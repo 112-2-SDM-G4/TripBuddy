@@ -1,0 +1,37 @@
+.inputcontainer {
+    margin-top: 1rem;
+    position: relative;
+    height: 3rem;
+}
+.inputcontainer label {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    font-size: 1.5rem;
+    transition: all 0.5s ease-in-out;
+}
+.inputcontainer input {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    border: 0;
+    border-bottom: 1px solid var(--primarycolor);
+    background: transparent;
+    width: 100%;
+    padding: 0.5rem 0 5px 0;
+    font-size: 1.5rem;
+}
+input:-webkit-autofill,
+input:-webkit-autofill:focus {
+    transition: background-color 600000s 0s, color 600000s 0s;
+}
+.inputcontainer input:focus {
+    border: none;
+    outline: none;
+    border-bottom: 1px solid var(--primarycolor);
+}
+.inputcontainer input:focus ~ label,
+.inputcontainer input:not(:placeholder-shown) ~ label {
+    top: -1rem;
+    font-size: 1rem;
+}

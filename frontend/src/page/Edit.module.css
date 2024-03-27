@@ -1,4 +1,16 @@
 .main {
     display: flex;
     flex-direction: column;
+    width: 100vw;
+    height: 100vh;
+    max-width: 100dvw;
+    max-height: 100dvh;
+    justify-content: center;
+    align-items: center;
+}
+.initialpage {
+    display: flex;
+    flex-direction: column;
+    width: 80vw;
+    gap: 5rem;
 }
