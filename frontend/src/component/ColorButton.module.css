@@ -1,0 +1,21 @@
+.colormode_button {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: calc(0.25rem);
+    background-size: cover;
+    border-radius: 0.25rem;
+    border: 2px solid var(--primarycolor);
+    background-color: var(--backgroundcolor);
+    z-index: 99;
+}
+.colormode_button:hover {
+    cursor: pointer;
+}
+.colormode_button svg {
+    width: 1.75rem;
+    height: 1.75rem;
+    fill: var(--fontcolor) !important;
+}
