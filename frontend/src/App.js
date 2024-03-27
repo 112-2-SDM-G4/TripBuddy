@@ -1,6 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./hooks/useAuth";
 import Login from "./page/Login";
+import Edit from "./page/Edit";
 import NotFound from "./page/NotFound";
 import { ColorButton } from "./component/ColorButton";
 import { useState } from "react";
@@ -17,6 +18,7 @@ function App() {
                 <Routes>
                     <Route path="/">
                         <Route path="login" element={<Login />} />
+                        <Route path="edit" element={<Edit />} />
                         <Route path="*" element={<NotFound />} />
                     </Route>
                 </Routes>
