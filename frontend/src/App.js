@@ -1,5 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./hooks/useAuth";
+import { LanguageProvider } from "./hooks/useLanguage";
 import Login from "./page/Login";
 import Edit from "./page/Edit";
 import NotFound from "./page/NotFound";
@@ -14,15 +15,17 @@ function App() {
                 isDarkMode={isDarkMode}
                 setIsDarkMode={setIsDarkMode}
             ></ColorButton>
-            <AuthProvider>
-                <Routes>
-                    <Route path="/">
-                        <Route path="login" element={<Login />} />
-                        <Route path="edit" element={<Edit />} />
-                        <Route path="*" element={<NotFound />} />
-                    </Route>
-                </Routes>
-            </AuthProvider>
+            <LanguageProvider>
+                <AuthProvider>
+                    <Routes>
+                        <Route path="/">
+                            <Route path="login" element={<Login />} />
+                            <Route path="edit" element={<Edit />} />
+                            <Route path="*" element={<NotFound />} />
+                        </Route>
+                    </Routes>
+                </AuthProvider>
+            </LanguageProvider>
         </div>
     );
 }

@@ -12,5 +12,22 @@
     display: flex;
     flex-direction: column;
     width: 80vw;
-    gap: 5rem;
+    gap: 2rem;
+}
+.pickdate {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    grid-column-gap: 0.5rem;
+    grid-row-gap: 0px;
+}
+.datepicker {
+    color: var(--fontcolor);
+    background-color: var(--backgroundcolor);
+    border: none;
+    border-bottom: 1px solid var(--primarycolor);
+    position: relative;
+}
+input[type="date"]::-webkit-calendar-picker-indicator {
+    opacity: 0;
 }

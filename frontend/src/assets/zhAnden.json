@@ -1,0 +1,14 @@
+{
+    "en": {
+        "tripname": "Please name this trip",
+        "startdate": "Start date",
+        "enddate": "End date",
+        "area": "Area"
+    },
+    "zh": {
+        "tripname": "請替這個旅程起個名稱",
+        "startdate": "起始日期",
+        "enddate": "結束日期",
+        "area": "地區"
+    }
+}
