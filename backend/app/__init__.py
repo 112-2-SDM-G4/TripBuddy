@@ -1,15 +1,20 @@
 import os
+from dotenv import load_dotenv
 
 from flask import Flask
 from flask_restful import Api, Resource
+
+from app.models import init_db
 from app.routes import initialize_routes
 
 app = Flask(__name__)
 api = Api(app)
 
-app.config['SECRET_KEY'] = "secretkey"
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
-# db = SQLAlchemy(app)
+load_dotenv()
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
+
+init_db(app)
+
 # bcrypt = Bcrypt(app)
 # login_manager = LoginManager(app)
 
