@@ -9,6 +9,7 @@
     left: 0px;
     font-size: 1rem;
     transition: all 0.5s ease-in-out;
+    opacity: 0.6;
 }
 .inputcontainer input {
     position: absolute;
@@ -33,5 +34,6 @@ input:-webkit-autofill:focus {
 .inputcontainer input:focus ~ label,
 .inputcontainer input:not(:placeholder-shown) ~ label {
     top: -1rem;
-    font-size: 0.5rem;
+    font-size: 0.75rem;
+    opacity: 1;
 }

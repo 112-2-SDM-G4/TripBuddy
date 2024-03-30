@@ -3,16 +3,30 @@
     flex-direction: column;
     width: 100vw;
     height: 100vh;
-    max-width: 100dvw;
+    max-width: calc(100dvw - 12px);
     max-height: 100dvh;
-    justify-content: center;
     align-items: center;
+    padding-top: 5rem;
+}
+@media (min-width: 900px) {
+    .main {
+        padding-left: 1rem;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+.title {
+    font-size: 1.25rem;
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
 }
 .initialpage {
     display: flex;
     flex-direction: column;
     width: 80vw;
-    gap: 2rem;
+    max-width: 28rem;
+    padding-bottom: 3rem;
 }
 .pickdate {
     display: grid;
@@ -20,6 +34,7 @@
     grid-template-rows: repeat(2, 1fr);
     grid-column-gap: 0.5rem;
     grid-row-gap: 0px;
+    padding: 1rem 0rem;
 }
 .datepicker {
     color: var(--fontcolor);
@@ -27,6 +42,8 @@
     border: none;
     border-bottom: 1px solid var(--primarycolor);
     position: relative;
+    font-size: 1rem;
+    height: 1.5rem;
 }
 input[type="date"]::-webkit-calendar-picker-indicator {
     opacity: 0;

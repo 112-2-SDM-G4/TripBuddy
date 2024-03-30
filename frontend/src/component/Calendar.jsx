@@ -1,56 +1,151 @@
 import React, { useState } from "react";
+import stlye from "./Calendar.module.css";
 
-const Calendar = () => {
-    // Initialize with the current year and month
+const Calendar = ({
+    selectedStart,
+    selectedEnd,
+    setSelectedStart,
+    setSelectedEnd,
+}) => {
     const [date, setDate] = useState(new Date());
 
     const changeMonth = (increment) => {
-        // Adjust the month by the increment (+1 for next, -1 for previous)
         setDate(new Date(date.getFullYear(), date.getMonth() + increment, 1));
     };
-
-    const changeYear = (increment) => {
-        // Adjust the year by the increment (+1 for next, -1 for previous)
-        setDate(new Date(date.getFullYear() + increment, date.getMonth(), 1));
+    const onDateClick = (day) => {
+        const newDate = new Date(date.getFullYear(), date.getMonth(), day);
+        if (
+            !selectedStart ||
+            selectedStart > newDate ||
+            (selectedStart && selectedEnd)
+        ) {
+            setSelectedStart(newDate);
+            if (selectedStart && selectedEnd) {
+                setSelectedEnd(undefined);
+            }
+        } else if (!selectedEnd || selectedEnd < newDate) {
+            setSelectedEnd(newDate);
+        }
     };
 
-    // Getting the number of days in the current month
     const getDaysInMonth = (year, month) => {
         return new Date(year, month + 1, 0).getDate();
     };
-
     const daysInMonth = getDaysInMonth(date.getFullYear(), date.getMonth());
+    const firstDayOfMonth = new Date(
+        date.getFullYear(),
+        date.getMonth(),
+        1
+    ).getDay();
 
-    // Generate an array [1, 2, ..., daysInMonth]
-    const daysArray = [...Array(daysInMonth).keys()].map((day) => day + 1);
+    const daysArray = Array(firstDayOfMonth)
+        .fill(null)
+        .concat(
+            Array(daysInMonth)
+                .fill(null)
+                .map((_, index) => index + 1)
+        );
+    const weeks = [];
+    while (daysArray.length) weeks.push(daysArray.splice(0, 7));
+
+    const isDateInRange = (day) => {
+        const currentDate = new Date(date.getFullYear(), date.getMonth(), day);
+        if (
+            selectedStart &&
+            selectedEnd &&
+            currentDate.getTime() > selectedStart.getTime() &&
+            currentDate.getTime() < selectedEnd.getTime()
+        ) {
+            return "in";
+        }
+        if (
+            selectedEnd &&
+            selectedStart &&
+            currentDate.getTime() === selectedStart.getTime()
+        ) {
+            return "selectstart";
+        }
+        if (
+            selectedStart &&
+            selectedEnd &&
+            currentDate.getTime() === selectedEnd.getTime()
+        ) {
+            return "selectend";
+        }
+        if (
+            (selectedStart &&
+                currentDate.getTime() === selectedStart.getTime()) ||
+            (selectedEnd && currentDate.getTime() === selectedEnd.getTime())
+        ) {
+            return "select";
+        }
+        return "no";
+    };
 
     return (
-        <div>
-            <header>
-                <button onClick={() => changeYear(-1)}>Previous Year</button>
-                <button onClick={() => changeMonth(-1)}>Previous Month</button>
-                <span>{`${date.getFullYear()} / ${date.getMonth() + 1}`}</span>
-                <button onClick={() => changeMonth(1)}>Next Month</button>
-                <button onClick={() => changeYear(1)}>Next Year</button>
+        <div className={stlye.calendar}>
+            <header className={stlye.header}>
+                <div
+                    className={`${stlye.control} ${stlye.clickable}`}
+                    onClick={() => changeMonth(-1)}
+                >
+                    {"<"}
+                </div>
+                <span className={stlye.title}>{`${date.getFullYear()} / ${
+                    date.getMonth() + 1
+                }`}</span>
+                <div
+                    className={`${stlye.control} ${stlye.clickable}`}
+                    onClick={() => changeMonth(1)}
+                >
+                    {">"}
+                </div>
             </header>
-            <table>
-                {/* Render a table for the calendar */}
+            <table className={stlye.table}>
                 <thead>
                     <tr>
-                        <th>Sun</th>
-                        <th>Mon</th>
-                        <th>Tue</th>
-                        <th>Wed</th>
-                        <th>Thu</th>
-                        <th>Fri</th>
-                        <th>Sat</th>
+                        <th className={stlye.block}>Sun</th>
+                        <th className={stlye.block}>Mon</th>
+                        <th className={stlye.block}>Tue</th>
+                        <th className={stlye.block}>Wed</th>
+                        <th className={stlye.block}>Thu</th>
+                        <th className={stlye.block}>Fri</th>
+                        <th className={stlye.block}>Sat</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {/* We'll need to write logic to correctly distribute the days in the table rows */}
-                    {/* For simplicity, we're just listing the days here */}
-                    {daysArray.map((day) => (
-                        <td key={day}>{day}</td>
+                    {weeks.map((week, weekIndex) => (
+                        <tr key={`week-${weekIndex}`}>
+                            {week.map((day, dayIndex) => {
+                                let classes = `${stlye.block} ${stlye.clickable}`;
+                                if (day) {
+                                    const isInRange = isDateInRange(day);
+                                    if (isInRange === "selectstart") {
+                                        classes += ` ${stlye.selected} ${stlye.selectedstart}`;
+                                    }
+                                    if (isInRange === "selectend") {
+                                        classes += ` ${stlye.selected} ${stlye.selectedend}`;
+                                    }
+                                    if (isInRange === "select") {
+                                        classes += ` ${stlye.selected}`;
+                                    }
+                                    if (isInRange === "in") {
+                                        classes += ` ${stlye.between}`;
+                                    }
+                                }
+                                return (
+                                    <td
+                                        className={classes}
+                                        key={`day-${weekIndex}-${dayIndex}`}
+                                        onClick={() => day && onDateClick(day)}
+                                    >
+                                        <div>
+                                            <span>{day}</span>
+                                        </div>
+                                    </td>
+                                );
+                            })}
+                        </tr>
                     ))}
                 </tbody>
             </table>

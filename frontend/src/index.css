@@ -5,16 +5,16 @@
     color: var(--fontcolor);
 }
 html {
-    font-size: 16px;
+    font-size: 20px;
 }
 @media (max-width: 600px) {
     html {
-        font-size: 12px;
+        font-size: 16px;
     }
 }
 @media (max-width: 325px) {
     html {
-        font-size: 10px;
+        font-size: 12px;
     }
 }
 body {
@@ -43,7 +43,7 @@ body {
 .App[theme="light"] {
     --accentcolor: #f6b02c;
     --primarycolor: #67c5da;
-    --secondarycolor: #ebdebd;
+    --secondarycolor: #985f2a;
     --backgroundcolor: #eae8e1;
     --fontcolor: #050003;
 }

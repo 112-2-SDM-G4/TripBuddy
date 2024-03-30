@@ -7,7 +7,6 @@ const InputText = ({ propmt, name, setting = {}, onChange }) => {
         focus = false,
         type = "text",
         width = "100%",
-        fontSize = "1rem",
     } = setting;
     const inputtxt = useRef(null);
     const [inputValue, setInputValue] = useState("");
@@ -22,9 +21,7 @@ const InputText = ({ propmt, name, setting = {}, onChange }) => {
     return (
         <div
             style={{ width: width }}
-            className={`${style.inputcontainer} ${
-                inputValue === "" ? style.type : style.type
-            }`}
+            className={`${style.inputcontainer}`}
             onClick={() => {
                 inputtxt.current.focus();
             }}
@@ -40,9 +37,8 @@ const InputText = ({ propmt, name, setting = {}, onChange }) => {
                 value={inputValue}
                 onChange={handleChange}
                 placeholder=" "
-                style={{ fontSize: fontSize }}
             />
-            <label style={{ fontSize: fontSize }}>{propmt}</label>
+            <label>{propmt}</label>
         </div>
     );
 };
