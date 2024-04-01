@@ -17,7 +17,7 @@
 }
 
 .loginContainer {
-    background-color: white;
+    background-color: var(--fieldcolor);
     padding: 1rem 2rem 1.5rem 2rem;
     border-radius: 1rem;
     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
@@ -50,13 +50,15 @@ button {
     cursor: pointer;
     font-weight: bold;
     font-size: 1rem;
-    color: #555;
+    color: var(--fontcolor);
+    opacity: 0.7;
     outline: none;
 }
 
 button.active {
     border-bottom: 2px solid var(--secondarycolor);
     color: var(--secondarycolor);
+    opacity: 1;
 }
 
 
