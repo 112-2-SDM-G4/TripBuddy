@@ -1,6 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./hooks/useAuth";
 import { LanguageProvider } from "./hooks/useLanguage";
+import Sidebar from "./component/Sidebar";
 import Login from "./page/Login";
 import Edit from "./page/Edit";
 import NotFound from "./page/NotFound";
@@ -17,6 +18,8 @@ function App() {
             ></ColorButton>
             <LanguageProvider>
                 <AuthProvider>
+                    <Sidebar />
+
                     <Routes>
                         <Route path="/">
                             <Route path="login" element={<Login />} />
