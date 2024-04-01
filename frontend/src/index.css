@@ -19,7 +19,7 @@ html {
 }
 body {
     margin: 0;
-    font-family: "Microsoft JhengHei", "PingFang", -apple-system,
+    font-family: "Jockey one", "Microsoft JhengHei", "PingFang", -apple-system,
         BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu",
         "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
     -webkit-font-smoothing: antialiased;
@@ -30,7 +30,8 @@ body {
     height: 100vh;
     max-width: 100dvw;
     max-height: 100dvh;
-    overflow: auto;
+    overflow-x: hidden;
+    overflow-y: auto;
     background-color: var(--backgroundcolor);
 }
 .App[theme="dark"] {

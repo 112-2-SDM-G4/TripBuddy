@@ -10,6 +10,7 @@ import words from "../assets/zhAnden.json";
 
 export default function Edit() {
     const [stage, setStage] = useState(0);
+    const [tripName, setTripName] = useState("");
     const [selectedStart, setSelectedStart] = useState("");
     const [selectedEnd, setSelectedEnd] = useState("");
     const { language } = useLanguage();
@@ -24,6 +25,7 @@ export default function Edit() {
                     selectedEnd={selectedEnd}
                     setSelectedEnd={setSelectedEnd}
                     language={language}
+                    setTripName={setTripName}
                 />
             )}
             {stage === 1 && (
@@ -32,6 +34,7 @@ export default function Edit() {
                     selectedStart={selectedStart}
                     selectedEnd={selectedEnd}
                     language={language}
+                    tripName={tripName}
                 />
             )}
         </div>
@@ -45,9 +48,9 @@ function InitialPage({
     selectedEnd,
     setSelectedEnd,
     language,
+    setTripName,
 }) {
-    const [tripName, setTripName] = useState("");
-
+    const [displayCalendar, setDisplayCalendar] = useState(false);
     // const inputtxt = useRef(null);
     // const locations = [
     //     "Tokyo",
@@ -120,7 +123,12 @@ function InitialPage({
                 ))}
             </datalist> */}
 
-            <div className={style.pickdate}>
+            <div
+                className={style.pickdate}
+                onClick={() => {
+                    setDisplayCalendar(!displayCalendar);
+                }}
+            >
                 <div>{words[language]["startdate"]}</div>
                 <div>{words[language]["enddate"]}</div>
                 <input
@@ -129,23 +137,31 @@ function InitialPage({
                     name="startdate"
                     id="startdate"
                     value={formatDate(selectedStart)}
-                    disabled
+                    onClick={(event) => {
+                        event.target.blur();
+                    }}
+                    readOnly
                 />
                 <input
                     className={style.datepicker}
                     type="date"
                     name="enddate"
                     id="enddate"
+                    onClick={(event) => {
+                        event.target.blur();
+                    }}
                     value={formatDate(selectedEnd)}
-                    disabled
+                    readOnly
                 />
             </div>
-            <Calendar
-                selectedStart={selectedStart}
-                setSelectedStart={setSelectedStart}
-                selectedEnd={selectedEnd}
-                setSelectedEnd={setSelectedEnd}
-            />
+            {displayCalendar && (
+                <Calendar
+                    selectedStart={selectedStart}
+                    setSelectedStart={setSelectedStart}
+                    selectedEnd={selectedEnd}
+                    setSelectedEnd={setSelectedEnd}
+                />
+            )}
             <div style={{ width: "100%", height: "2rem" }}>&nbsp;</div>
             <Button
                 txt={"下一頁"}
@@ -158,8 +174,15 @@ function InitialPage({
     );
 }
 
-function EditPage({ setStage, selectedStart, selectedEnd, language }) {
+function EditPage({
+    setStage,
+    selectedStart,
+    selectedEnd,
+    language,
+    tripName,
+}) {
     const [dates, setDates] = useState([]);
+    const [selectedDate, setSelectedDate] = useState(0);
     useEffect(() => {
         function formatDateAndWeekday(start, end, language) {
             const oneDay = 24 * 60 * 60 * 1000;
@@ -203,14 +226,26 @@ function EditPage({ setStage, selectedStart, selectedEnd, language }) {
     }, [selectedStart, selectedEnd, language]);
 
     return (
-        <div>
-            {dates.map((d, i) => (
-                <div key={i}>
-                    {`第${i + 1}天`}
-                    {d.date}
-                    {d.weekday}
-                </div>
-            ))}
+        <div className={style.editpage}>
+            <div className={style.editpageTitle}>{tripName}</div>
+            <div className={style.selectdate}>
+                {dates.map((d, i) => (
+                    <div
+                        className={`${style.date} ${
+                            i === selectedDate ? style.selected : null
+                        }`}
+                        key={i}
+                        onClick={() => {
+                            setSelectedDate(i);
+                        }}
+                    >{`第${i + 1}天`}</div>
+                ))}
+            </div>
+            <div className={style.datedetail}>
+                {dates[selectedDate] ? dates[selectedDate].date : ""}
+                {dates[selectedDate] ? dates[selectedDate].weekday : ""}
+                {"天氣晴"}
+            </div>
         </div>
     );
 }

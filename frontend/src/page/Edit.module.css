@@ -3,23 +3,21 @@
     flex-direction: column;
     width: 100vw;
     height: 100vh;
-    max-width: calc(100dvw - 12px);
+    max-width: 100dvw;
     max-height: 100dvh;
     align-items: center;
-    padding-top: 5rem;
 }
-@media (min-width: 900px) {
-    .main {
-        padding-left: 1rem;
-        flex-direction: column;
-        align-items: flex-start;
-    }
-}
+
 .title {
     font-size: 1.25rem;
-    position: absolute;
-    top: 1rem;
-    left: 1rem;
+    font-weight: 900;
+    width: 100%;
+    padding-top: 1rem;
+    padding-left: 1rem;
+    margin-bottom: 1rem;
+    background-color: var(--secondarycolor);
+    color: var(--backgroundcolor);
+    padding-bottom: 0.5rem;
 }
 .initialpage {
     display: flex;
@@ -35,6 +33,7 @@
     grid-column-gap: 0.5rem;
     grid-row-gap: 0px;
     padding: 1rem 0rem;
+    cursor: pointer;
 }
 .datepicker {
     color: var(--fontcolor);
@@ -44,7 +43,46 @@
     position: relative;
     font-size: 1rem;
     height: 1.5rem;
+    cursor: pointer;
 }
 input[type="date"]::-webkit-calendar-picker-indicator {
     opacity: 0;
+}
+
+.editpage {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding-bottom: 3rem;
+}
+.editpageTitle {
+    font-size: 1.25rem;
+    font-weight: 900;
+    width: 100%;
+}
+.selectdate {
+    padding-top: 1rem;
+    display: flex;
+}
+.date {
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+}
+.selected {
+    border-bottom: 5px solid var(--primarycolor);
+}
+.datedetail {
+    padding-top: 1rem;
+}
+@media (min-width: 900px) {
+    .main {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .initialpage {
+        padding-left: 1rem;
+    }
+    .editpage {
+        padding-left: 1rem;
+    }
 }
