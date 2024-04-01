@@ -1,7 +1,5 @@
-import React, { useEffect, useRef, useState } from "react";
-import Menu from "../component/Menu";
+import React, { useEffect, useState } from "react";
 import style from "./Edit.module.css";
-import inputstyle from "../component/InputText.module.css";
 import Button from "../component/Button";
 import Calendar from "../component/Calendar";
 import InputText from "../component/InputText";
@@ -51,29 +49,6 @@ function InitialPage({
     setTripName,
 }) {
     const [displayCalendar, setDisplayCalendar] = useState(false);
-    // const inputtxt = useRef(null);
-    // const locations = [
-    //     "Tokyo",
-    //     "New York",
-    //     "Paris",
-    //     "London",
-    //     "Beijing",
-    //     "Sydney",
-    //     "Cairo",
-    //     "Berlin",
-    //     "Moscow",
-    //     "Dubai",
-    //     "Singapore",
-    //     "Istanbul",
-    //     "Los Angeles",
-    //     "Rome",
-    //     "Bangkok",
-    //     "Madrid",
-    //     "Toronto",
-    //     "Hong Kong",
-    //     "Buenos Aires",
-    //     "Cape Town",
-    // ];
 
     function formatDate(date) {
         if (!date || date === "") {
@@ -98,31 +73,6 @@ function InitialPage({
                 setting={{ require: true, width: "100%" }}
                 onChange={setTripName}
             />
-
-            {/* <div
-                style={{ width: "100%" }}
-                className={`${inputstyle.inputcontainer}`}
-                onClick={() => {
-                    inputtxt.current.focus();
-                }}
-            >
-                <input
-                    ref={inputtxt}
-                    type="text"
-                    id="area"
-                    name="area"
-                    list="areas"
-                    required
-                    placeholder=" "
-                />
-                <label>{words[language]["area"]}</label>
-            </div>
-            <datalist id="areas">
-                {locations.map((item, index) => (
-                    <option key={index} value={item} />
-                ))}
-            </datalist> */}
-
             <div
                 className={style.pickdate}
                 onClick={() => {

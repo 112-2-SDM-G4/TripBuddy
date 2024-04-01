@@ -8,7 +8,7 @@
     background-size: cover;
     border-radius: 0.25rem;
     border: 2px solid var(--primarycolor);
-    background-color: var(--backgroundcolor);
+    background-color: transparent;
     z-index: 99;
 }
 .colormode_button:hover {
