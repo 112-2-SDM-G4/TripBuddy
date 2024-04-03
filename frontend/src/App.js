@@ -18,8 +18,6 @@ function App() {
             ></ColorButton>
             <LanguageProvider>
                 <AuthProvider>
-                    <Sidebar />
-
                     <Routes>
                         <Route path="/">
                             <Route path="login" element={<Login />} />

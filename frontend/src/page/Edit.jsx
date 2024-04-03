@@ -4,14 +4,14 @@ import Button from "../component/Button";
 import Calendar from "../component/Calendar";
 import InputText from "../component/InputText";
 import { useLanguage } from "../hooks/useLanguage";
-import words from "../assets/zhAnden.json";
+import DragBox from "../component/DragBox";
 
 export default function Edit() {
     const [stage, setStage] = useState(0);
     const [tripName, setTripName] = useState("");
     const [selectedStart, setSelectedStart] = useState("");
     const [selectedEnd, setSelectedEnd] = useState("");
-    const { language } = useLanguage();
+    const { words, language } = useLanguage();
     return (
         <div className={style.main}>
             <div className={style.title}>編輯行程</div>
@@ -22,7 +22,7 @@ export default function Edit() {
                     setSelectedStart={setSelectedStart}
                     selectedEnd={selectedEnd}
                     setSelectedEnd={setSelectedEnd}
-                    language={language}
+                    words={words}
                     setTripName={setTripName}
                 />
             )}
@@ -31,6 +31,7 @@ export default function Edit() {
                     setStage={setStage}
                     selectedStart={selectedStart}
                     selectedEnd={selectedEnd}
+                    words={words}
                     language={language}
                     tripName={tripName}
                 />
@@ -45,7 +46,7 @@ function InitialPage({
     setSelectedStart,
     selectedEnd,
     setSelectedEnd,
-    language,
+    words,
     setTripName,
 }) {
     const [displayCalendar, setDisplayCalendar] = useState(false);
@@ -68,7 +69,7 @@ function InitialPage({
     return (
         <div className={style.initialpage}>
             <InputText
-                propmt={words[language]["tripname"]}
+                propmt={words["tripname"]}
                 name={"tripname"}
                 setting={{ require: true, width: "100%" }}
                 onChange={setTripName}
@@ -79,8 +80,8 @@ function InitialPage({
                     setDisplayCalendar(!displayCalendar);
                 }}
             >
-                <div>{words[language]["startdate"]}</div>
-                <div>{words[language]["enddate"]}</div>
+                <div>{words["startdate"]}</div>
+                <div>{words["enddate"]}</div>
                 <input
                     className={style.datepicker}
                     type="date"
@@ -128,11 +129,14 @@ function EditPage({
     setStage,
     selectedStart,
     selectedEnd,
+    words,
     language,
     tripName,
 }) {
     const [dates, setDates] = useState([]);
     const [selectedDate, setSelectedDate] = useState(0);
+    const [spots, setSpots] = useState([]);
+
     useEffect(() => {
         function formatDateAndWeekday(start, end, language) {
             const oneDay = 24 * 60 * 60 * 1000;
@@ -184,7 +188,7 @@ function EditPage({
                         className={`${style.date} ${
                             i === selectedDate ? style.selected : null
                         }`}
-                        key={i}
+                        key={"dates" + i}
                         onClick={() => {
                             setSelectedDate(i);
                         }}
@@ -195,6 +199,7 @@ function EditPage({
                 {dates[selectedDate] ? dates[selectedDate].date : ""}
                 {dates[selectedDate] ? dates[selectedDate].weekday : ""}
                 {"天氣晴"}
+                <DragBox items={spots} setItems={setSpots} />
             </div>
         </div>
     );
