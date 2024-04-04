@@ -1,9 +1,10 @@
 import { Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./hooks/useAuth";
 import { LanguageProvider } from "./hooks/useLanguage";
-import Sidebar from "./component/Sidebar";
+import Header from "./component/Header";
 import Login from "./page/Login";
 import Edit from "./page/Edit";
+import Explore from "./page/Explore";
 import NotFound from "./page/NotFound";
 import { ColorButton } from "./component/ColorButton";
 import { useState } from "react";
@@ -18,12 +19,13 @@ function App() {
             ></ColorButton>
             <LanguageProvider>
                 <AuthProvider>
-                    <Sidebar />
+                    <Header />
 
                     <Routes>
                         <Route path="/">
                             <Route path="login" element={<Login />} />
                             <Route path="edit" element={<Edit />} />
+                            <Route path="explore" element={<Explore />} />
                             <Route path="*" element={<NotFound />} />
                         </Route>
                     </Routes>
