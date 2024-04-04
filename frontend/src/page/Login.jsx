@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import Menu from "../component/Menu";
 import style from "./Login.module.css";
 import Button from "../component/Button";
 import InputText from "../component/InputText";
+import bcrypt from 'bcryptjs';
 
 
 
@@ -38,29 +38,87 @@ const Login = () => {
     );
 };
 
+
+
 const LoginForm = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const handleSubmit = (e) => {
-        e.preventDefault();
+    const [salt, setSalt] = useState('');
+    const [error, setError] = useState(''); // State to store error messages
+
+    const handleEmailBlur = async () => {
+        setError(''); // Reset error message
+        if (email) {
+            try {
+                const response = await fetch('/api/getSalt', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email })
+                });
+                if (!response.ok) {
+                    throw new Error('User not exists. Please try again or register it.');
+                }
+                const data = await response.json();
+                setSalt(data.salt);
+            } catch (error) {
+                setError(error.message); // Set error message
+            }
+        }
     };
 
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (password && salt) {
+            // Hash the password with the salt
+            const hashedPassword = bcrypt.hashSync(password, salt);
+
+            try {
+                // Assuming your backend endpoint to receive the hashed password is `/api/login`
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, hashedPassword }),
+                });
+                if (!response.ok) {
+                    throw new Error('E-mail or password is wrong');
+                }
+                const jwt_token = await response.json();
+            } catch (error) {
+                setError(error.message);
+            }
+        }
+    };
     return (
-        <form action='/signup' onSubmit={handleSubmit} className={style.form}>
+        <form action='/signin' method="post" onSubmit={handleSubmit} className={style.form}>
             <div className={style.logoContainer}>
-                {/* You will replace 'logo.svg' with your actual logo */}
                 <img className={style.logo} src="../../logo.svg" alt="TourBuddy" />
             </div>
+            <div className={style.inputWithErrorMessage}>
+
+                {error && <span className={style.errorMessage}>{error}</span>}
+
+            </div>
             <div className={style.inputGroup}>
+
                 <InputText
                     propmt={"E-mail"}
                     name={"email"}
                     setting={{ require: true, type: 'email' }}
+                    value={email}
+                    onChange={setEmail}
+                    onBlur={handleEmailBlur}
                 />
+
                 <InputText
                     propmt={"Password"}
                     name={"password"}
                     setting={{ require: true, type: 'password' }}
+                    value={password}
+                    onChange={setPassword}
                 />
             </div>
             <Button className={style.buttonSignIn}
@@ -71,9 +129,7 @@ const LoginForm = () => {
             />
 
             <div className={style.links}>
-
-                <a href="/forgot-password">Forgot Password?</a>
-
+                <a href="/reset">Forgot Password?</a>
             </div>
             <div className={style.socialLogin}>
                 <div className={style.text}>or you can sign in with</div>
@@ -142,6 +198,5 @@ const SignupForm = () => {
         </form>
     );
 };
-
 
 export default Login;
