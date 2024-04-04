@@ -1,10 +1,10 @@
 .card {
     width: 15rem;
     height: 10rem;
-    background-color: var(--primarycolor);
+    background-color: var(--backgroundcolor);
     margin: 0.5rem;
     border-radius: 0.5rem;
-    box-shadow: 0.1rem 0.1rem 0.1rem #8b8b8b;
+    box-shadow: 0 0 0.2rem #9fa0a1;
 }
 
 .card:hover {
@@ -29,6 +29,13 @@
     font-size: 0.75rem;
     font-weight: bold;
     align-items: center;
+    
+    /* color: var(--backgroundcolor); */
+
+}
+
+.infocontainer a {
+    color: white;
 }
 
 .icon {
