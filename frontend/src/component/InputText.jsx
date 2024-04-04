@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import style from "./InputText.module.css";
 
-const InputText = ({ propmt, name, setting = {}, onChange }) => {
+const InputText = ({ propmt, name, setting = {}, onChange, onBlur }) => {
     const {
         require = false,
         focus = false,
@@ -17,6 +17,13 @@ const InputText = ({ propmt, name, setting = {}, onChange }) => {
             onChange(newValue);
         }
     };
+    const handleBlur = (event) => {
+        const value = event.target.value;
+        if (onBlur) {
+            onBlur(value);
+        }
+    };
+
 
     return (
         <div
@@ -36,6 +43,7 @@ const InputText = ({ propmt, name, setting = {}, onChange }) => {
                 autoFocus={focus}
                 value={inputValue}
                 onChange={handleChange}
+                onBlur={handleBlur}
                 placeholder=" "
             />
             <label>{propmt}</label>

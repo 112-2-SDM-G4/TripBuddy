@@ -38,9 +38,9 @@ body {
     --accentcolor: #88CF46;
     --primarycolor: #bdd5ea;
     --secondarycolor: #DDD23B;
-    --backgroundcolor: #464646;
+    --backgroundcolor: #486160;
     --fontcolor: #E2EFE7;
-    --fieldcolor:  #486160;
+    --fieldcolor:  #464646;
 }
 .App[theme="light"] {
     --accentcolor: #e26c5a;
