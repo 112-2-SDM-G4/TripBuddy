@@ -4,6 +4,7 @@ import { LanguageProvider } from "./hooks/useLanguage";
 import Sidebar from "./component/Sidebar";
 import Login from "./page/Login";
 import Edit from "./page/Edit";
+import Reset from "./page/Reset";
 import NotFound from "./page/NotFound";
 import { ColorButton } from "./component/ColorButton";
 import { useState } from "react";
@@ -21,6 +22,7 @@ function App() {
                     <Routes>
                         <Route path="/">
                             <Route path="login" element={<Login />} />
+                            <Route path="reset" element={<Reset />} />
                             <Route path="edit" element={<Edit />} />
                             <Route path="*" element={<NotFound />} />
                         </Route>
