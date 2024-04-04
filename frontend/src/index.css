@@ -35,18 +35,20 @@ body {
     background-color: var(--backgroundcolor);
 }
 .App[theme="dark"] {
-    --accentcolor: #d38c09;
-    --primarycolor: #0089a7;
-    --secondarycolor: #d9cd90;
-    --backgroundcolor: #1e1c15;
-    --fontcolor: #fffafd;
+    --accentcolor: #88CF46;
+    --primarycolor: #bdd5ea;
+    --secondarycolor: #DDD23B;
+    --backgroundcolor: #486160;
+    --fontcolor: #E2EFE7;
+    --fieldcolor:  #464646;
 }
 .App[theme="light"] {
-    --accentcolor: #f6b02c;
-    --primarycolor: #67c5da;
+    --accentcolor: #e26c5a;
+    --primarycolor: #3b8ea5;
     --secondarycolor: #985f2a;
     --backgroundcolor: #eae8e1;
     --fontcolor: #050003;
+    --fieldcolor: white;
 }
 
 ::-webkit-scrollbar {

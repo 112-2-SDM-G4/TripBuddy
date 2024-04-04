@@ -3,12 +3,26 @@
         "tripname": "Please name this trip",
         "startdate": "Start date",
         "enddate": "End date",
-        "area": "Area"
+        "area": "Area",
+        "Sun": "Sun",
+        "Mon": "Mon",
+        "Tue": "Tue",
+        "Wed": "Wed",
+        "Thu": "Thu",
+        "Fri": "Fri",
+        "Sat": "Sat"
     },
     "zh": {
         "tripname": "請替這個旅程起個名稱",
         "startdate": "起始日期",
         "enddate": "結束日期",
-        "area": "地區"
+        "area": "地區",
+        "Sun": "日",
+        "Mon": "一",
+        "Tue": "二",
+        "Wed": "三",
+        "Thu": "四",
+        "Fri": "五",
+        "Sat": "六"
     }
 }

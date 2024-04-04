@@ -5,6 +5,7 @@ import Header from "./component/Header";
 import Login from "./page/Login";
 import Edit from "./page/Edit";
 import Explore from "./page/Explore";
+import Reset from "./page/Reset";
 import NotFound from "./page/NotFound";
 import { ColorButton } from "./component/ColorButton";
 import { useState } from "react";
@@ -20,10 +21,10 @@ function App() {
             <LanguageProvider>
                 <AuthProvider>
                     <Header />
-
                     <Routes>
                         <Route path="/">
                             <Route path="login" element={<Login />} />
+                            <Route path="reset" element={<Reset />} />
                             <Route path="edit" element={<Edit />} />
                             <Route path="explore" element={<Explore />} />
                             <Route path="*" element={<NotFound />} />

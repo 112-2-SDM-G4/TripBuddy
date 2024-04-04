@@ -6,7 +6,7 @@
     border-style: none;
     box-shadow: var(--fontcolor) 0 4px 9px;
     box-sizing: border-box;
-    color: var(--fontcolor);
+    color: var(--fieldcolor);
     cursor: pointer;
     display: inline-block;
     font-size: 1rem;

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import stlye from "./Calendar.module.css";
+import style from "./Calendar.module.css";
+import { useLanguage } from "../hooks/useLanguage";
 
 const Calendar = ({
     selectedStart,
@@ -8,6 +9,7 @@ const Calendar = ({
     setSelectedEnd,
 }) => {
     const [date, setDate] = useState(new Date());
+    const { words } = useLanguage();
 
     const changeMonth = (increment) => {
         setDate(new Date(date.getFullYear(), date.getMonth() + increment, 1));
@@ -83,54 +85,54 @@ const Calendar = ({
     };
 
     return (
-        <div className={stlye.calendar}>
-            <header className={stlye.header}>
+        <div className={style.calendar}>
+            <header className={style.header}>
                 <div
-                    className={`${stlye.control} ${stlye.clickable}`}
+                    className={`${style.control} ${style.clickable}`}
                     onClick={() => changeMonth(-1)}
                 >
                     {"<"}
                 </div>
-                <span className={stlye.title}>{`${date.getFullYear()} / ${
+                <span className={style.title}>{`${date.getFullYear()} / ${
                     date.getMonth() + 1
                 }`}</span>
                 <div
-                    className={`${stlye.control} ${stlye.clickable}`}
+                    className={`${style.control} ${style.clickable}`}
                     onClick={() => changeMonth(1)}
                 >
                     {">"}
                 </div>
             </header>
-            <table className={stlye.table}>
+            <table className={style.table}>
                 <thead>
                     <tr>
-                        <th className={stlye.block}>Sun</th>
-                        <th className={stlye.block}>Mon</th>
-                        <th className={stlye.block}>Tue</th>
-                        <th className={stlye.block}>Wed</th>
-                        <th className={stlye.block}>Thu</th>
-                        <th className={stlye.block}>Fri</th>
-                        <th className={stlye.block}>Sat</th>
+                        <th className={style.block}>{words["Sun"]}</th>
+                        <th className={style.block}>{words["Mon"]}</th>
+                        <th className={style.block}>{words["Tue"]}</th>
+                        <th className={style.block}>{words["Wed"]}</th>
+                        <th className={style.block}>{words["Thu"]}</th>
+                        <th className={style.block}>{words["Fri"]}</th>
+                        <th className={style.block}>{words["Sat"]}</th>
                     </tr>
                 </thead>
                 <tbody>
                     {weeks.map((week, weekIndex) => (
                         <tr key={`week-${weekIndex}`}>
                             {week.map((day, dayIndex) => {
-                                let classes = `${stlye.block} ${stlye.clickable}`;
+                                let classes = `${style.block} ${style.clickable}`;
                                 if (day) {
                                     const isInRange = isDateInRange(day);
                                     if (isInRange === "selectstart") {
-                                        classes += ` ${stlye.selected} ${stlye.selectedstart}`;
+                                        classes += ` ${style.selected} ${style.selectedstart}`;
                                     }
                                     if (isInRange === "selectend") {
-                                        classes += ` ${stlye.selected} ${stlye.selectedend}`;
+                                        classes += ` ${style.selected} ${style.selectedend}`;
                                     }
                                     if (isInRange === "select") {
-                                        classes += ` ${stlye.selected}`;
+                                        classes += ` ${style.selected}`;
                                     }
                                     if (isInRange === "in") {
-                                        classes += ` ${stlye.between}`;
+                                        classes += ` ${style.between}`;
                                     }
                                 }
                                 return (
