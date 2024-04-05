@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import style from "./AttractionCard.module.css";
 import { useNavigate } from 'react-router-dom';
-import * as AiIcons from 'react-icons/ai';
+import { AiOutlinePlusCircle } from 'react-icons/ai';
 
 function AttractionCard({ name, src, attractionId}) {
   const navigate = useNavigate();
@@ -11,7 +11,7 @@ function AttractionCard({ name, src, attractionId}) {
         <img src={src} alt="Logo" className={style.img}/>
         <div className={style.infocontainer}>
             <div>{name}</div>
-            <div className={style.icon}><AiIcons.AiOutlinePlusCircle size={20}/></div>
+            <div className={style.icon}><AiOutlinePlusCircle size={20}/></div>
         </div>
     </div>
   );
