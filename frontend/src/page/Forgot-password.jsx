@@ -1,7 +1,7 @@
 // rest.jsx
 import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom';
-import style from "./Reset.module.css";
+import style from "./Forgot-password.module.css";
 import Button from "../component/Button";
 import InputText from "../component/InputText";
 import { FaArrowLeft } from 'react-icons/fa';
@@ -74,9 +74,12 @@ const Reset = () => {
         return (
             <div className={style.main}>
                 <div className={style.loginContainer}>
-                    <h2>Password Reset Email Sent</h2>
-                    <p>Please check your email to reset your password.</p>
-                    <button onClick={goBack} className={style.backButton}>Go Back</button>
+                    <img className={style.logo} src="../../circle-check.svg"/>
+                    <h2>Password Reset Email Sent!</h2>
+                    <div className={style.description}>
+                        <p className={style.text}>We've sent an email to <strong>{email}</strong>. Follow the instructions in the email to reset your password.</p>
+                    </div> 
+                    <Button txt="Return to Login" func={goBack} />
                 </div>
             </div>
         );

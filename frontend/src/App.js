@@ -6,7 +6,8 @@ import Header from "./component/Header";
 import Login from "./page/Login";
 import Edit from "./page/Edit";
 import Explore from "./page/Explore";
-import Reset from "./page/Reset";
+import ForgotPassword from "./page/Forgot-password";
+import ResetPassword from "./page/Reset-password";
 import NotFound from "./page/NotFound";
 
 function App() {
@@ -19,8 +20,8 @@ function App() {
             <Routes>
                 <Route path="/">
                     <Route path="login" element={<Login />} />
-                    <Route path="reset" element={<Reset />} />
-                    <Route path="reset/:token" element={<Reset />} /> 
+                    <Route path="reset" element={<ForgotPassword />} />
+                    <Route path="reset/:token" element={<ResetPassword />} /> 
                     <Route path="edit" element={<Edit />} />
                     <Route path="explore" element={<Explore />} />
                     <Route path="*" element={<NotFound />} />
