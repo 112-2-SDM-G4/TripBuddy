@@ -4,7 +4,7 @@
     flex-direction: column;
     width: 100vw;
     align-items: center;
-    padding-top: 5rem;
+    padding-top: 2rem;
 }
 
 .loginContainer {
@@ -28,6 +28,15 @@
 }
 .backButton {
     padding-left: 0rem;
+    transition: transform 0.2s ease;
+    display: inline-flex; /* Or however you need to display it */
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.backButton:active {
+    transform: scale(0.9);
 }
 
 .backButton FaArrowLeft{

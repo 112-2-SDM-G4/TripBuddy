@@ -20,6 +20,7 @@ function App() {
                 <Route path="/">
                     <Route path="login" element={<Login />} />
                     <Route path="reset" element={<Reset />} />
+                    <Route path="reset/:token" element={<Reset />} /> 
                     <Route path="edit" element={<Edit />} />
                     <Route path="explore" element={<Explore />} />
                     <Route path="*" element={<NotFound />} />
