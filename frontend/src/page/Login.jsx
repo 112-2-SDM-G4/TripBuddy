@@ -58,7 +58,7 @@ const LoginForm = () => {
                     body: JSON.stringify({ email })
                 });
                 if (!response.ok) {
-                    throw new Error('User not exists. Please try again or register it.');
+                    throw new Error('User not exists. Please try again or register.');
                 }
                 const data = await response.json();
                 setSalt(data.salt);
