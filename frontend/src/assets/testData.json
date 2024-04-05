@@ -1,0 +1,40 @@
+{
+    "trip": [
+        [
+            {
+                "spot_id": "spot01",
+                "spot_name": "某某公園",
+                "spot_image": "https://photo.travelking.com.tw/weekend/945_e_1.jpg",
+                "comment": "早上來感覺很漂亮",
+                "budget": 200,
+                "stay_time": [1, 0]
+            },
+            {
+                "spot_id": "spot02",
+                "spot_name": "某某小吃攤",
+                "spot_image": "https://img.ezfly.com/ims/I000/036/165.jpg",
+                "comment": "必吃大腸包小腸",
+                "budget": 60,
+                "stay_time": [0, 30]
+            }
+        ],
+        [
+            {
+                "spot_id": "spot03",
+                "spot_name": "某某廣場",
+                "spot_image": "urlFromGoogle",
+                "comment": "",
+                "budget": 0,
+                "stay_time": [1, 30]
+            },
+            {
+                "spot_id": "spot05",
+                "spot_name": "某某山上",
+                "spot_image": "urlFromGoogle",
+                "comment": "這邊夜景很讚！！！",
+                "budget": 0,
+                "stay_time": [2, 0]
+            }
+        ]
+    ]
+}

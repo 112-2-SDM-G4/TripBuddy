@@ -1,8 +1,9 @@
 import {
     DndContext,
     closestCenter,
-    KeyboardSensor,
     PointerSensor,
+    TouchSensor,
+    MouseSensor,
     useSensor,
     useSensors,
 } from "@dnd-kit/core";
@@ -13,7 +14,8 @@ import {
 } from "@dnd-kit/sortable";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { useState } from "react";
+import SpotinEdit from "./SpotinEdit";
+import { useEffect, useState } from "react";
 
 function SortableItem(props) {
     const { id } = props;
@@ -32,10 +34,19 @@ function SortableItem(props) {
     );
 }
 
-function DragBox({ items, setItems }) {
+function DragBox({ spots, setSpots }) {
+    const [items, setItems] = useState(spots.map((s) => s.spot_id));
+    useEffect(() => {
+        const idToObjMap = new Map(spots.map((obj) => [obj.spot_id, obj]));
+        const sortedObjects = items.map((id) => idToObjMap.get(id));
+        setSpots(sortedObjects);
+        return () => {};
+    }, [items]);
+
     const sensors = useSensors(
         useSensor(PointerSensor),
-        useSensor(KeyboardSensor)
+        useSensor(TouchSensor),
+        useSensor(MouseSensor)
     );
     const handleDragEnd = (event) => {
         const { active, over } = event;
@@ -59,9 +70,11 @@ function DragBox({ items, setItems }) {
                 items={items}
                 strategy={verticalListSortingStrategy}
             >
-                {items.map((id) => (
-                    <SortableItem key={id} id={id}>
-                        {id}
+                {items.map((item, index) => (
+                    <SortableItem key={item} id={item}>
+                        <SpotinEdit
+                            spot={spots.find((s) => s.spot_id === item)}
+                        />
                     </SortableItem>
                 ))}
             </SortableContext>
