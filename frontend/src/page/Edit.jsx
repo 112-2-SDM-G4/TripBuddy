@@ -5,6 +5,7 @@ import Calendar from "../component/Calendar";
 import InputText from "../component/InputText";
 import { useLanguage } from "../hooks/useLanguage";
 import DragBox from "../component/DragBox";
+import testData from "../assets/testData.json";
 
 export default function Edit() {
     const [stage, setStage] = useState(0);
@@ -135,7 +136,7 @@ function EditPage({
 }) {
     const [dates, setDates] = useState([]);
     const [selectedDate, setSelectedDate] = useState(0);
-    const [spots, setSpots] = useState([]);
+    const [spots, setSpots] = useState(testData["trip"][0]);
 
     useEffect(() => {
         function formatDateAndWeekday(start, end, language) {
@@ -199,7 +200,7 @@ function EditPage({
                 {dates[selectedDate] ? dates[selectedDate].date : ""}
                 {dates[selectedDate] ? dates[selectedDate].weekday : ""}
                 {"天氣晴"}
-                <DragBox items={spots} setItems={setSpots} />
+                <DragBox spots={spots} setSpots={setSpots} />
             </div>
         </div>
     );

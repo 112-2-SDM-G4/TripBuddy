@@ -2,9 +2,9 @@
     display: flex;
     flex-direction: column;
     width: 100vw;
-    height: 100vh;
+    height: calc(100vh - 3.5rem);
     max-width: 100dvw;
-    max-height: 100dvh;
+    max-height: calc(100dvh - 3.5rem);
     align-items: center;
 }
 
