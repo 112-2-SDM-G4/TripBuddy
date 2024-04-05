@@ -5,11 +5,21 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter } from "react-router-dom";
 
+import { AuthProvider } from "./hooks/useAuth";
+import { ThemeProvider } from "./hooks/useTheme";
+import { LanguageProvider } from "./hooks/useLanguage";
+
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
     <React.StrictMode>
         <BrowserRouter>
-            <App />
+            <AuthProvider>
+                <LanguageProvider>
+                    <ThemeProvider>
+                        <App />
+                    </ThemeProvider>
+                </LanguageProvider>
+            </AuthProvider>
         </BrowserRouter>
     </React.StrictMode>
 );

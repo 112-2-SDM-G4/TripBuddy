@@ -1,4 +1,4 @@
-.colormode_button {
+/* .colormode_button {
     position: fixed;
     top: 0.75rem;
     right: 1rem;
@@ -10,12 +10,25 @@
     border: 2px solid var(--primarycolor);
     background-color: transparent;
     z-index: 99;
+} */
+
+.colormode_button {
+    width: 1.75rem;
+    height: 1.75rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* border-radius: 0.25rem; */
+    /* border: 1px solid var(--primarycolor); */
+    /* box-shadow: 0.03rem 0.03rem 0.1rem var(--primarycolor); */
+
 }
+
 .colormode_button:hover {
     cursor: pointer;
 }
 .colormode_button svg {
-    width: 1.25rem;
-    height: 1.25rem;
+    width: 1rem;
+    height: 1rem;
     fill: var(--fontcolor) !important;
 }
