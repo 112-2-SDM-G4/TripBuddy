@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import style from './Reset-password.module.css'; // Adjust path as needed
 import Button from '../component/Button'; // Adjust path as needed
 import InputText from '../component/InputText'; // Adjust path as needed
+import SHA256 from 'crypto-js/sha256';
 
 const PasswordResetPage = () => {
     const { token } = useParams(); // Capture the token from the URL
@@ -11,39 +12,57 @@ const PasswordResetPage = () => {
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
+    const generateSalt = (length = 10) => {
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        let result = '';
+        for (let i = 0; i < length; i++) {
+            const randomIndex = Math.floor(Math.random() * characters.length);
+            result += characters[randomIndex];
+        }
+        return result;
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (password.length < 8) {
             setError("Password must be at least 8 characters long.");
             return;
         }
-    
+
         // Check if passwords match
         if (password !== confirmPassword) {
             setError("Passwords do not match.");
             return;
         }
-    
+
         // Reset error state if validation passes
         setError('');
 
+        // Generate a random salt
+        const new_salt = generateSalt();
+
+        // Hash the password concatenated with the salt
+        const hashedPassword = SHA256(password + new_salt).toString();
+
         try {
-            // Here you would make an API call to your backend
-            // const response = await fetch('/api/reset-password', { 
-            //   method: 'POST', 
-            //   headers: {'Content-Type': 'application/json'}, 
-            //   body: JSON.stringify({ token, password }) 
+            // const response = await fetch('/api/update-password', {
+            //     method: 'POST',
+            //     headers: {'Content-Type': 'application/json'},
+            //     body: JSON.stringify({ token, hashedPassword, new_salt }),
             // });
             // const data = await response.json();
-
-            // Assuming a successful response
-            // if (data.valid) {
-            navigate('/login'); // Redirect user to login page upon success
-            // } else {
-            //   setError(data.message);
-            // }
+            const data = {
+                "valid": true,
+                "message": "設置成功"
+            }
+            if (data.valid) {
+                alert(data.message);
+                navigate('/login'); // Redirect to login on success
+            } else {
+                setError(data.message); // Display error from the server
+            }
         } catch (error) {
-            setError("An error occurred. Please try again.");
+            setError(error.message);
         }
     };
 

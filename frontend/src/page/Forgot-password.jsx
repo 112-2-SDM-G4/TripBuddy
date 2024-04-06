@@ -74,11 +74,13 @@ const Reset = () => {
         return (
             <div className={style.main}>
                 <div className={style.loginContainer}>
-                    <img className={style.logo} src="../../circle-check.svg"/>
+                    <div className={style.logoContainer}>
+                        <img className={style.logo} src="../../circle-check.svg" alt="cirle-check"/>
+                    </div>
                     <h2>Password Reset Email Sent!</h2>
                     <div className={style.description}>
                         <p className={style.text}>We've sent an email to <strong>{email}</strong>. Follow the instructions in the email to reset your password.</p>
-                    </div> 
+                    </div>
                     <Button txt="Return to Login" func={goBack} />
                 </div>
             </div>

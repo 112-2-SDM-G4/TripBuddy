@@ -2,38 +2,57 @@ import React, { useState } from "react";
 import style from "./Login.module.css";
 import Button from "../component/Button";
 import InputText from "../component/InputText";
-import bcrypt from 'bcryptjs';
-
-
+import SHA256 from 'crypto-js/sha256';
 
 const Login = () => {
-    const [activeTab, setActiveTab] = useState('login'); // 'login' or 'signup'
+    const [activeTab, setActiveTab] = useState('login');
+    const [email, setEmail] = useState(''); // Lifted state for email
+    const [isSignupSuccess, setIsSignupSuccess] = useState(false);
 
     const handleTabClick = (tab) => {
         setActiveTab(tab);
+        setIsSignupSuccess(false); // Reset signup success when switching tabs
+    };
+
+    // This function will be called by the SignupForm on successful signup
+    const handleSignupSuccess = (userEmail) => {
+        setEmail(userEmail); // Set the email state to the user's email
+        setIsSignupSuccess(true); // Set the flag to show the success message
     };
 
     return (
         <div className={style.main}>
-            <div className={style.loginContainer}>
-                <div className={style.tabs}>
-                    <button
-                        onClick={() => handleTabClick('login')}
-                        className={activeTab === 'login' ? `${style.active}` : ''}
-                    >
-                        Login
-                    </button>
-                    <button
-                        onClick={() => handleTabClick('signup')}
-                        className={activeTab === 'signup' ? `${style.active}` : ''}
-                    >
-                        Signup
-                    </button>
+            
+
+            {!isSignupSuccess ? (
+                <>
+                    <div className={style.loginContainer}>
+                        <div className={style.tabs}>
+                            <button onClick={() => handleTabClick('login')} className={activeTab === 'login' ? style.active : ''}>Login</button>
+                            <button onClick={() => handleTabClick('signup')} className={activeTab === 'signup' ? style.active : ''}>Signup</button>
+                        </div>
+                        {activeTab === 'login' && <LoginForm />}
+                        {activeTab === 'signup' && <SignupForm onSignupSuccess={handleSignupSuccess} />}
+                    </div>
+                </>
+            ) : (
+                // Success message
+
+                <div className={style.loginContainer}>
+                    <div className={style.logoContainer}>
+                        <img className={style.logo} src="../../circle-check.svg" alt="cirle-check" />
+                    </div>
+                    <h2>Registration Almost Complete!</h2>
+                    <div className={style.description}>
+                        <p className={style.text}>
+                            Please check your inbox at <strong>{email}</strong> to find the confirmation email we've sent.
+                            Click the link provided to finalize your registration and start using your account.
+                        </p>
+                    </div>
                 </div>
 
-                {activeTab === 'login' && <LoginForm />}
-                {activeTab === 'signup' && <SignupForm />}
-            </div>
+            )}
+
         </div>
     );
 };
@@ -45,6 +64,7 @@ const LoginForm = () => {
     const [password, setPassword] = useState('');
     const [salt, setSalt] = useState('');
     const [error, setError] = useState(''); // State to store error messages
+
 
     const handleEmailBlur = async () => {
         setError(''); // Reset error message
@@ -63,12 +83,12 @@ const LoginForm = () => {
                     "salt": `$2b$10$IHadE3iUTRkVze.OPcKhTe`,
                     "message": ""
                 }
-                const data_false =
-                {
-                    "valid": false,
-                    "salt": "",
-                    "message": "該帳號未註冊"
-                }
+                // const data_false =
+                // {
+                //     "valid": false,
+                //     "salt": "",
+                //     "message": "該帳號未註冊"
+                // }
                 if (!data_true.valid) {
                     throw new Error(data_true.message);
                 }
@@ -84,7 +104,7 @@ const LoginForm = () => {
         e.preventDefault();
         if (password && salt) {
             // Hash the password with the salt
-            const hashedPassword = bcrypt.hashSync(password, salt);
+            const hashedPassword = SHA256(salt + password).toString();
 
             try {
                 // Assuming your backend endpoint to receive the hashed password is `/api/login`
@@ -177,16 +197,64 @@ const LoginForm = () => {
     );
 };
 
-const SignupForm = () => {
-    const [email, setEmail] = useState('');
+const SignupForm = ({ onSignupSuccess }) => {
+    const [localEmail, setLocalEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-    const [username, setUsername] = useState('');
-    const [error, setError] = useState(''); // State to store error messages
+    const [error, setError] = useState('');
+
+    const generateSalt = (length = 10) => {
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        let result = '';
+        for (let i = 0; i < length; i++) {
+            const randomIndex = Math.floor(Math.random() * characters.length);
+            result += characters[randomIndex];
+        }
+        return result;
+    };
+
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Validate and submit the password change...
+        
+        if (password.length < 8) {
+            setError("Password must be at least 8 characters long.");
+            return;
+        }
+
+        // Check if passwords match
+        if (password !== confirmPassword) {
+            setError("Passwords do not match.");
+            return;
+        }
+        const salt = generateSalt(); // Generate a "salt"
+        const hashedPassword = SHA256(password + salt).toString();
+
+        try {
+            // Replace this with your actual API call
+            console.log('Submitting:', { localEmail, hashedPassword, salt });
+            // const response = await fetch('/api/signup', {
+            //     method: 'POST',
+            //     headers: {'Content-Type': 'application/json'},
+            //     body: JSON.stringify({ email, hashedPassword, salt })
+            // });
+            // const data = await response.json();
+            const data = {
+                "valid": true,
+                "jwt_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMTIzNDU2Nzg5MCIsIm5hbWUiOiLlsI_mmI4ifQ.f2QgkBxI2j09ks4XBnzDNOVBo-WKlbRp6f8FxfqgtKg"
+            }
+            // Assuming a successful response
+            if (data.valid) {
+                onSignupSuccess(localEmail); // Pass the email back up to the parent component
+            } else {
+                throw new Error('使用者已註冊過');
+            }
+
+        } catch (error) {
+            setError(error.message);
+        }
+
+
     };
 
     return (
@@ -202,16 +270,11 @@ const SignupForm = () => {
             </div>
             <div className={style.inputGroup}>
                 <InputText
-                    propmt={"Username"}
-                    name={"username"}
-                    setting={{ require: true, type: 'text' }}
-                    onChange={setUsername}
-                />
-                <InputText
                     propmt={"E-mail"}
                     name={"email"}
+                    value={localEmail}
                     setting={{ require: true, type: 'email' }}
-                    onChange={setEmail}
+                    onChange={setLocalEmail}
                 />
                 <InputText
                     propmt={"Password"}
@@ -221,18 +284,12 @@ const SignupForm = () => {
                 />
                 <InputText
                     propmt={"Confirmed Password"}
-                    name={"password"}
+                    name={"confirmedPassword"}
                     setting={{ require: true, type: 'password' }}
                     onChange={setConfirmPassword}
                 />
             </div>
-            <Button className={style.buttonSignup}
-                txt={"Sign Up"}
-                onclick={() => {
-                    // setStage(1);
-                }}
-            />
-
+            <Button txt="Sign Up" setting={{ type: "submit" }} />
 
         </form>
     );
