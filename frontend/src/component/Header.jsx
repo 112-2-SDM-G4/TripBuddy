@@ -1,45 +1,27 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React from 'react';
 import { IoLanguage } from 'react-icons/io5';
+
+import * as constants from '../constants';
 
 import style from "./Header.module.css";
 import { useTheme } from "../hooks/useTheme";
 import { useLanguage } from "../hooks/useLanguage";
+import { useWindowSize } from '../hooks/useWindowSize';
 
-import { NavbarItems } from './NavbarItems';
 import { ColorButton } from "./ColorButton";
 
-
+import NavbarItems from './NavbarItems';
 
 function Header() {
-  const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState("explore");
   const { isDarkMode, setIsDarkMode } = useTheme();
-  const { words, language, toggleLanguage } = useLanguage();
-
+  const { toggleLanguage } = useLanguage();
+  const windowSize = useWindowSize();
 
   return (
     <div className={style.main}>
           <div>TripBuddy</div>
-          <div className={style.tabcontainer}>
-          {NavbarItems.map((item, index) => {
-              return (
-                  <div key={index} className={style.tab} onClick={() => {
-                    setActiveTab(item.tabname)
-                    navigate(item.path)
-                  }}>
-                      <div className={style.icon}>
-                      {item.icon}
-                      </div>
+          {windowSize.width > constants.MOBILE_SCREEN_WIDTH && <NavbarItems />}
 
-                      <div className={activeTab === item.tabname ? style.titlefocus : style.title}>
-                      {language === "en" ? item.entitle : item.zhtitle}
-                      </div>
-
-                  </div>
-              );
-              })}
-          </div>
         <div className={style.switchcontainer}>
             <div className={style.switch} onClick={toggleLanguage}>
             <IoLanguage size={20}/>
