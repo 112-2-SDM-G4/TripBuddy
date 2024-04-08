@@ -2,8 +2,6 @@ import {
     DndContext,
     closestCenter,
     PointerSensor,
-    TouchSensor,
-    MouseSensor,
     useSensor,
     useSensors,
 } from "@dnd-kit/core";
@@ -34,28 +32,35 @@ function SortableItem(props) {
     );
 }
 
-function DragBox({ spots, setSpots }) {
+function DragBox({ spots, onItemsReordered }) {
     const [items, setItems] = useState(spots.map((s) => s.spot_id));
-    useEffect(() => {
-        const idToObjMap = new Map(spots.map((obj) => [obj.spot_id, obj]));
-        const sortedObjects = items.map((id) => idToObjMap.get(id));
-        setSpots(sortedObjects);
-        return () => {};
-    }, [items]);
-
     const sensors = useSensors(
-        useSensor(PointerSensor),
-        useSensor(TouchSensor),
-        useSensor(MouseSensor)
+        useSensor(PointerSensor, {
+            activationConstraint: {
+                distance: 25, // 以像素为单位的距离
+            },
+        })
     );
+    useEffect(() => {
+        setItems(spots.map((s) => s.spot_id));
+    }, [spots]);
+
+    const delSpot = (id) => {
+        setItems((items) => {
+            const newItems = items.filter((i) => i !== id);
+            onItemsReordered(newItems);
+            return newItems;
+        });
+    };
     const handleDragEnd = (event) => {
         const { active, over } = event;
-
-        if (active.id !== over.id) {
+        if (active !== null && over !== null && active.id !== over.id) {
             setItems((items) => {
                 const oldIndex = items.indexOf(active.id);
                 const newIndex = items.indexOf(over.id);
-                return arrayMove(items, oldIndex, newIndex);
+                const newItems = arrayMove(items, oldIndex, newIndex);
+                onItemsReordered(newItems);
+                return newItems;
             });
         }
     };
@@ -74,6 +79,9 @@ function DragBox({ spots, setSpots }) {
                     <SortableItem key={item} id={item}>
                         <SpotinEdit
                             spot={spots.find((s) => s.spot_id === item)}
+                            delSpot={() => {
+                                delSpot(item);
+                            }}
                         />
                     </SortableItem>
                 ))}
