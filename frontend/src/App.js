@@ -8,6 +8,8 @@ import Edit from "./page/Edit";
 import Explore from "./page/Explore";
 import ForgotPassword from "./page/Forgot-password";
 import ResetPassword from "./page/Reset-password";
+import EmailVerification from './page/EmailVerification';
+import ProfileSetup from './page/ProfileSetup';
 import NotFound from "./page/NotFound";
 
 function App() {
@@ -22,6 +24,8 @@ function App() {
                     <Route path="login" element={<Login />} />
                     <Route path="reset" element={<ForgotPassword />} />
                     <Route path="reset/:token" element={<ResetPassword />} /> 
+                    <Route path="verify-email/:token" element={<EmailVerification />} />
+                    <Route path="profile-setup" element={<ProfileSetup />} />
                     <Route path="edit" element={<Edit />} />
                     <Route path="explore" element={<Explore />} />
                     <Route path="*" element={<NotFound />} />
