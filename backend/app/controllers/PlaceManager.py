@@ -18,3 +18,17 @@ class PlaceSearch(Resource):
         )
         responses.headers["Content-Type"] = "application/json"
         return responses
+
+
+class PlaceDetail(Resource):
+    # @jwt_required()
+    def get(self) -> Dict:
+        place_id = request.args.get('place_id') # TODO: can be edited
+        google_maps = GoogleMapApi(GOOGLE_MAPS_API_KEY)
+        detail_res, place_detail = google_maps.get_place_detail(place_id)
+        responses = make_response({
+            'result': place_detail
+        }, detail_res.status_code
+        )
+        responses.headers["Content-Type"] = "application/json"
+        return responses

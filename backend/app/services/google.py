@@ -41,6 +41,25 @@ class GoogleMapApi():
             "skipHttpRedirect": True,
         }
 
+        # For place details
+        self.detail_field_mask = [
+            # basic
+            'id', 'displayName', 'formattedAddress',
+            'location', 'googleMapsUri',
+            'businessStatus',
+            'photos',
+            # advanced
+            'regularOpeningHours', 'priceLevel',
+            'rating', 'userRatingCount', 'websiteUri',
+            # preferred
+            'editorialSummary'
+        ]
+        self.detail_params = {
+            "key": self.api_key,
+            "languageCode": "zh_TW",
+        }
+
+
     def get_places(
             self,
             search_text: str,
@@ -114,3 +133,45 @@ class GoogleMapApi():
             place_info_list.append(info_json)
 
         return res, place_info_list
+
+
+    def get_place_detail(
+            self,
+            place_id: str,
+    ) -> Tuple[requests.models.Response, List[dict]]:
+        detail_api_url = f"https://places.googleapis.com/v1/places/{place_id}?fields={('%2C').join(self.detail_field_mask)}"
+        params = self.detail_params.copy()
+        res = requests.get(detail_api_url, params=params)
+        if res.ok:
+            place = json.loads(res.text)
+            success = False
+            photo_list = place['photos']
+            for p in photo_list:
+                p_res, photo = self.get_photos(p['name'])
+                if p_res.ok:
+                    success = True
+                    photo_url = photo['photoUri']
+                    break
+            if not success:
+                photo_url = ""
+
+            # return value formatting
+            res_json = {
+                'id': place['id'],
+                'name': place['displayName']['text'],
+                'address': place['formattedAddress'],
+                'location': (place['location']['latitude'], place['location']['longitude']),
+                'google_maps_uri': place['googleMapsUri'],
+                'image': photo_url,
+            }
+            # exception handling
+            res_json['rating'] = place['rating'] if 'rating' in place.keys() else None
+            res_json['user_rating_count'] = place['userRatingCount'] if 'userRatingCount' in place.keys() else None
+            res_json['opening_hours_d'] = place['regularOpeningHours']['weekdayDescriptions'] if 'regularOpeningHours' in place.keys() else None
+            res_json['opening_hours_p'] = place['regularOpeningHours']['periods'] if 'regularOpeningHours' in place.keys() else None
+            res_json['summary'] = place['editorialSummary']['text'] if 'editorialSummary' in place.keys() else None
+
+        else: # searching failed
+            res_json = {}
+
+        return res, res_json
