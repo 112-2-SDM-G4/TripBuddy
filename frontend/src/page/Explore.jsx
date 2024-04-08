@@ -1,17 +1,29 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import style from "./Explore.module.css";
-import disneyPic from "../fakeData/images/disney.png"
-
 import AttractionCard from "../component/AttractionCard";
+import testData from "../assets/testData.json";
 
 const Explore = () => {
-    return <div className={style.main}>
-        explore page
-        <div className={style.cardwrapper}>
-        <AttractionCard name="東京迪士尼" src={disneyPic} attractionId={234}/>
-        <AttractionCard name="東京迪士尼" src={disneyPic} attractionId={235}/>
+    const [spots, setSpots] = useState([]);
+
+    useEffect(() => {
+        setSpots(testData["testSpots"]);
+
+        return () => {};
+    }, []);
+
+    return (
+        <div className={style.container}>
+            {spots.map((spot) => (
+                <AttractionCard
+                    key={spot["spot_id"]}
+                    name={spot["spot_name"]}
+                    src={spot["spot_image"]}
+                    attractionId={spot["spot_id"]}
+                />
+            ))}
         </div>
-    </div>;
+    );
 };
 
 export default Explore;

@@ -41,5 +41,8 @@
     font-size: 0.75rem;
     opacity: 0.9;
 }
-.deletebt {
+.closebt {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
 }

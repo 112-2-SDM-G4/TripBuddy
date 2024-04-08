@@ -1,10 +1,9 @@
 import React from "react";
-import { IoLanguage } from "react-icons/io5";
 import { TbRobotFace } from "react-icons/tb";
 import { MdOutlineTravelExplore, MdModeOfTravel } from "react-icons/md";
 import { HiDotsHorizontal } from "react-icons/hi";
 
-export const NavbarItems = [
+export const NavbarItemsData = [
     {
         tabname: "explore",
         entitle: "Explore",
@@ -32,10 +31,5 @@ export const NavbarItems = [
         zhtitle: "其他",
         path: "/others",
         icon: <HiDotsHorizontal />,
-    },
-    // {
-    //   title: '中英切換',
-    //   path: '/others',
-    //   icon: <IoLanguage />
-    // }
+    }
 ];

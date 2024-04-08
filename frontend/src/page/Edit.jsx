@@ -6,6 +6,13 @@ import InputText from "../component/InputText";
 import { useLanguage } from "../hooks/useLanguage";
 import DragBox from "../component/DragBox";
 import testData from "../assets/testData.json";
+import { useNavigate } from "react-router-dom";
+import {
+    IoSunny,
+    IoRainy,
+    IoAlertCircle,
+    IoAddCircleOutline,
+} from "react-icons/io5";
 
 export default function Edit() {
     const [stage, setStage] = useState(0);
@@ -136,7 +143,9 @@ function EditPage({
 }) {
     const [dates, setDates] = useState([]);
     const [selectedDate, setSelectedDate] = useState(0);
+    const [trip, setTrip] = useState(testData["trip"]);
     const [spots, setSpots] = useState(testData["trip"][0]);
+    let navigate = useNavigate();
 
     useEffect(() => {
         function formatDateAndWeekday(start, end, language) {
@@ -180,6 +189,49 @@ function EditPage({
         return () => {};
     }, [selectedStart, selectedEnd, language]);
 
+    useEffect(() => {
+        setSpots(trip[selectedDate] || []);
+    }, [selectedDate, trip]);
+
+    useEffect(() => {
+        console.log(trip);
+        return () => {};
+    }, [trip]);
+
+    const reorderSpots = (newOrder) => {
+        const newSpots = newOrder.map((id) =>
+            spots.find((s) => s.spot_id === id)
+        );
+        const chkempty = (obj) => {
+            if (obj && obj.length > 0) {
+                return obj;
+            } else {
+                return [];
+            }
+        };
+        setTrip((prev) => {
+            return chkempty(prev).map((item, index) =>
+                index === selectedDate ? newSpots : item
+            );
+        });
+
+        setSpots(newSpots);
+    };
+    const getWeather = () => {
+        let weather = "晴";
+        switch (weather) {
+            case "晴":
+                return <IoSunny className={style.weather} />;
+            case "雨":
+                return <IoRainy className={style.weather} />;
+            default:
+                return <IoAlertCircle className={style.weather} />;
+        }
+    };
+    const openAddSpot = () => {
+        navigate("../explore");
+    };
+
     return (
         <div className={style.editpage}>
             <div className={style.editpageTitle}>{tripName}</div>
@@ -197,10 +249,22 @@ function EditPage({
                 ))}
             </div>
             <div className={style.datedetail}>
-                {dates[selectedDate] ? dates[selectedDate].date : ""}
-                {dates[selectedDate] ? dates[selectedDate].weekday : ""}
-                {"天氣晴"}
-                <DragBox spots={spots} setSpots={setSpots} />
+                <div className={style.dateinfos}>
+                    <div>
+                        {dates[selectedDate]
+                            ? dates[selectedDate].date + " "
+                            : ""}
+                        {dates[selectedDate]
+                            ? dates[selectedDate].weekday + " "
+                            : ""}
+                        {getWeather()}
+                    </div>
+                    <IoAddCircleOutline
+                        className={style.addspot}
+                        onClick={openAddSpot}
+                    />
+                </div>
+                <DragBox spots={spots} onItemsReordered={reorderSpots} />
             </div>
         </div>
     );

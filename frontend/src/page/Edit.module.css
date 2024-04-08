@@ -54,6 +54,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     flex-direction: column;
     width: 100%;
     padding-bottom: 3rem;
+    padding-left: 1rem;
 }
 .editpageTitle {
     font-size: 1.25rem;
@@ -71,18 +72,32 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .selected {
     border-bottom: 5px solid var(--primarycolor);
 }
+.weather {
+    font-size: 1.5rem;
+    margin-left: 0.5rem;
+    color: var(--primarycolor);
+}
 .datedetail {
     padding-top: 1rem;
 }
+.dateinfos {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 90vw;
+    max-width: 26rem;
+}
+.addspot {
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
 @media (min-width: 900px) {
     .main {
         flex-direction: column;
         align-items: flex-start;
     }
     .initialpage {
-        padding-left: 1rem;
-    }
-    .editpage {
         padding-left: 1rem;
     }
 }
