@@ -1,17 +1,38 @@
 import os
 from flask_sqlalchemy import SQLAlchemy
+from google.cloud.sql.connector import Connector
 
-db = None
+# Environment variables
+INSTANCE_NAME = os.getenv("INSTANCE_NAME")
+PUBLIC_IP_ADDRESS = os.getenv("DB_PUBLIC_IP_ADDRESS")
+USER = os.getenv("DB_USER")
+DB_NAME = os.getenv("DB_NAME")
+DB_PASSWORD = os.getenv("DB_PASSWORD")
+
+# initialize Python Connector object
+connector = Connector()
+
+# Python Connector database connection function
+def getconn():
+    conn = connector.connect(
+        INSTANCE_NAME, # Cloud SQL Instance Connection Name
+        "pymysql",
+        user=USER,
+        password=DB_PASSWORD,
+        db=DB_NAME,
+        ip_type="public"  # "private" for private IP
+    )
+    return conn
+
+
+
+# initialize the app with the extension
+db = SQLAlchemy()
 
 def init_db(app):
-    PASSWORD = os.environ.get('DB_PASSWORD')
-    PUBLIC_IP_ADDRESS = os.environ.get('DB_PUBLIC_IP_ADDRESS')
-    DBNAME = os.environ.get('DB_NAME')
-    PROJECT_ID = os.environ.get('GCP_PROJECT_ID')
-    INSTANCE_NAME = os.environ.get('GCP_INSTANCE_NAME')
-
-    app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql + mysqldb://root:{PASSWORD}@{PUBLIC_IP_ADDRESS}/{DBNAME}?unix_socket =/cloudsql/{PROJECT_ID}:{INSTANCE_NAME}"
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = os.environ.get('SQLALCHEMY_TRACK_MODIFICATIONS')
-
-    db = SQLAlchemy(app)
-    print("DB_URI :", app.config['SQLALCHEMY_DATABASE_URI'])
+    # configure Flask-SQLAlchemy to use Python Connector
+    app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+pymysql://"
+    app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+        "creator": getconn
+    }
+    db.init_app(app)

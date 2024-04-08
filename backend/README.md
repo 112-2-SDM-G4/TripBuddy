@@ -12,6 +12,13 @@ If you use any new package, please update requirements.txt
 pip freeze > requirements.txt
 ```
 
+### Connect Google Cloud SQL from local
+1. [Install the gcloud CLI](https://cloud.google.com/sdk/docs/install)
+
+2. [Set up Application Default Credentials](https://cloud.google.com/docs/authentication/provide-credentials-adc?hl=zh-cn#local-dev)
+
+3. Set Database configs in ```.env```
+
 ## 1. Run Server
 To run server, you can use :
 ```

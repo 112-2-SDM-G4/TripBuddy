@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 
 from flask import Flask
 from flask_restful import Api, Resource
+from flask_sqlalchemy import SQLAlchemy
 
 from app.models import init_db
 from app.routes import initialize_routes
