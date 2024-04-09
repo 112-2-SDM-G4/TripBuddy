@@ -2,9 +2,10 @@
     width: 50%;
     height: 100%;
     display: flex;
-    flex-direction: row;  
+    flex-direction: row;
     justify-content: space-between;
     align-items: center;
+    user-select: none;
 }
 
 .tabcontainer a {
@@ -21,7 +22,7 @@
     /* padding: 0 0.5rem 0 0.5rem; */
 }
 
-.tab:hover{
+.tab:hover {
     /* background-color: var(--secondarycolor); */
     cursor: pointer;
 }
@@ -56,15 +57,14 @@
     .title {
         font-size: 0.6rem;
     }
-    
+
     .titlefocus {
         color: var(--primarycolor);
         font-size: 0.6rem;
-        font-color: var(--primarycolor);
+        color: var(--primarycolor);
     }
 
     .icon {
         font-size: 1.25rem;
     }
-
 }

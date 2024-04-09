@@ -1,42 +1,63 @@
-import React from "react";
-import { useParams } from 'react-router';
-import disneyPic from "../fakeData/images/disney.png"
-
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router";
 import { useLanguage } from "../hooks/useLanguage";
 import style from "./ViewAttraction.module.css";
 
 const Attraction = () => {
     const { id } = useParams();
-    const { words, language } = useLanguage();
+    const { language } = useLanguage();
+    const [spot, setSpot] = useState({
+        spot_id: "spot01",
+        spot_name: "某某公園",
+        spot_image:
+            "https://down-tw.img.susercontent.com/file/tw-11134201-7qula-lk0pv54axu19d0",
+        spot_rate: 4.7,
+        spot_address: "Urayasu, Chiba, Japan",
+        spot_phone: 3242342,
+        spot_open: "9-18",
+    });
 
-    // get attraction information
+    useEffect(() => {
+        console.log(id);
+        return () => {};
+    }, [id]);
 
-    return <div className={style.main}>
-        <div className={style.img}>
-            <img src={disneyPic} alt="Logo" className={style.img}/>
-        </div>
+    return (
+        <div className={style.main}>
+            <img src={spot["spot_image"]} alt="Logo" className={style.img} />
 
-        <div className={style.textbox}>
-            <div className={style.title}> 東京迪士尼 </div>
-            <div className={style.info}>
-                {language === "en" ? 
-                    <div>
-                        <div> Rate: 4.7 </div>
-                        <div> Address: Urayasu, Chiba, Japan </div>
-                        <div> Phone number: 3242342 </div>
-                        <div> Open Hour: 9-18 </div>
+            <div className={style.textbox}>
+                <div className={style.title}> {spot["spot_name"]} </div>
+                <div className={style.info}>
+                    <div className={style.row}>
+                        <div className={style.rowname}>
+                            {language === "en" ? "Rate:" : "評分:"}
+                        </div>
+
+                        {spot["spot_rate"]}
                     </div>
-                :
-                <div>
-                    <div> 評分: 4.7 </div>
-                    <div> 地址: Urayasu, Chiba, Japan </div>
-                    <div> 電話: 3242342 </div>
-                    <div> 營業時間: 9-18 </div>
+                    <div className={style.row}>
+                        <div className={style.rowname}>
+                            {language === "en" ? "Address:" : "地址:"}
+                        </div>
+                        {spot["spot_address"]}
+                    </div>
+                    <div className={style.row}>
+                        <div className={style.rowname}>
+                            {language === "en" ? "Phone number:" : "電話:"}
+                        </div>
+                        {spot["spot_phone"]}
+                    </div>
+                    <div className={style.row}>
+                        <div className={style.rowname}>
+                            {language === "en" ? "Open Hour:" : "營業時間:"}
+                        </div>
+                        {spot["spot_open"]}
+                    </div>
                 </div>
-                }
             </div>
         </div>
-    </div>;
+    );
 };
 
 export default Attraction;
