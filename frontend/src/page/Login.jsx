@@ -1,8 +1,10 @@
 import React, { useState } from "react";
+import { useNavigate } from 'react-router-dom';
 import style from "./Login.module.css";
 import Button from "../component/Button";
 import InputText from "../component/InputText";
 import SHA256 from 'crypto-js/sha256';
+import { useAuth } from '../hooks/useAuth';
 
 const Login = () => {
     const [activeTab, setActiveTab] = useState('login');
@@ -64,7 +66,8 @@ const LoginForm = () => {
     const [password, setPassword] = useState('');
     const [salt, setSalt] = useState('');
     const [error, setError] = useState(''); // State to store error messages
-
+    const navigate = useNavigate();
+    const { login } = useAuth();
 
     const handleEmailBlur = async () => {
         setError(''); // Reset error message
@@ -107,32 +110,14 @@ const LoginForm = () => {
             const hashedPassword = SHA256(salt + password).toString();
 
             try {
-                // Assuming your backend endpoint to receive the hashed password is `/api/login`
-                // const response = await fetch('/api/login', {
-                //     method: 'POST',
-                //     headers: {
-                //         'Content-Type': 'application/json',
-                //     },
-                //     body: JSON.stringify({ email, hashedPassword }),
-                // });
-                // const data = await response.json(); // Get the JSON payload
-                const data = {
-                    "valid": true,
-                    "jwt_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMTIzNDU2Nzg5MCIsIm5hbWUiOiLlsI_mmI4ifQ.f2QgkBxI2j09ks4XBnzDNOVBo-WKlbRp6f8FxfqgtKg",
-                    "language": "zh",
-                    "message": "登入成功"
+                const { success, error } = await login(email, hashedPassword);
+                if (!success) {
+                    throw new Error(error);
                 }
-
-                if (!data.valid) {
-                    // If the valid field is false, use the message from the response
-                    throw new Error(data.message);
+                else {
+                    navigate('/explore');
                 }
-                console.log(data.message)
-                // If valid is true, handle the JWT token
-                localStorage.setItem('jwt_token', data.jwt_token); // Store token in session storage
-
-                // Set the user's language preference for session, if needed
-                localStorage.setItem('language', data.language); // Or handle session storage/server-side accordingly
+                
                 // Redirect user or do some action after successful login here
                 // e.g., navigate to a dashboard or home page
 
@@ -180,7 +165,7 @@ const LoginForm = () => {
                 <a href="/reset">Forgot Password?</a>
             </div>
             <div className={style.socialLogin}>
-                <div className={style.text}>or you can sign in with</div>
+                <div className={style.thirdSignin}>or you can sign in with</div>
                 <div className={style.icons}>
                     <a href="/auth/google" className={style.icon}>
                         <img src="../../google-icon.svg" alt="Sign in with google" />
