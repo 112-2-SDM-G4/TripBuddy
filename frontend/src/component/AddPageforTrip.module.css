@@ -1,0 +1,35 @@
+.background {
+    background-color: color-mix(
+        in srgb,
+        var(--backgroundcolor) 80%,
+        transparent
+    );
+    width: 100vw;
+    height: 100vh;
+    max-width: 100dvw;
+    max-height: 100dvh;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.container {
+    background-color: var(--backgroundcolor);
+    border: 1px solid var(--primarycolor);
+    border-radius: 0.2rem;
+    width: 80vw;
+    padding: 1rem;
+    height: 90vh;
+    max-height: 90vh;
+}
+@media (max-width: 500px) {
+    .container {
+        width: 100vw;
+        height: 100vh;
+        max-width: 100dvw;
+        max-height: 100dvh;
+    }
+}

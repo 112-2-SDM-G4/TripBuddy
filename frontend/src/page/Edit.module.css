@@ -6,6 +6,7 @@
     max-width: 100dvw;
     max-height: calc(100dvh - 3.5rem);
     align-items: center;
+    padding-top: 1rem;
 }
 
 .title {

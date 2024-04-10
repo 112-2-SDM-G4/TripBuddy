@@ -10,7 +10,7 @@
     border-radius: 0.25rem;
     display: flex;
     position: relative;
-    box-shadow: 0rem 0rem 0.5rem 0.25rem
+    box-shadow: 0rem 0rem 0.2rem 0rem
         color-mix(in srgb, var(--secondarycolor) 60%, transparent);
 }
 .block::after {
