@@ -36,3 +36,4 @@ def init_db(app):
         "creator": getconn
     }
     db.init_app(app)
+    return db
