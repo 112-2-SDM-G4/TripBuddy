@@ -22,7 +22,6 @@ export default function Edit() {
     const { words, language } = useLanguage();
     return (
         <div className={style.main}>
-            <div className={style.title}>編輯行程</div>
             {stage === 0 && (
                 <InitialPage
                     setStage={setStage}
