@@ -1,9 +1,9 @@
 from . import db
 
 class Post(db.Model):
-    __tabelname__ = 'Post'
+    __tablename__ = 'Post'
     post_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    content = db.Column(db.String(100), nullable=True)
+    content = db.Column(db.Text, nullable=True)
     like_count = db.Column(db.Integer, nullable=True, default=0)
 
     def __init__(self, content, like_count):
@@ -21,7 +21,8 @@ class Post(db.Model):
     @staticmethod
     def create(data):
         post = Post(content=data['content'],
-                    like_count=data['like_count'])
+                    like_count=data['like_count'],
+                    )
         db.session.add(post)
         db.session.commit()
         return post
