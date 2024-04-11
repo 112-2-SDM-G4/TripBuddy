@@ -1,0 +1,104 @@
+.main {
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+    height: calc(100vh - 3.5rem);
+    max-width: 100dvw;
+    max-height: calc(100dvh - 3.5rem);
+    align-items: center;
+    padding-top: 1rem;
+}
+
+.title {
+    font-size: 1.25rem;
+    font-weight: 900;
+    width: 100%;
+    padding-top: 1rem;
+    padding-left: 1rem;
+    margin-bottom: 1rem;
+    background-color: var(--secondarycolor);
+    color: var(--backgroundcolor);
+    padding-bottom: 0.5rem;
+}
+.initialpage {
+    display: flex;
+    flex-direction: column;
+    width: 80vw;
+    max-width: 28rem;
+    padding-bottom: 3rem;
+}
+.pickdate {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    grid-column-gap: 0.5rem;
+    grid-row-gap: 0px;
+    padding: 1rem 0rem;
+    cursor: pointer;
+}
+.datepicker {
+    color: var(--fontcolor);
+    background-color: var(--backgroundcolor);
+    border: none;
+    border-bottom: 1px solid var(--primarycolor);
+    position: relative;
+    font-size: 1rem;
+    height: 1.5rem;
+    cursor: pointer;
+}
+input[type="date"]::-webkit-calendar-picker-indicator {
+    opacity: 0;
+}
+
+.editpage {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding-bottom: 3rem;
+    padding-left: 1rem;
+}
+.editpageTitle {
+    font-size: 1.25rem;
+    font-weight: 900;
+    width: 100%;
+}
+.selectdate {
+    padding-top: 1rem;
+    display: flex;
+}
+.date {
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+}
+.selected {
+    border-bottom: 5px solid var(--primarycolor);
+}
+.weather {
+    font-size: 1.5rem;
+    margin-left: 0.5rem;
+    color: var(--primarycolor);
+}
+.datedetail {
+    padding-top: 1rem;
+}
+.dateinfos {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 90vw;
+    max-width: 26rem;
+}
+.addspot {
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+@media (min-width: 900px) {
+    .main {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .initialpage {
+        padding-left: 1rem;
+    }
+}
