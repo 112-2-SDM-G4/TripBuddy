@@ -12,9 +12,9 @@ BASE_ROUTE = '/api/v1'
 def initialize_routes(api: Api):
     api.add_resource(ExampleController, f'{BASE_ROUTE}/example/<string:id>')
     api.add_resource(TripManager, 
-                     f'{BASE_ROUTE}/trip', 
+                     f'{BASE_ROUTE}/trip',
                      f'{BASE_ROUTE}/trip/<string:id>')
-    api.add_resource(PlaceSearch, f'{BASE_ROUTE}/placesearch')
-    api.add_resource(PlaceDetail, f'{BASE_ROUTE}/placedetail')
-    api.add_resource(SendVerifyEmail, f'{BASE_ROUTE}/sendverifyemail')
+    api.add_resource(PlaceSearch, f'{BASE_ROUTE}/place/search')
+    api.add_resource(PlaceDetail, f'{BASE_ROUTE}/place/detail')
+    api.add_resource(SendVerifyEmail, f'{BASE_ROUTE}/user/send_email')
     api.add_resource(Test, f'{BASE_ROUTE}/test')

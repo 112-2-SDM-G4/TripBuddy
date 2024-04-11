@@ -65,3 +65,7 @@ class UserVerify(db.Model):
         user.verification_code = data['v_code']
         user.expired_time = data['expired_time']
         db.session.commit()
+    
+    @staticmethod
+    def get_by_email(email):
+        return UserVerify.query.filter_by(email=email).first()
