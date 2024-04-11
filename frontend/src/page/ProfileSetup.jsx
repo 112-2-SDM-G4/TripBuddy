@@ -23,9 +23,9 @@ const ProfileSetup = () => {
   const [userInfo, setUserInfo] = useState({
     username: '',
     language: '',
-    photo: null, // Assuming this will be a File object
+    photo: null,
     travelStyle: '',
-    activities: [], // Initialize as an empty array
+    activities: [],
     travelGroup: '',
     destinationType: ''
   });
@@ -64,7 +64,12 @@ const ProfileSetup = () => {
       content = (
         <>
           <div>
-            <h2>Setup Profile</h2>
+            <div className={style.questionnaireIntro}>
+              <h2 className={style.introTitle}>Let's Get to Know You!</h2>
+              <p className={style.introText}>
+                Your answers to the following questions will help us tailor your experience and recommendations. It'll only take a minute!
+              </p>
+            </div>
             <InputText
               propmt={"Username"}
               name={"username"}
@@ -73,7 +78,23 @@ const ProfileSetup = () => {
               onChange={handleUserInfoChange}
             />
 
-            
+            <div>
+              <label>Language Preference:</label>
+              <button
+                type="button"
+                className={userInfo.language === 'Chinese' ? style.activeButton : style.button}
+                onClick={() => setUserInfo(prev => ({ ...prev, language: 'Chinese' }))}
+              >
+                繁體中文
+              </button>
+              <button
+                type="button"
+                className={userInfo.language === 'English' ? style.activeButton : style.button}
+                onClick={() => setUserInfo(prev => ({ ...prev, language: 'English' }))}
+              >
+                English
+              </button>
+            </div>
             {/* Handle photo upload accordingly */}
             <Button txt="Next" func={nextStep} />
           </div>
