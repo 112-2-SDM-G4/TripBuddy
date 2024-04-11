@@ -19,8 +19,10 @@
 }
 
 .spinner {
-    /* Add your spinner styling here */
-    margin-bottom: 1rem;
+    display: flex;
+    flex-direction: column; /* Stack items vertically */
+    align-items: center; /* Center items horizontally in the container */
+    justify-content: center; /* Center items vertically in the container */
 }
 
 .logoContainer {
@@ -54,3 +56,19 @@ img {
     justify-content: center;
     width: 4.6rem;
 }
+
+/* HTML: <div class="loader"></div> */
+.loader {
+    width: fit-content;
+    font-family: monospace;
+    font-size: 1rem;
+    color:#0000;
+    background:linear-gradient(90deg,#000 calc(50% - 0.5ch),#C02942 0 calc(50% + 0.5ch),#000 0) right/calc(200% + 1ch) 100%;
+    -webkit-background-clip:text;
+            background-clip:text;
+    animation: l8 2s infinite steps(11);
+  }
+  .loader:before {
+    content:"Verifying your email...";
+  }
+  @keyframes l8 {to{background-position: left}}

@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import style from './EmailVerification.module.css'; // Assuming you have a CSS file for styling
-import { Loading } from '@geist-ui/core'
 import Button from "../component/Button";
 
 const EmailVerification = () => {
@@ -33,14 +32,14 @@ const EmailVerification = () => {
                         <div className={style.logoContainer}>
                             <img className={style.logo} src="../../logo.svg" alt="TourBuddy" />
                         </div>
-                        <Loading>Verifying your email</Loading>
+                        <div className={style.loader}></div>
                     </div> {/* Correctly accessing spinner class */}
                 </>
             )}
             {verificationStatus === 'success' && (
                 <>
                     <div className={style.logoContainer}><img src="../../circle-check.svg" alt="Success" /></div>
-                    <h2>Welcome to Trip Buddy!</h2>
+                    <h2>Welcome to TripBuddy!</h2>
                     <div className={style.description}>
                         <p className={style.text}>Your email has been successfully verified!</p>
                         <p className={style.text}>You can now use all the features of our website.</p>
