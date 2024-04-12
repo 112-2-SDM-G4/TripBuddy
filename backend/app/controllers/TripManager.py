@@ -163,7 +163,8 @@ class TripManager(Resource):
         if self.get_trip_length(Schedule.get_by_id(trip_id)) != len(data['trip']):
             return make_response({'message': 'Trip length does not match.'}, 400)
 
-        # delete relations 
+        # delete origin relations 
+        RelationSpotSch.delete_by_trip(trip_id)
 
         for day_count, day_list in enumerate(data['trip']):
             for order_count, place_info in enumerate(day_list):
