@@ -59,3 +59,17 @@ class RelationSpotSch(db.Model):
         relation.period_minutes = data['period_minutes']
         db.session.commit()
         return relation
+    
+    @staticmethod
+    def delete(schedule_id, place_id):
+        relation = RelationSpotSch.query.filter_by(schedule_id=schedule_id, place_id=place_id).first()
+        db.session.delete(relation)
+        db.session.commit()
+        return relation
+    
+    @staticmethod
+    def delete_by_trip(schedule_id):
+        relations = RelationSpotSch.query.filter_by(schedule_id=schedule_id).all()
+        for relation in relations:
+            db.session.delete(relation)
+        db.session.commit()

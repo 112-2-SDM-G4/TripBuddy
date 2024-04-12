@@ -163,6 +163,8 @@ class TripManager(Resource):
         if self.get_trip_length(Schedule.get_by_id(trip_id)) != len(data['trip']):
             return make_response({'message': 'Trip length does not match.'}, 400)
 
+        # delete relations 
+
         for day_count, day_list in enumerate(data['trip']):
             for order_count, place_info in enumerate(day_list):
                 # if spot is not in Place, create new Place
@@ -189,7 +191,29 @@ class TripManager(Resource):
 
         return make_response({'message': 'Trip updated successfully.'}, 200)
     
+    @jwt_required()
     def delete(self, trip_id):
-        # schedule = Schedule.delete(trip_id)
-        # return schedule
-        pass
+        user_email = self.varify_user(get_jwt_identity())
+        if user_email == None:
+            return make_response({'message': 'User not found.'}, 400)
+        
+        if not Schedule.get_by_id(trip_id):
+            return make_response({'message': 'Trip not found.'}, 400)
+        
+        if not self.user_owns_schedule(user_email, trip_id):
+            return make_response({'message': 'User does not have access to this trip.'}, 403)
+        
+        # delete relations
+        RelationUserSch.delete(user_email, trip_id)
+        RelationSpotSch.delete_by_trip(trip_id)
+
+        # delete schedule, ledger, post
+        schedule = Schedule.get_by_id(trip_id)
+        ledger_id = schedule.ledger_id
+        post_id = schedule.post_id
+        Schedule.delete(trip_id)
+        Ledger.delete(ledger_id)
+        Post.delete(post_id)
+        
+
+        return make_response({'message': 'Trip deleted successfully.'}, 200)
