@@ -3,7 +3,7 @@ from app.controllers.TripManager import TripManager
 from tests.test import Test
 from app.controllers.Base import ExampleController
 from app.controllers.PlaceManager import PlaceSearch, PlaceDetail
-from app.controllers.UserManager import SendVerifyEmail, UserVerification
+from app.controllers.UserManager import SendVerifyEmail, UserVerification, SetUserInfo, LoginCheckUser, LoginCheckPassword
 from flask_restful import Api
 
 BASE_ROUTE = '/api/v1'
@@ -18,4 +18,7 @@ def initialize_routes(api: Api):
     api.add_resource(PlaceDetail, f'{BASE_ROUTE}/place/detail')
     api.add_resource(SendVerifyEmail, f'{BASE_ROUTE}/user/send_email')
     api.add_resource(UserVerification, f'{BASE_ROUTE}/user/verify')
+    api.add_resource(SetUserInfo, f'{BASE_ROUTE}/user/set_info')
+    api.add_resource(LoginCheckUser, f'{BASE_ROUTE}/user/check_user')
+    api.add_resource(LoginCheckPassword, f'{BASE_ROUTE}/user/check_password')
     api.add_resource(Test, f'{BASE_ROUTE}/test')

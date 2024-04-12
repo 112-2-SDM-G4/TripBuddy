@@ -2,9 +2,9 @@ import os
 import random
 from datetime import datetime, timedelta
 from flask_restful import Resource
-from flask import request, make_response
+from flask import request, make_response, jsonify
 from flask_mail import Message
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from app.models.user import User, UserVerify
 import app
 
@@ -86,3 +86,92 @@ class UserVerification(Resource):
                     res_json['jwt_token'] = jwt_token
                     res_json['message'] = "Register Successfully!!!"
                     return make_response(res_json, 200)
+
+class SetUserInfo(Resource):
+    @jwt_required()
+    def post(self):
+
+        user_email = get_jwt_identity()
+        user = User.get_by_email(user_email)
+        
+        err_msg = {
+            'valid': False,
+            'message': "User not found."
+        }
+
+        if not user:
+            return make_response(err_msg, 404)
+
+        data = request.get_json()
+        user_name = data.get('user_name', None)
+        language = data.get('language', None)
+        tags = data.get('tags', None)
+        
+        if user_name:
+            user.user_name = user_name
+        
+        if language:
+            user.language = language
+
+        ### tags 跟 relation_user_tag 的部分尚未實作
+
+        app.db.session.commit()
+
+        responce = {
+            'valid': True,
+            'user_name': user.user_name, 
+            'language': user.language, 
+            'message': "User information updated successfully."
+        }
+        
+        return make_response(responce, 200)
+    
+class LoginCheckUser(Resource):
+    def post(self):
+        data = request.get_json()
+        user_email = data.get('email')
+        user = User.get_by_email(user_email)
+
+        if user is not None:
+            res_json = {
+                'valid': True,
+                'salt': user.salt
+            }
+            return make_response(res_json, 200)
+        else:
+            res_json = {
+                'valid': False, 
+                'salt': '', 
+                'message': 'User do not exist, Please try to regist'
+            }
+            return make_response(res_json, 401)
+
+
+class LoginCheckPassword(Resource):
+    def post(self):
+        data = request.get_json()
+        user_email = data.get('user_email')
+        password_input = data.get('hashed_password')
+        user = User.get_by_email(user_email)
+
+        if user and password_input == user.hashed_password :
+            jwt_token = create_access_token(identity=user_email)
+            res_json = {
+                'valid': True,
+                'jwt_token': jwt_token,
+                'user_name': user.user_name,
+                'language': user.language,
+                'message': 'Login Successful',
+                'preference': user.questionnaire
+            }
+            return make_response(res_json, 200)
+        else:
+            res_json = {
+                'valid': False,
+                'jwt_token': '',
+                'user_name': '',
+                'language': '',
+                'message': 'Wrong Password',
+                'preference': None
+            }
+            return make_response(res_json, 401)
