@@ -17,6 +17,8 @@ import ForgotPassword from "./page/Forgot-password";
 import ResetPassword from "./page/Reset-password";
 import EmailVerification from "./page/EmailVerification";
 import ProfileSetup from "./page/ProfileSetup";
+import EmailVerification from "./component/EmailVerification";
+import ProfileSetup from "./page/ProfileSetup";
 import NotFound from "./page/NotFound";
 
 function App() {

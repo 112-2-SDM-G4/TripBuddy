@@ -10,34 +10,54 @@
     background-color: var(--fieldcolor);
     padding: 1rem 2rem 1.5rem 2rem;
     border-radius: 1rem;
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
-    width: 60rem;
+    box-shadow: 0 0.5rem 1rem color-mix(in srgb, var(--fontcolor) 15%, transparent);
+    width: 65rem;
     margin: 3rem;
     justify-content: center;
     align-items: center;
 }
 
 .ProgressBarStyle {
-    height: 25px;
+    height: 1.4rem;
     width: 100%;
-    background-color: #e0e0de;
+    background-color: color-mix(in srgb, var(--fontcolor) 15%, transparent);
     border-radius: 5px;
     margin: 20px 0;
-  }
+}
 
 .FillerStyle {
     height: 100%;
-    background-color: #4caf50;
+    background-color: var(--accentcolor);
     border-radius: inherit;
     text-align: right;
     transition: width 0.5s ease-in-out;
-  };
+}
 
-.LabelStyle{
+
+.LabelStyle {
     padding: 5px;
-    color: white;
+    color: var(--fontcolor);
     font-weight: bold;
-  };
+}
+
+.questionnaireIntro {
+    margin-bottom: 2rem;
+    color: var(--fontcolor);
+}
+
+.button {
+    padding: 10px;
+    margin: 5px;
+    border: 1px solid #ccc;
+    background-color: #f5f5f5;
+}
+
+.activeButton {
+    padding: 10px;
+    margin: 5px;
+    border: 1px solid blue;
+    background-color: lightblue;
+}
 
 
 
@@ -45,5 +65,5 @@
     .container {
         width: 30rem;
     }
-    
+
 }

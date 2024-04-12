@@ -11,7 +11,7 @@
     background-color: var(--fieldcolor);
     padding: 1rem 2rem 1.5rem 2rem;
     border-radius: 1rem;
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0.5rem 1rem color-mix(in srgb, var(--fontcolor) 15%, transparent);
     width: 23rem;
     margin: 3rem;
     justify-content: center;
@@ -20,9 +20,13 @@
 
 .spinner {
     display: flex;
-    flex-direction: column; /* Stack items vertically */
-    align-items: center; /* Center items horizontally in the container */
-    justify-content: center; /* Center items vertically in the container */
+    flex-direction: column;
+    /* Stack items vertically */
+    align-items: center;
+    /* Center items horizontally in the container */
+    justify-content: center;
+    /* Center items vertically in the container */
+    margin-top: 1rem;
 }
 
 .logoContainer {
@@ -62,13 +66,26 @@ img {
     width: fit-content;
     font-family: monospace;
     font-size: 1rem;
-    color:#0000;
-    background:linear-gradient(90deg,#000 calc(50% - 0.5ch),#C02942 0 calc(50% + 0.5ch),#000 0) right/calc(200% + 1ch) 100%;
-    -webkit-background-clip:text;
-            background-clip:text;
+    color: #0000;
+    background: linear-gradient(90deg, var(--fontcolor) calc(50% - 0.5ch), var(--accentcolor) 0 calc(50% + 0.5ch), var(--fontcolor) 0) right/calc(200% + 1ch) 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
     animation: l8 2s infinite steps(11);
-  }
-  .loader:before {
-    content:"Verifying your email...";
-  }
-  @keyframes l8 {to{background-position: left}}
+}
+
+.loader:before {
+    content: "Verifying your email...";
+}
+
+@keyframes l8 {
+    to {
+        background-position: left
+    }
+}
+
+.errorMessage {
+    color: red;
+    /* Style it as needed, for example: */
+    font-size: 0.6rem;
+    margin-top: 0.6rem;
+}
