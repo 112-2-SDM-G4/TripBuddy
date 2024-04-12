@@ -23,25 +23,49 @@ class TripManager(Resource):
         if not relation or not relation.access:
             return False
         return True
+    
+    def get_trip_length(self, trip):
+        return (trip.end_date - trip.start_date).days + 1
 
     @jwt_required()
     def get(self, trip_id=None):
-        if trip_id:
-            # user_id = self.varify_user(get_jwt_identity())
-            # if user_id == None:
-            #     return make_response({'message': 'User not found.'}, 400)
+        if trip_id: # get a specific schedule detail
+            user_id = self.varify_user(get_jwt_identity())
+            if user_id == None:
+                return make_response({'message': 'User not found.'}, 400)
             
-            # if not Schedule.get_by_id(id):
-            #     return make_response({'message': 'Trip not found.'}, 400)
+            if not Schedule.get_by_id(trip_id):
+                return make_response({'message': 'Trip not found.'}, 400)
             
-            # if not self.user_owns_schedule(user_id, trip_id):
-            #     return make_response({'message': 'User does not have access to this trip.'}, 403)
+            if not self.user_owns_schedule(user_id, trip_id):
+                return make_response({'message': 'User does not have access to this trip.'}, 403)
             
-            # schedule = Schedule.get_by_id(trip_id)
-            responce = {}
-            # responce['public'] = schedule.public
+            schedule = Schedule.get_by_id(trip_id)
+            places_in_trip = RelationSpotSch.get_by_schedule(trip_id)
+            
+            trip = [[] for _ in range(self.get_trip_length(schedule))]
+            places_in_trip.sort(key=lambda x: (x.date, x.order))
+            for relation_spot_sch in places_in_trip:
+                place = Place.get_by_id(relation_spot_sch.place_id)
+                place_info = {
+                    'place_id': place.place_id,
+                    'name': place.name,
+                    'formatted_address': place.formatted_address,
+                    "google_maps_uri": place.google_map_uri,
+                    "image": place.image,
+                    "rating": place.rating,
+                    "user_rating_count": place.user_rating_count,
+                    "regular_opening_hours": str_to_array(place.regular_opening_hours),
+                    "place_summary": place.place_summary,
+                    "comment": relation_spot_sch.comment,
+                    "money": relation_spot_sch.money,
+                    "stay_time": [relation_spot_sch.period_hours, relation_spot_sch.period_minutes],
+                }
+                trip[relation_spot_sch.date].append(place_info)
 
-            # TODO: get all spots in the schedule
+            responce = {"trip": trip}
+            responce['public'] = schedule.public
+
 
         else: # get all schedules accessible by the user
             user_id = self.varify_user(get_jwt_identity())
@@ -136,6 +160,9 @@ class TripManager(Resource):
         if not self.user_owns_schedule(user_id, trip_id):
             return make_response({'message': 'User does not have access to this trip.'}, 403)
         
+        if self.get_trip_length(Schedule.get_by_id(trip_id)) != len(data['trip']):
+            return make_response({'message': 'Trip length does not match.'}, 400)
+
         for day_count, day_list in enumerate(data['trip']):
             for order_count, place_info in enumerate(day_list):
                 # if spot is not in Place, create new Place

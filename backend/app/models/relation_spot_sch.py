@@ -20,6 +20,10 @@ class RelationSpotSch(db.Model):
             if key not in data:
                 data[key] = None
         return data
+    
+    @staticmethod
+    def get_by_schedule(schedule_id):
+        return RelationSpotSch.query.filter_by(schedule_id=schedule_id).all()
 
     @staticmethod
     def get_by_spot_schedule(schedule_id, place_id):

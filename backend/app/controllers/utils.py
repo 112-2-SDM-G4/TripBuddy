@@ -19,6 +19,8 @@ def check_date_status(start_date, end_date):
         return 0
     
 def str_to_array(string, t=','):
+    if string == None:
+        return []
     return string.split(t)
 
 def array_to_str(array, t=','):
