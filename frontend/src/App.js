@@ -15,7 +15,6 @@ import Explore from "./page/Explore";
 import ViewAttraction from "./page/ViewAttraction";
 import ForgotPassword from "./page/Forgot-password";
 import ResetPassword from "./page/Reset-password";
-import EmailVerification from './component/EmailVerification';
 import ProfileSetup from './page/ProfileSetup';
 import NotFound from "./page/NotFound";
 
