@@ -1,0 +1,43 @@
+/* search-box.css */
+
+.container {
+    display: flex;
+    align-items: center;
+    width: 95%;
+    padding: 0.8rem 0 0 0.8rem;
+}
+  
+.input {
+    padding: 0.5rem 0.75rem; 
+    height: 100%;
+    font-size: 1rem; 
+    border: 1px solid var(--primarycolor);
+    border-radius: 1rem 0 0 1rem;
+    flex: 1;
+    background-color: var(--backgroundcolor);
+    box-shadow: 0 0.1rem 0.1rem var(--primarycolor);
+}
+
+.input:focus {
+    outline: none;
+}
+  
+.button {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    padding: 0 1rem; 
+    font-size: 1rem;
+    background-color: var(--primarycolor);
+    border: none;
+    border-radius: 0 1rem 1rem 0;
+    cursor: pointer;
+    opacity: 0.9;
+    box-shadow: 0 0.1rem 0.1rem var(--primarycolor);
+}
+  
+.button:hover {
+    opacity: 1;
+
+}
+  

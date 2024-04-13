@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { useLanguage } from "../hooks/useLanguage";
-import style from "./ViewAttraction.module.css";
+import style from "./ViewSpot.module.css";
 
-const Attraction = () => {
+const ViewSpot = () => {
     const { id } = useParams();
     const { language } = useLanguage();
     const [spot, setSpot] = useState({
@@ -60,4 +60,4 @@ const Attraction = () => {
     );
 };
 
-export default Attraction;
+export default ViewSpot;

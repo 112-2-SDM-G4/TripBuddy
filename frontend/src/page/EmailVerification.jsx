@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import style from './EmailVerification.module.css'; // Assuming you have a CSS file for styling
 import { Loading } from '@geist-ui/core'

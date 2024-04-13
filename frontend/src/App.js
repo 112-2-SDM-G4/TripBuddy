@@ -12,7 +12,7 @@ import Footer from "./component/Footer";
 import Login from "./page/Login";
 import Edit from "./page/Edit";
 import Explore from "./page/Explore";
-import ViewAttraction from "./page/ViewAttraction";
+import ViewSpot from "./page/ViewSpot";
 import ForgotPassword from "./page/Forgot-password";
 import ResetPassword from "./page/Reset-password";
 import EmailVerification from './page/EmailVerification';
@@ -38,7 +38,7 @@ function App() {
                     <Route path="profile-setup" element={<ProfileSetup />} />
                     <Route path="edit" element={<Edit />} />
                     <Route path="explore" element={<Explore />} />
-                    <Route path="attraction/:id" element={<ViewAttraction />} />
+                    <Route path="spot/:id" element={<ViewSpot />} />
                     <Route path="*" element={<NotFound />} />
                 </Route>
             </Routes>
