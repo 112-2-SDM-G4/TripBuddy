@@ -3,13 +3,17 @@ import { useNavigate } from 'react-router-dom';
 import style from "./Login.module.css";
 import Button from "../component/Button";
 import InputText from "../component/InputText";
+import EmailVerification from '../component/EmailVerification';
 import SHA256 from 'crypto-js/sha256';
 import { useAuth } from '../hooks/useAuth';
 
 const Login = () => {
     const [activeTab, setActiveTab] = useState('login');
     const [email, setEmail] = useState(''); // Lifted state for email
+    const [password, setPassword] = useState('');
+    const [salt, setSalt] = useState('');
     const [isSignupSuccess, setIsSignupSuccess] = useState(false);
+
 
     const handleTabClick = (tab) => {
         setActiveTab(tab);
@@ -17,14 +21,17 @@ const Login = () => {
     };
 
     // This function will be called by the SignupForm on successful signup
-    const handleSignupSuccess = (userEmail) => {
+    const handleSignupSuccess = (userEmail, salt, hashedPassword) => {
         setEmail(userEmail); // Set the email state to the user's email
+        setPassword(hashedPassword);
+        setSalt(salt);
         setIsSignupSuccess(true); // Set the flag to show the success message
     };
 
+
     return (
         <div className={style.main}>
-            
+
 
             {!isSignupSuccess ? (
                 <>
@@ -40,18 +47,8 @@ const Login = () => {
             ) : (
                 // Success message
 
-                <div className={style.loginContainer}>
-                    <div className={style.logoContainer}>
-                        <img className={style.logo} src="../../circle-check.svg" alt="cirle-check" />
-                    </div>
-                    <h2>Registration Almost Complete!</h2>
-                    <div className={style.description}>
-                        <p className={style.text}>
-                            Please check your inbox at <strong>{email}</strong> to find the confirmation email we've sent.
-                            Click the link provided to finalize your registration and start using your account.
-                        </p>
-                    </div>
-                </div>
+                <EmailVerification email={email} hashed_password={password} salt={salt}/>
+            
 
             )}
 
@@ -117,7 +114,7 @@ const LoginForm = () => {
                 else {
                     navigate('/explore');
                 }
-                
+
                 // Redirect user or do some action after successful login here
                 // e.g., navigate to a dashboard or home page
 
@@ -199,9 +196,9 @@ const SignupForm = ({ onSignupSuccess }) => {
     };
 
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        
+
         if (password.length < 8) {
             setError("Password must be at least 8 characters long.");
             return;
@@ -212,27 +209,32 @@ const SignupForm = ({ onSignupSuccess }) => {
             setError("Passwords do not match.");
             return;
         }
+
         const salt = generateSalt(); // Generate a "salt"
         const hashedPassword = SHA256(password + salt).toString();
 
         try {
-            // Replace this with your actual API call
-            console.log('Submitting:', { localEmail, hashedPassword, salt });
-            // const response = await fetch('/api/signup', {
+            // const response = await fetch('/api/v1/user/send_email', {
             //     method: 'POST',
-            //     headers: {'Content-Type': 'application/json'},
-            //     body: JSON.stringify({ email, hashedPassword, salt })
+            //     headers: { 'Content-Type': 'application/json' },
+            //     body: JSON.stringify({ localEmail })
             // });
+
+            // if (!response.OK) {
+            //     throw new Error(`HTTP error! status: ${response.status}`);
+            // }
+
             // const data = await response.json();
+
             const data = {
                 "valid": true,
-                "jwt_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMTIzNDU2Nzg5MCIsIm5hbWUiOiLlsI_mmI4ifQ.f2QgkBxI2j09ks4XBnzDNOVBo-WKlbRp6f8FxfqgtKg"
+                "message": "已寄送驗證信"
             }
             // Assuming a successful response
             if (data.valid) {
-                onSignupSuccess(localEmail); // Pass the email back up to the parent component
+                onSignupSuccess(localEmail, salt, hashedPassword); // Pass the email back up to the parent component
             } else {
-                throw new Error('使用者已註冊過');
+                throw new Error(data.message);
             }
 
         } catch (error) {
@@ -243,7 +245,7 @@ const SignupForm = ({ onSignupSuccess }) => {
     };
 
     return (
-        <form action='/signup' onSubmit={handleSubmit} className={style.form}>
+        <form onSubmit={handleSubmit} className={style.form}>
             <div className={style.logoContainer}>
                 {/* You will replace 'logo.svg' with your actual logo */}
                 <img className={style.logo} src="../../logo.svg" alt="TourBuddy" />
