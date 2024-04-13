@@ -13,12 +13,12 @@ function SpotCard({ name, src, spotId }) {
             {addPage && (
                 <AddPageforTrip
                     close={() => showAddPage(false)}
-                    spot={{ name, src, attractionId }}
+                    spot={{ name, src, spotId }}
                 />
             )}
             <div
                 className={style.card}
-                onClick={() => navigate(`/attraction/${spotId}`)}
+                onClick={() => navigate(`/spot/${spotId}`)}
             >
                 <img src={src} alt="spot loading" className={style.img} />
                 <div className={style.infocontainer}>
