@@ -1,0 +1,10 @@
+.block {
+    display: flex;
+    gap: 0.5rem;
+}
+.picker {
+    border: none;
+    border-bottom: solid 1px var(--primarycolor);
+    font-size: 1rem;
+    width: 3rem;
+}

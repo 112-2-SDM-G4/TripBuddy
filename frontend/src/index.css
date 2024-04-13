@@ -35,12 +35,12 @@ body {
     background-color: var(--backgroundcolor);
 }
 .App[theme="dark"] {
-    --accentcolor: #88CF46;
+    --accentcolor: #88cf46;
     --primarycolor: #bdd5ea;
-    --secondarycolor: #DDD23B;
+    --secondarycolor: #d9ab42;
     --backgroundcolor: #464646;
-    --fontcolor: #E2EFE7;
-    --fieldcolor:  #486160;
+    --fontcolor: #e2efe7;
+    --fieldcolor: #486160;
 }
 .App[theme="light"] {
     --accentcolor: #e26c5a;
@@ -58,7 +58,10 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-    background-color: var(--secondarycolor);
+    background-color: color-mix(
+        in srgb,
+        var(--secondarycolor) 80%,
+        transparent
+    );
     border-radius: 10px;
-    border: 1px solid var(--primarycolor);
 }
