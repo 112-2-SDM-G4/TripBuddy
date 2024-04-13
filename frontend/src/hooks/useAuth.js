@@ -6,28 +6,44 @@ export const AuthProvider = ({ children }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [user, setUser] = useState({});
 
-    const login = async (email, password) => {
-        const url = "/api/login";
-        const method = "POST";
-        const postData = { email, password };
-    
-        const response = await fetchWithJwt(url, method, postData);
-        // Check if 'response' has 'success' field instead of 'valid'
-        if (response.success) {
-            const { jwt_token: jwtToken, ...userData } = response.data; 
-            localStorage.setItem('jwtToken', jwtToken); // Store JWT in localStorage
-            setUser(userData);
-            setIsLoggedIn(true);
-            return { success: true }; // Indicate login was successful
-        } else {
-            console.error(response.error);
-            // Assuming 'response' has 'error' field for error message
-            return { success: false, error: response.error }; // Provide error information
+    const login = async (email, hashedPassword) => {
+        const url = "/api/v1/login";
+        const postData = { email, hashedPassword };
+
+        try {
+            // const response = await fetchWithJwt(url, "POST", postData);
+
+            // // Check if response.ok to catch HTTP errors
+            // if (!response.ok) {
+            //     throw new Error(`HTTP error! status: ${response.status}`);
+            // }
+
+            // const data = await response.json();
+            const data = {
+                "valid": true,
+                "jwt_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMTIzNDU2Nzg5MCIsIm5hbWUiOiLlsI_mmI4ifQ.f2QgkBxI2j09ks4XBnzDNOVBo-WKlbRp6f8FxfqgtKg",
+                "user_name": "",
+                "language": "zh",
+                "message": "登入成功",
+                "preference" : true
+            }
+            if (data.valid) {
+                sessionStorage.setItem('jwtToken', data.jwt_token);
+                setUser({ ...data.user }); // Assuming data.user contains user info
+                setIsLoggedIn(true);
+                return { success: true, error: null };
+            } else {
+                return { success: false, error: data.message };
+            }
+        } catch (error) {
+            console.error(error);
+            return { success: false, error: error.message };
         }
     };
 
+
     const logout = () => {
-        localStorage.removeItem('jwtToken'); // Remove JWT from localStorage
+        sessionStorage.removeItem('jwtToken');
         setUser({});
         setIsLoggedIn(false);
     };
@@ -42,36 +58,15 @@ export const AuthProvider = ({ children }) => {
 export const useAuth = () => useContext(AuthContext);
 
 // fetchWithJwt function adjusted for error handling
-async function fetchWithJwt(url, method = 'GET', postData = null) {
-    try {
-        const options = {
-            method,
-            headers: {
-                'Content-Type': 'application/json',
-                // Include the token only for requests that require authorization
-                ...(localStorage.getItem('jwtToken') && { 'Authorization': `Bearer ${localStorage.getItem('jwtToken')}` }),
-            },
-        };
+async function fetchWithJwt(url, method = 'POST', postData = null) {
+    const options = {
+        method,
+        headers: {
+            'Content-Type': 'application/json',
+            ...(sessionStorage.getItem('jwtToken') && { 'Authorization': `Bearer ${sessionStorage.getItem('jwtToken')}` }),
+        },
+        ...(postData && { body: JSON.stringify(postData) }),
+    };
 
-        if (postData) {
-            options.body = JSON.stringify(postData);
-        }
-
-        // const response = await fetch(url, options);
-        // if (!response.ok) {
-        //     throw new Error(`HTTP error! status: ${response.status}`);
-        // }
-        // const data = await response.json();
-        const data ={
-            "valid": true,
-            "jwt_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMTIzNDU2Nzg5MCIsIm5hbWUiOiLlsI_mmI4ifQ.f2QgkBxI2j09ks4XBnzDNOVBo-WKlbRp6f8FxfqgtKg",
-            "language": "zh",
-            "message": "登入成功"
-        }
-
-        return { success: true, data }; // Match the structure in 'login'
-
-    } catch (error) {
-        return { success: false, error: error.message }; // Corrected error handling
-    }
+    return fetch(url, options);
 }

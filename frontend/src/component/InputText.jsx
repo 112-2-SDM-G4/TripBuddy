@@ -7,9 +7,10 @@ const InputText = ({ propmt, name, setting = {}, onChange, onBlur }) => {
         focus = false,
         type = "text",
         width = "100%",
+        defaultValue = "",
     } = setting;
     const inputtxt = useRef(null);
-    const [inputValue, setInputValue] = useState("");
+    const [inputValue, setInputValue] = useState(defaultValue);
     const handleChange = (event) => {
         const newValue = event.target.value;
         setInputValue(newValue);
@@ -23,7 +24,6 @@ const InputText = ({ propmt, name, setting = {}, onChange, onBlur }) => {
             onBlur(value);
         }
     };
-
 
     return (
         <div

@@ -1,7 +1,20 @@
 import React, { useState } from 'react';
-import ProgressBar from 'react-bootstrap/ProgressBar';
 import Button from '../component/Button'; // Assuming you have a Button component
+import InputText from "../component/InputText";
 import style from "./ProfileSetup.module.css";
+
+
+const ProgressBar = ({ progress, currentStep }) => {
+
+
+  return (
+    <div className={style.ProgressBarStyle}>
+      <div className={style.FillerStyle} style={{ width: `${progress}%` }}>
+        <span className={style.LabelStyle}>{`Page ${currentStep}`}</span>
+      </div>
+    </div>
+  );
+};
 
 const ProfileSetup = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -9,10 +22,10 @@ const ProfileSetup = () => {
   // Additional states for form inputs
   const [userInfo, setUserInfo] = useState({
     username: '',
-    bio: '',
-    photo: null, // Assuming this will be a File object
+    language: '',
+    photo: null,
     travelStyle: '',
-    activities: [], // Initialize as an empty array
+    activities: [],
     travelGroup: '',
     destinationType: ''
   });
@@ -51,20 +64,37 @@ const ProfileSetup = () => {
       content = (
         <>
           <div>
-            <h2>Setup Profile</h2>
-            <input
-              type="text"
-              name="username"
-              placeholder="Username"
+            <div className={style.questionnaireIntro}>
+              <h2 className={style.introTitle}>Let's Get to Know You!</h2>
+              <p className={style.introText}>
+                Your answers to the following questions will help us tailor your experience and recommendations. It'll only take a minute!
+              </p>
+            </div>
+            <InputText
+              propmt={"Username"}
+              name={"username"}
+              setting={{ require: true, type: 'text' }}
               value={userInfo.username}
               onChange={handleUserInfoChange}
             />
-            <textarea
-              name="bio"
-              placeholder="Bio"
-              value={userInfo.bio}
-              onChange={handleUserInfoChange}
-            />
+
+            <div>
+              <label>Language Preference:</label>
+              <button
+                type="button"
+                className={userInfo.language === 'Chinese' ? style.activeButton : style.button}
+                onClick={() => setUserInfo(prev => ({ ...prev, language: 'Chinese' }))}
+              >
+                繁體中文
+              </button>
+              <button
+                type="button"
+                className={userInfo.language === 'English' ? style.activeButton : style.button}
+                onClick={() => setUserInfo(prev => ({ ...prev, language: 'English' }))}
+              >
+                English
+              </button>
+            </div>
             {/* Handle photo upload accordingly */}
             <Button txt="Next" func={nextStep} />
           </div>
@@ -140,7 +170,7 @@ const ProfileSetup = () => {
             <h2>Welcome to TripBuddy!</h2>
             <p>Your profile is all set up. Start exploring now!</p>
             <Button txt="Back" func={prevStep} />
-            <Button txt="Next" func={nextStep} />
+            <Button txt="Submit" func={nextStep} />
           </div>
         </>
       );
@@ -150,9 +180,11 @@ const ProfileSetup = () => {
   }
 
   return (
-    <div>
-      <ProgressBar now={(currentStep / totalSteps) * 100} label={`Page ${currentStep}`} />
-      {content}
+    <div className={style.main}>
+      <div className={style.container}>
+        <ProgressBar progress={(currentStep / totalSteps) * 100} currentStep={currentStep}></ProgressBar>
+        {content}
+      </div>
     </div>
   );
 };

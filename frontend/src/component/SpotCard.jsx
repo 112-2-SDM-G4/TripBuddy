@@ -10,7 +10,12 @@ function SpotCard({ name, src, spotId }) {
 
     return (
         <>
-            {addPage && <AddPageforTrip close={() => showAddPage(false)} />}
+            {addPage && (
+                <AddPageforTrip
+                    close={() => showAddPage(false)}
+                    spot={{ name, src, attractionId }}
+                />
+            )}
             <div
                 className={style.card}
                 onClick={() => navigate(`/attraction/${spotId}`)}
