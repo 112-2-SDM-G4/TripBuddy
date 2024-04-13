@@ -16,8 +16,7 @@ import MyTrips from "./page/MyTrips";
 import ViewSpot from "./page/ViewSpot";
 import ForgotPassword from "./page/Forgot-password";
 import ResetPassword from "./page/Reset-password";
-import EmailVerification from "./component/EmailVerification";
-import ProfileSetup from "./page/ProfileSetup";
+import ProfileSetup from './page/ProfileSetup';
 import NotFound from "./page/NotFound";
 
 function App() {
@@ -34,11 +33,7 @@ function App() {
                 <Route path="/">
                     <Route path="login" element={<Login />} />
                     <Route path="reset" element={<ForgotPassword />} />
-                    <Route path="reset/:token" element={<ResetPassword />} />
-                    <Route
-                        path="verify-email/:token"
-                        element={<EmailVerification />}
-                    />
+                    <Route path="reset/:token" element={<ResetPassword />} /> 
                     <Route path="profile-setup" element={<ProfileSetup />} />
                     <Route path="edit" element={<Edit />} />
                     <Route path="explore" element={<Explore />} />

@@ -13,6 +13,7 @@ const Login = () => {
     const [password, setPassword] = useState('');
     const [salt, setSalt] = useState('');
     const [isSignupSuccess, setIsSignupSuccess] = useState(false);
+    
 
 
     const handleTabClick = (tab) => {
@@ -124,7 +125,7 @@ const LoginForm = () => {
         }
     };
     return (
-        <form action='/signin' method="post" onSubmit={handleSubmit} className={style.form}>
+        <form method="post" onSubmit={handleSubmit} className={style.form}>
             <div className={style.logoContainer}>
                 <img className={style.logo} src="../../logo.svg" alt="TourBuddy" />
             </div>

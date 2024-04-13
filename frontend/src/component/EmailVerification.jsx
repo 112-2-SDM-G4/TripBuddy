@@ -85,7 +85,7 @@ const EmailVerification = ({ email, hashed_password, salt }) => {
                             <p className={style.text}>Your account has been successfully verified!</p>
                             <p className={style.text}>You can now use all the features of our website.</p>
                         </div>
-                        <Button txt="Start" onClick={() => navigate('../page/profile-setup')} />
+                        <Button txt="Start" func={() => navigate('/profile-setup')} />
                     </>
                 ) : (
                     <>

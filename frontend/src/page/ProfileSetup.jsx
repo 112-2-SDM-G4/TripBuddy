@@ -5,13 +5,33 @@ import style from "./ProfileSetup.module.css";
 
 
 const ProgressBar = ({ progress, currentStep }) => {
-
-
   return (
     <div className={style.ProgressBarStyle}>
       <div className={style.FillerStyle} style={{ width: `${progress}%` }}>
         <span className={style.LabelStyle}>{`Page ${currentStep}`}</span>
       </div>
+    </div>
+  );
+};
+
+const AvatarSelector = ({ onSelect, avatars, onUpload }) => {
+  return (
+    <div className={style.avatarSelector}>
+      {avatars.map((avatar, index) => (
+        <img
+          key={index}
+          src={avatar}
+          alt={`Avatar ${index + 1}`}
+          onClick={() => onSelect(avatar)}
+          className={style.avatar}
+        />
+      ))}
+      <button
+        className={style.avatarAddButton}
+        onClick={onUpload}
+      >
+        +
+      </button>
     </div>
   );
 };
@@ -56,8 +76,18 @@ const ProfileSetup = () => {
     }
   };
 
+  const handleAvatarSelect = (avatar) => {
+    setUserInfo(prev => ({ ...prev, photo: avatar }));
+  };
+
+  // Function to handle avatar upload
+  const handleAvatarUpload = () => {
+    // Trigger file input to upload an avatar
+  };
+
   let content;
   switch (currentStep) {
+
     // UserInfoForm
 
     case 1:
@@ -70,6 +100,11 @@ const ProfileSetup = () => {
                 Your answers to the following questions will help us tailor your experience and recommendations. It'll only take a minute!
               </p>
             </div>
+            <AvatarSelector
+              onSelect={handleAvatarSelect}
+              avatars={['../../boy.png', '../../panda.png', '../../gamer.png', '../../woman.png']}
+              onUpload={handleAvatarUpload}
+            />
             <InputText
               propmt={"Username"}
               name={"username"}
@@ -77,25 +112,18 @@ const ProfileSetup = () => {
               value={userInfo.username}
               onChange={handleUserInfoChange}
             />
-
-            <div>
-              <label>Language Preference:</label>
-              <button
-                type="button"
+            <div className={style.languagePreference}>
+              <Button
+                txt="繁體中文"
+                func={() => setUserInfo(prev => ({ ...prev, language: 'Chinese' }))}
                 className={userInfo.language === 'Chinese' ? style.activeButton : style.button}
-                onClick={() => setUserInfo(prev => ({ ...prev, language: 'Chinese' }))}
-              >
-                繁體中文
-              </button>
-              <button
-                type="button"
+              />
+              <Button
+                txt="English"
+                func={() => setUserInfo(prev => ({ ...prev, language: 'English' }))}
                 className={userInfo.language === 'English' ? style.activeButton : style.button}
-                onClick={() => setUserInfo(prev => ({ ...prev, language: 'English' }))}
-              >
-                English
-              </button>
+              />
             </div>
-            {/* Handle photo upload accordingly */}
             <Button txt="Next" func={nextStep} />
           </div>
         </>
