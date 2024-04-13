@@ -22,12 +22,20 @@ class RelationSpotSch(db.Model):
         return data
     
     @staticmethod
+    def get_by_relation_id(relation_id):
+        return RelationSpotSch.query.get(relation_id)
+
+    @staticmethod
     def get_by_schedule(schedule_id):
         return RelationSpotSch.query.filter_by(schedule_id=schedule_id).all()
 
     @staticmethod
     def get_by_spot_schedule(schedule_id, place_id):
         return RelationSpotSch.query.filter_by(schedule_id=schedule_id, place_id=place_id).first()
+    
+    @staticmethod
+    def get_by_after_order(schedule_id, date,  order):
+        return RelationSpotSch.query.filter_by(schedule_id=schedule_id, date=date).filter(RelationSpotSch.order >= order).all()
     
     @staticmethod
     def create(data):
@@ -61,8 +69,26 @@ class RelationSpotSch(db.Model):
         return relation
     
     @staticmethod
+    def update_order(schedule_id, date, order, increase=True):
+        relations = RelationSpotSch.query.filter_by(schedule_id=schedule_id, date=date).filter(RelationSpotSch.order >= order).all()
+        for relation in relations:
+            if increase:
+                relation.order += 1
+            else:
+                relation.order -= 1
+        db.session.commit()
+        return relations
+    
+    @staticmethod
+    def delete_by_relation_id(relation_id):
+        relation = RelationSpotSch.query.get(relation_id)
+        db.session.delete(relation)
+        db.session.commit()
+        return relation
+
+    @staticmethod
     def delete(schedule_id, place_id):
-        relation = RelationSpotSch.query.filter_by(schedule_id=schedule_id, place_id=place_id).first()
+        relation = RelationSpotSch.query.filter_by(schedule_id=schedule_id, place_id=place_id).all()
         db.session.delete(relation)
         db.session.commit()
         return relation
