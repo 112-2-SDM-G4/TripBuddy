@@ -46,6 +46,12 @@ class User(db.Model):
         db.session.commit()
         return user
 
+    @staticmethod
+    def update(email, data):
+        user = User.query.filter_by(email=email).first()
+        user.hashed_password = data['new_password']
+        user.salt = data['new_salt']
+        db.session.commit()
 
 class UserVerify(db.Model):
     __tablename__ = "User_Verify_Code"
@@ -65,3 +71,7 @@ class UserVerify(db.Model):
         user.verification_code = data['v_code']
         user.expired_time = data['expired_time']
         db.session.commit()
+    
+    @staticmethod
+    def get_by_email(email):
+        return UserVerify.query.filter_by(email=email).first()

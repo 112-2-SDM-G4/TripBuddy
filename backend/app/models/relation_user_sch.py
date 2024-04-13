@@ -27,3 +27,18 @@ class RelationUserSch(db.Model):
         db.session.add(relation)
         db.session.commit()
         return relation
+    
+    @staticmethod
+    def get_by_user(user_id):
+        return RelationUserSch.query.filter_by(user_id=user_id).all()
+    
+    @staticmethod
+    def get_by_user_schedule(user_id, schedule_id):
+        return RelationUserSch.query.filter_by(user_id=user_id, schedule_id=schedule_id).first()
+    
+    @staticmethod
+    def delete(user_id, schedule_id):
+        relation = RelationUserSch.query.filter_by(user_id=user_id, schedule_id=schedule_id).first()
+        db.session.delete(relation)
+        db.session.commit()
+        return relation

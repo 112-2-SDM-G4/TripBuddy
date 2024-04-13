@@ -5,7 +5,7 @@ Create new environment and Install packages first
 ```
 virtualenv venv
 source venv/bin/activate
-pip install -r requirments.txt
+pip install -r requirements.txt
 ```
 If you use any new package, please update requirements.txt
 ```
