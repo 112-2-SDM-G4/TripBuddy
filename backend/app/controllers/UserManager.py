@@ -5,6 +5,7 @@ from flask_restful import Resource
 from flask import request, make_response, jsonify
 from flask_mail import Message
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
+
 from app.models.user import User, UserVerify
 import app
 
@@ -175,3 +176,57 @@ class LoginCheckPassword(Resource):
                 'preference': None
             }
             return make_response(res_json, 401)
+class ForgetPassword(Resource):
+    def post(self):
+        user_email = str(request.get_json()['user_email']).strip(' ')
+        user = User.get_by_email(user_email)
+        if not user:
+            return make_response({'valid': False, 'message': "This email is not registered."}, 200)
+        v_code = str(random.randint(100000, 999999)).zfill(6)
+        expired_time = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d %H:%M:%S")
+        if UserVerify.get_by_email(user_email):
+            verification = UserVerify.update(user_email, {"v_code": v_code, "expired_time": expired_time})
+        else:
+            verification = UserVerify(email=user_email, v_code=v_code, expired_time=expired_time)
+            app.db.session.add(verification)
+            app.db.session.commit()
+        # 寄信
+        msg = Message(
+            subject="[Reset Your Password]",
+            sender=os.getenv('MAIL_DEFAULT_SENDER'),
+            recipients=[user_email],
+            html=f"<p>Hi, {user_email},</p><p>Your verification code is: <b>{v_code}</b>. This code will expire at <b>{expired_time}</b>.</p>"
+            # html=render_template("email.html")
+        )
+        try:
+            app.mail.send(msg)
+            return make_response({"valid": True, "message": "Password reset email was sent."}, 200)
+        except Exception as e:
+            return make_response({'valid': False, "message": str(e)}, 500)
+class ResetPassword(Resource):
+    def post(self):
+        data = request.get_json()
+        email = data['email']
+        reset_token = data['reset_token']
+
+        res_json ={
+            "valid" :True,
+            "message":""
+        }
+        # 因為經過 ForgetPassword 驗證後，不須再驗證 User table 只須驗證 UserVerify 的 code 正確/過期
+        user = UserVerify.get_by_email(email)
+        if not user:
+            res_json['message'] = "email is not valid"
+            return make_response(res_json, 200)
+        current_time = datetime.now()
+        if current_time > user.expired_time:
+            res_json['message'] = "Verification code had been expired."
+            return make_response(res_json, 200)
+        if reset_token != user.verification_code:
+            res_json['message'] = "Wrong verification code!!!"
+            return make_response(res_json, 200)
+
+        # success
+        User.update(email, {"new_password": data['new_password'], "new_salt": data['new_salt']})
+        res_json['message'] = "Password reset successful!"
+        return make_response(res_json, 200)         
