@@ -1,5 +1,8 @@
 from datetime import datetime, date, timedelta
 
+from app.models.user import User
+from app.models.relation_user_sch import RelationUserSch
+
 def array_to_date(array):
     return date(array[0], array[1], array[2])
 
@@ -25,3 +28,16 @@ def str_to_array(string, t=','):
 
 def array_to_str(array, t=','):
     return t.join(array)
+
+def varify_user(user_email):
+        user = User.get_by_email(user_email)
+        if not user:
+            return None
+        return user.user_id
+    
+def user_owns_schedule(user_id, schedule_id):
+    relation = RelationUserSch.get_by_user_schedule(user_id, schedule_id)
+    if not relation or not relation.access:
+        return False
+    return True
+

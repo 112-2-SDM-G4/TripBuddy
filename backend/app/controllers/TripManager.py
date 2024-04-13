@@ -2,42 +2,29 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_restful import Resource
 from flask import request, make_response, jsonify
 
-from app.controllers.utils import date_to_array, array_to_date, check_date_status, str_to_array, array_to_str
+from app.controllers.utils import *
 from app.models.schedule import Schedule
 from app.models.ledger import Ledger
 from app.models.post import Post
 from app.models.place import Place
 from app.models.relation_user_sch import RelationUserSch
 from app.models.relation_spot_sch import RelationSpotSch
-from app.models.user import User
 
 class TripManager(Resource):
-    def varify_user(self, user_email):
-        user = User.get_by_email(user_email)
-        if not user:
-            return None
-        return user.user_id
-    
-    def user_owns_schedule(self, user_id, schedule_id):
-        relation = RelationUserSch.get_by_user_schedule(user_id, schedule_id)
-        if not relation or not relation.access:
-            return False
-        return True
-    
     def get_trip_length(self, trip):
         return (trip.end_date - trip.start_date).days + 1
 
     @jwt_required()
     def get(self, trip_id=None):
         if trip_id: # get a specific schedule detail
-            user_id = self.varify_user(get_jwt_identity())
+            user_id = varify_user(get_jwt_identity())
             if user_id == None:
                 return make_response({'message': 'User not found.'}, 400)
             
             if not Schedule.get_by_id(trip_id):
                 return make_response({'message': 'Trip not found.'}, 400)
             
-            if not self.user_owns_schedule(user_id, trip_id):
+            if not user_owns_schedule(user_id, trip_id):
                 return make_response({'message': 'User does not have access to this trip.'}, 403)
             
             schedule = Schedule.get_by_id(trip_id)
@@ -48,6 +35,7 @@ class TripManager(Resource):
             for relation_spot_sch in places_in_trip:
                 place = Place.get_by_id(relation_spot_sch.place_id)
                 place_info = {
+                    'relation_id': relation_spot_sch.rss_id,
                     'place_id': place.place_id,
                     'name': place.name,
                     'formatted_address': place.formatted_address,
@@ -68,7 +56,7 @@ class TripManager(Resource):
 
 
         else: # get all schedules accessible by the user
-            user_id = self.varify_user(get_jwt_identity())
+            user_id = varify_user(get_jwt_identity())
             if user_id == None:
                 return make_response({'message': 'User not found.'}, 400)
             
@@ -93,7 +81,7 @@ class TripManager(Resource):
     
     @jwt_required()
     def post(self):
-        user_id = self.varify_user(get_jwt_identity())
+        user_id = varify_user(get_jwt_identity())
         if user_id == None:
             return make_response({'message': 'User not found.'}, 400)
         
@@ -150,14 +138,14 @@ class TripManager(Resource):
     @jwt_required()
     def put(self, trip_id):
         data = request.get_json()
-        user_id = self.varify_user(get_jwt_identity())
+        user_id = varify_user(get_jwt_identity())
         if user_id == None:
             return make_response({'message': 'User not found.'}, 400)
         
         if not Schedule.get_by_id(trip_id):
             return make_response({'message': 'Trip has not created.'}, 400)
         
-        if not self.user_owns_schedule(user_id, trip_id):
+        if not user_owns_schedule(user_id, trip_id):
             return make_response({'message': 'User does not have access to this trip.'}, 403)
         
         if self.get_trip_length(Schedule.get_by_id(trip_id)) != len(data['trip']):
@@ -184,24 +172,20 @@ class TripManager(Resource):
                 place_info['stay_time'] = [1,0] if 'stay_time' not in place_info else place_info['stay_time']
                 place_info['period_hours'] = place_info['stay_time'][0]
                 place_info['period_minutes'] = place_info['stay_time'][1]
-                relation = RelationSpotSch.get_by_spot_schedule(trip_id, place.place_id)
-                if not relation:
-                    relation = RelationSpotSch.create(place_info)
-                else:
-                    relation = RelationSpotSch.update(trip_id, place.place_id, place_info)
+                RelationSpotSch.create(place_info)
 
         return make_response({'message': 'Trip updated successfully.'}, 200)
     
     @jwt_required()
     def delete(self, trip_id):
-        user_email = self.varify_user(get_jwt_identity())
+        user_email = varify_user(get_jwt_identity())
         if user_email == None:
             return make_response({'message': 'User not found.'}, 400)
         
         if not Schedule.get_by_id(trip_id):
             return make_response({'message': 'Trip not found.'}, 400)
         
-        if not self.user_owns_schedule(user_email, trip_id):
+        if not user_owns_schedule(user_email, trip_id):
             return make_response({'message': 'User does not have access to this trip.'}, 403)
         
         # delete relations

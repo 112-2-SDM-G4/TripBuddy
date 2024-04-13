@@ -2,7 +2,7 @@
 from app.controllers.TripManager import TripManager
 from tests.test import Test
 from app.controllers.Base import ExampleController
-from app.controllers.PlaceManager import PlaceSearch, PlaceDetail
+from app.controllers.PlaceManager import PlaceSearch, PlaceDetail, PlaceInTrip
 from app.controllers.UserManager import SendVerifyEmail, UserVerification, SetUserInfo, LoginCheckUser, LoginCheckPassword, ForgetPassword, ResetPassword
 from flask_restful import Api
 
@@ -16,6 +16,8 @@ def initialize_routes(api: Api):
                      f'{BASE_ROUTE}/trip/<string:trip_id>')
     api.add_resource(PlaceSearch, f'{BASE_ROUTE}/place/search')
     api.add_resource(PlaceDetail, f'{BASE_ROUTE}/place/detail')
+    api.add_resource(PlaceInTrip, f'{BASE_ROUTE}/single_place/<string:trip_id>',
+                     f'{BASE_ROUTE}/single_place/<string:trip_id>/<string:relation_id>')
     api.add_resource(SendVerifyEmail, f'{BASE_ROUTE}/user/send_email')
     api.add_resource(UserVerification, f'{BASE_ROUTE}/user/verify')
     api.add_resource(SetUserInfo, f'{BASE_ROUTE}/user/set_info')

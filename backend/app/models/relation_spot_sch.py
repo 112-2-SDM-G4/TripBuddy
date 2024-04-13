@@ -22,12 +22,20 @@ class RelationSpotSch(db.Model):
         return data
     
     @staticmethod
+    def get_by_relation_id(relation_id):
+        return RelationSpotSch.query.get(relation_id)
+
+    @staticmethod
     def get_by_schedule(schedule_id):
         return RelationSpotSch.query.filter_by(schedule_id=schedule_id).all()
 
     @staticmethod
     def get_by_spot_schedule(schedule_id, place_id):
         return RelationSpotSch.query.filter_by(schedule_id=schedule_id, place_id=place_id).first()
+    
+    @staticmethod
+    def get_by_after_order(schedule_id, date,  order):
+        return RelationSpotSch.query.filter_by(schedule_id=schedule_id, date=date).filter(RelationSpotSch.order >= order).all()
     
     @staticmethod
     def create(data):
@@ -47,22 +55,47 @@ class RelationSpotSch(db.Model):
         return relation
 
     @staticmethod
-    def update(schedule_id, place_id, data):
-        data = RelationSpotSch.fill_nullables(data)
-        relation = RelationSpotSch.query.filter_by(schedule_id=schedule_id, place_id=place_id).first()
-        relation.order = data['order']
-        relation.comment = data['comment']
-        relation.money = data['money']
-        relation.category = data['category']
-        relation.date = data['date']
-        relation.period_hours = data['period_hours']
-        relation.period_minutes = data['period_minutes']
+    def update(relation_id, data):
+        # data = RelationSpotSch.fill_nullables(data)
+        relation = RelationSpotSch.query.get(relation_id)
+        if 'order' in data:
+            relation.order = data['order']
+        if 'comment' in data:
+            relation.comment = data['comment']
+        if 'money' in data:
+            relation.money = data['money']
+        if 'category' in data:
+            relation.category = data['category']
+        if 'date' in data:
+            relation.date = data['date']
+        if 'period_hours' in data:
+            relation.period_hours = data['period_hours']
+        if 'period_minutes' in data:
+            relation.period_minutes = data['period_minutes']
         db.session.commit()
         return relation
     
     @staticmethod
+    def update_order(schedule_id, date, order, increase=True):
+        relations = RelationSpotSch.query.filter_by(schedule_id=schedule_id, date=date).filter(RelationSpotSch.order >= order).all()
+        for relation in relations:
+            if increase:
+                relation.order += 1
+            else:
+                relation.order -= 1
+        db.session.commit()
+        return relations
+    
+    @staticmethod
+    def delete_by_relation_id(relation_id):
+        relation = RelationSpotSch.query.get(relation_id)
+        db.session.delete(relation)
+        db.session.commit()
+        return relation
+
+    @staticmethod
     def delete(schedule_id, place_id):
-        relation = RelationSpotSch.query.filter_by(schedule_id=schedule_id, place_id=place_id).first()
+        relation = RelationSpotSch.query.filter_by(schedule_id=schedule_id, place_id=place_id).all()
         db.session.delete(relation)
         db.session.commit()
         return relation
