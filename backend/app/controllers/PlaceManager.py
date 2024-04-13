@@ -103,6 +103,37 @@ class PlaceInTrip(Resource):
         return make_response({'message': 'Place removed from trip successfully.'}, 200)
 
     @jwt_required()
-    def put(self, trip_id: str, relation_id: str):
+    def patch(self, trip_id: str, relation_id: str):
         '''Update place in trip, move the corresponding places'''
-        pass
+        
+        user_id = varify_user(get_jwt_identity())
+        if user_id == None:
+            return make_response({'message': 'User not found.'}, 400)
+        
+        if not Schedule.get_by_id(trip_id):
+            return make_response({'message': 'Trip not found.'}, 400)
+        
+        if not user_owns_schedule(user_id, trip_id):
+            return make_response({'message': 'User does not have access to this trip.'}, 403)
+        
+        relation = RelationSpotSch.get_by_relation_id(relation_id)
+        if not relation:
+            return make_response({'message': 'Relation Id not found.'}, 400)
+        
+        relation_info = request.get_json()
+        # check the date and order have been changed
+        if 'date' in relation_info or 'order' in relation_info:
+            if 'date' not in relation_info:
+                relation_info['date'] = relation.date
+            if 'order' not in relation_info:
+                relation_info['order'] = relation.order
+            # move the corresponding places than the updated place
+            RelationSpotSch.update_order(trip_id, relation.date, relation.order, increase=False)
+            RelationSpotSch.update_order(trip_id, relation_info['date'], relation_info['order'], increase=True)
+
+        if 'stay_time' in relation_info:
+            relation_info['period_hours'] = relation_info['stay_time'][0]
+            relation_info['period_minutes'] = relation_info['stay_time'][1]
+        relation = RelationSpotSch.update(relation_id, relation_info)
+
+        return make_response({'message': 'Place updated successfully.'}, 200)

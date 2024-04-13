@@ -55,16 +55,23 @@ class RelationSpotSch(db.Model):
         return relation
 
     @staticmethod
-    def update(schedule_id, place_id, data):
-        data = RelationSpotSch.fill_nullables(data)
-        relation = RelationSpotSch.query.filter_by(schedule_id=schedule_id, place_id=place_id).first()
-        relation.order = data['order']
-        relation.comment = data['comment']
-        relation.money = data['money']
-        relation.category = data['category']
-        relation.date = data['date']
-        relation.period_hours = data['period_hours']
-        relation.period_minutes = data['period_minutes']
+    def update(relation_id, data):
+        # data = RelationSpotSch.fill_nullables(data)
+        relation = RelationSpotSch.query.get(relation_id)
+        if 'order' in data:
+            relation.order = data['order']
+        if 'comment' in data:
+            relation.comment = data['comment']
+        if 'money' in data:
+            relation.money = data['money']
+        if 'category' in data:
+            relation.category = data['category']
+        if 'date' in data:
+            relation.date = data['date']
+        if 'period_hours' in data:
+            relation.period_hours = data['period_hours']
+        if 'period_minutes' in data:
+            relation.period_minutes = data['period_minutes']
         db.session.commit()
         return relation
     

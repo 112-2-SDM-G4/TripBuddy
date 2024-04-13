@@ -172,11 +172,7 @@ class TripManager(Resource):
                 place_info['stay_time'] = [1,0] if 'stay_time' not in place_info else place_info['stay_time']
                 place_info['period_hours'] = place_info['stay_time'][0]
                 place_info['period_minutes'] = place_info['stay_time'][1]
-                relation = RelationSpotSch.get_by_spot_schedule(trip_id, place.place_id)
-                if not relation:
-                    relation = RelationSpotSch.create(place_info)
-                else:
-                    relation = RelationSpotSch.update(trip_id, place.place_id, place_info)
+                RelationSpotSch.create(place_info)
 
         return make_response({'message': 'Trip updated successfully.'}, 200)
     
