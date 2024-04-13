@@ -25,7 +25,7 @@ function SearchBox({ onSearch }) {
             className={style.input}
             />
             <button type="submit" className={style.button}>
-                <IoSearch size={17}/>
+                <IoSearch size={17} color="white"/>
             </button>
       </form>
     );
