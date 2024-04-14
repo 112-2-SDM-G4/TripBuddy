@@ -14,22 +14,22 @@
 }
 
 @media (min-width: 60rem) {
-    .container {
+    .spotscontainer {
         column-count: 3;
     }
 }
 @media (min-width: 78rem) {
-    .container {
+    .spotscontainer {
         column-count: 4;
     }
 }
 @media (min-width: 98rem) {
-    .container {
+    .spotscontainer {
         column-count: 5;
     }
 }
 @media (min-width: 120rem) {
-    .container {
+    .spotscontainer {
         column-count: 6;
     }
 }

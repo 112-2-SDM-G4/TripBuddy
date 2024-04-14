@@ -6,7 +6,7 @@ import InputText from "../component/InputText";
 import { useLanguage } from "../hooks/useLanguage";
 import DragBox from "../component/DragBox";
 import testData from "../assets/testData.json";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
     IoSunny,
     IoRainy,
@@ -15,11 +15,21 @@ import {
 } from "react-icons/io5";
 
 export default function Edit() {
+    const { id } = useParams();
     const [stage, setStage] = useState(0);
     const [tripName, setTripName] = useState("");
     const [selectedStart, setSelectedStart] = useState("");
     const [selectedEnd, setSelectedEnd] = useState("");
     const { words, language } = useLanguage();
+
+    useEffect(() => {
+        if (id !== undefined) {
+            console.log(id);
+            //getTrip
+        }
+        return () => {};
+    }, [id]);
+
     return (
         <div className={style.main}>
             {stage === 0 && (
@@ -35,10 +45,8 @@ export default function Edit() {
             )}
             {stage === 1 && (
                 <EditPage
-                    setStage={setStage}
                     selectedStart={selectedStart}
                     selectedEnd={selectedEnd}
-                    words={words}
                     language={language}
                     tripName={tripName}
                 />
@@ -75,71 +83,66 @@ function InitialPage({
 
     return (
         <div className={style.initialpage}>
-            <InputText
-                propmt={words["tripname"]}
-                name={"tripname"}
-                setting={{ require: true, width: "100%" }}
-                onChange={setTripName}
-            />
-            <div
-                className={style.pickdate}
-                onClick={() => {
-                    setDisplayCalendar(!displayCalendar);
-                }}
-            >
-                <div>{words["startdate"]}</div>
-                <div>{words["enddate"]}</div>
-                <input
-                    className={style.datepicker}
-                    type="date"
-                    name="startdate"
-                    id="startdate"
-                    value={formatDate(selectedStart)}
-                    onClick={(event) => {
-                        event.target.blur();
-                    }}
-                    readOnly
+            <div className={style.initialblock}>
+                <InputText
+                    propmt={words["tripname"]}
+                    name={"tripname"}
+                    setting={{ require: true, width: "100%" }}
+                    onChange={setTripName}
                 />
-                <input
-                    className={style.datepicker}
-                    type="date"
-                    name="enddate"
-                    id="enddate"
-                    onClick={(event) => {
-                        event.target.blur();
+                <div
+                    className={style.pickdate}
+                    onClick={() => {
+                        setDisplayCalendar(!displayCalendar);
                     }}
-                    value={formatDate(selectedEnd)}
-                    readOnly
+                >
+                    <div>{words["startdate"]}</div>
+                    <div>{words["enddate"]}</div>
+                    <input
+                        className={style.datepicker}
+                        type="date"
+                        name="startdate"
+                        id="startdate"
+                        value={formatDate(selectedStart)}
+                        onClick={(event) => {
+                            event.target.blur();
+                        }}
+                        readOnly
+                    />
+                    <input
+                        className={style.datepicker}
+                        type="date"
+                        name="enddate"
+                        id="enddate"
+                        onClick={(event) => {
+                            event.target.blur();
+                        }}
+                        value={formatDate(selectedEnd)}
+                        readOnly
+                    />
+                </div>
+                {displayCalendar && (
+                    <Calendar
+                        selectedStart={selectedStart}
+                        setSelectedStart={setSelectedStart}
+                        selectedEnd={selectedEnd}
+                        setSelectedEnd={setSelectedEnd}
+                    />
+                )}
+                <div style={{ width: "100%", height: "2rem" }}>&nbsp;</div>
+                <Button
+                    txt={"下一頁"}
+                    func={() => {
+                        setStage(1);
+                    }}
+                    setting={{ width: "100%" }}
                 />
             </div>
-            {displayCalendar && (
-                <Calendar
-                    selectedStart={selectedStart}
-                    setSelectedStart={setSelectedStart}
-                    selectedEnd={selectedEnd}
-                    setSelectedEnd={setSelectedEnd}
-                />
-            )}
-            <div style={{ width: "100%", height: "2rem" }}>&nbsp;</div>
-            <Button
-                txt={"下一頁"}
-                func={() => {
-                    setStage(1);
-                }}
-                setting={{ width: "100%" }}
-            />
         </div>
     );
 }
 
-function EditPage({
-    setStage,
-    selectedStart,
-    selectedEnd,
-    words,
-    language,
-    tripName,
-}) {
+function EditPage({ selectedStart, selectedEnd, language, tripName }) {
     const [dates, setDates] = useState([]);
     const [selectedDate, setSelectedDate] = useState(0);
     const [trip, setTrip] = useState(testData["trip"]);

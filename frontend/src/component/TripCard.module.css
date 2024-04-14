@@ -1,8 +1,8 @@
 .card {
     /* break-inside: avoid; 避免卡片被分割到兩列 */
     display: flex;
-    width: 40rem;
-    height: 10rem;
+    width: 30rem;
+    height: 8rem;
     background-color: var(--backgroundcolor);
     /* padding: 0.5rem; */
     margin: 1rem;
@@ -19,11 +19,11 @@
     opacity: 0.9;
     transform: scale(1.05);
 }
-
 .img {
-    object-fit: fill;
-    width: 9rem;
-    height: auto;
+    object-fit: cover;
+    width: 11rem;
+    height: 100%;
+    overflow: hidden;
     border-radius: 0.5rem 0 0 0.5rem;
 }
 
@@ -35,6 +35,7 @@
 }
 
 .title {
+    margin-top: 1.5rem;
     height: 2.5rem;
     width: 100%;
     display: flex;
@@ -59,7 +60,8 @@
     height: 100%;
     width: fit-content;
     border-radius: 0.35rem;
-    background-color: var(--secondarycolor);
+    background-color: var(--primarycolor);
+    color: var(--backgroundcolor);
     opacity: 0.9;
     padding: 0 0.7rem 0 0.7rem;
     align-items: center;

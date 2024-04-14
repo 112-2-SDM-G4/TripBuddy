@@ -6,26 +6,22 @@
     max-width: 100dvw;
     max-height: calc(100dvh - 3.5rem);
     align-items: center;
-    padding-top: 3.5rem;
+    margin-top: 3.5rem;
 }
 
-.title {
-    font-size: 1.25rem;
-    font-weight: 900;
-    width: 100%;
-    padding-top: 1rem;
-    padding-left: 1rem;
-    margin-bottom: 1rem;
-    background-color: var(--secondarycolor);
-    color: var(--backgroundcolor);
-    padding-bottom: 0.5rem;
-}
 .initialpage {
     display: flex;
     flex-direction: column;
+    align-items: center;
+    width: 100vw;
+    height: 100%;
+    overflow-y: scroll;
+}
+.initialblock {
+    margin-top: 5rem;
     width: 80vw;
     max-width: 28rem;
-    padding-bottom: 3rem;
+    margin-bottom: 5rem;
 }
 .pickdate {
     display: grid;
@@ -51,11 +47,12 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 .editpage {
+    padding-top: 1rem;
     display: flex;
     flex-direction: column;
-    width: 100%;
+    width: 90vw;
+    max-width: 28rem;
     padding-bottom: 3rem;
-    padding-left: 1rem;
 }
 .editpageTitle {
     font-size: 1.25rem;
@@ -91,14 +88,4 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .addspot {
     font-size: 1.5rem;
     cursor: pointer;
-}
-
-@media (min-width: 900px) {
-    .main {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    .initialpage {
-        padding-left: 1rem;
-    }
 }
