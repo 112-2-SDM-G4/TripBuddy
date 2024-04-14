@@ -1,7 +1,7 @@
 # from models import db
 # from google.cloud.sql.connector import Connector, IPTypes
 # import sqlalchemy
-from . import db
+from app.models.create_db import db
 
 class User(db.Model):
     __tablename__ = 'User'

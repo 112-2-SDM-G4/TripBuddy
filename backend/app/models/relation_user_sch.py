@@ -1,4 +1,4 @@
-from . import db
+from app.models.create_db import db
 
 class RelationUserSch(db.Model):
     __tablename__ = 'Relation_User_Sch'

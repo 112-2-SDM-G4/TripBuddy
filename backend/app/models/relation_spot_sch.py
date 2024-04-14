@@ -1,4 +1,4 @@
-from . import db
+from app.models.create_db import db
 
 class RelationSpotSch(db.Model):
     __tablename__ = 'Relation_Spot_Sch'

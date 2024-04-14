@@ -1,4 +1,4 @@
-from . import db
+from app.models.create_db import db
 
 class Place(db.Model):
     __tablename__ = 'Place'

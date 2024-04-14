@@ -7,10 +7,14 @@ from flask_mail import Message
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 
 from app.models.user import User, UserVerify
-import app
+# import app
+from app.models.create_db import db
+from app.services.mail import get_mail
+
 
 class SendVerifyEmail(Resource):
     def post(self):
+        mail = get_mail()
         user_email = str(request.get_json()['user_email']).strip(' ')
         user = User.get_by_email(user_email)
         if user:
@@ -22,8 +26,8 @@ class SendVerifyEmail(Resource):
                 verification = UserVerify.update(user_email, {"v_code": v_code, "expired_time": expired_time})
             else: # first time
                 verification = UserVerify(email=user_email, v_code=v_code, expired_time=expired_time)
-                app.db.session.add(verification)
-                app.db.session.commit()
+                db.session.add(verification)
+                db.session.commit()
 
             msg = Message(
                 subject="[Email Verification]",
@@ -33,7 +37,7 @@ class SendVerifyEmail(Resource):
                 # html=render_template("email.html")
             )
             try:
-                app.mail.send(msg)
+                mail.send(msg)
                 return make_response({'valid': True, 'message': f"Verification Code has been sent to {user_email}."}, 200)
             except Exception as e:
                 return make_response({'valid': False, "message": str(e)}, 500)
@@ -79,8 +83,8 @@ class UserVerification(Resource):
                         language="zh",
                         questionnaire=False
                     )
-                    app.db.session.add(new_user)
-                    app.db.session.commit()
+                    db.session.add(new_user)
+                    db.session.commit()
 
                     jwt_token = create_access_token(identity=user_email)
                     res_json['valid'] = True
@@ -116,7 +120,7 @@ class SetUserInfo(Resource):
 
         ### tags 跟 relation_user_tag 的部分尚未實作
 
-        app.db.session.commit()
+        db.session.commit()
 
         responce = {
             'valid': True,
@@ -178,7 +182,8 @@ class LoginCheckPassword(Resource):
             return make_response(res_json, 401)
 class ForgetPassword(Resource):
     def post(self):
-        user_email = str(request.get_json()['user_email']).strip(' ')
+        mail = get_mail()
+        user_email = str(request.get_json()['email']).strip(' ')
         user = User.get_by_email(user_email)
         if not user:
             return make_response({'valid': False, 'message': "This email is not registered."}, 200)
@@ -188,8 +193,8 @@ class ForgetPassword(Resource):
             verification = UserVerify.update(user_email, {"v_code": v_code, "expired_time": expired_time})
         else:
             verification = UserVerify(email=user_email, v_code=v_code, expired_time=expired_time)
-            app.db.session.add(verification)
-            app.db.session.commit()
+            db.session.add(verification)
+            db.session.commit()
         # 寄信
         msg = Message(
             subject="[Reset Your Password]",
@@ -199,7 +204,7 @@ class ForgetPassword(Resource):
             # html=render_template("email.html")
         )
         try:
-            app.mail.send(msg)
+            mail.send(msg)
             return make_response({"valid": True, "message": "Password reset email was sent."}, 200)
         except Exception as e:
             return make_response({'valid': False, "message": str(e)}, 500)
@@ -210,7 +215,7 @@ class ResetPassword(Resource):
         reset_token = data['reset_token']
 
         res_json ={
-            "valid" :True,
+            "valid" :False,
             "message":""
         }
         # 因為經過 ForgetPassword 驗證後，不須再驗證 User table 只須驗證 UserVerify 的 code 正確/過期
@@ -222,11 +227,13 @@ class ResetPassword(Resource):
         if current_time > user.expired_time:
             res_json['message'] = "Verification code had been expired."
             return make_response(res_json, 200)
+        print(reset_token, user.verification_code)
         if reset_token != user.verification_code:
             res_json['message'] = "Wrong verification code!!!"
             return make_response(res_json, 200)
 
         # success
         User.update(email, {"new_password": data['new_password'], "new_salt": data['new_salt']})
+        res_json['valid'] = True
         res_json['message'] = "Password reset successful!"
         return make_response(res_json, 200)         

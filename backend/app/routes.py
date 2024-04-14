@@ -10,6 +10,7 @@ BASE_ROUTE = '/api/v1'
 
 # Add routes for controllers here
 def initialize_routes(api: Api):
+    api.add_resource(Test, f'{BASE_ROUTE}/test')
     api.add_resource(ExampleController, f'{BASE_ROUTE}/example/<string:id>')
     api.add_resource(TripManager, 
                      f'{BASE_ROUTE}/trip',
