@@ -14,27 +14,24 @@ const Reset = () => {
     const navigate = useNavigate();
 
     // Email validation logic
-    const handleEmailValidation = () => {
+    const handleSubmit = async (e) => {
+        e.preventDefault();
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailPattern.test(email)) {
+    
+        if (!email) {
+            setEmailError('Email is required.');
+            setIsSubmittedSuccessfully(false);
+            return; // Stop the function if the email is empty
+        } else if (!emailPattern.test(email)) {
             setEmailError('Please enter a valid email address.');
             setIsSubmittedSuccessfully(false);
+            return; // Stop the function if the email is invalid
         } else {
             setEmailError('');
         }
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setEmailError('');
-        handleEmailValidation(); // Validate email on submit
-
-        // If there's an email error, stop here
-        if (emailError) {
-            return;
-        }
+    
         try {
-            // const response = await fetch('/api/postReset', {
+            // const response = await fetch('/api/v1/user/send_email', {
             //     method: 'POST',
             //     headers: {
             //         'Content-Type': 'application/json',
@@ -93,7 +90,7 @@ const Reset = () => {
                 <button onClick={goBack} className={style.backButton}>
                     <FaArrowLeft /> {/* Back icon */}
                 </button>
-                <form action='/reset' onSubmit={handleSubmit} className={style.form}>
+                <form action='/reset' className={style.form}>
                     <div className={style.logoContainer}>
                         <img className={style.logo} src="../../logo.svg" alt="TourBuddy" />
                     </div>
@@ -110,7 +107,6 @@ const Reset = () => {
                             setting={{ require: true, type: 'email' }}
                             value={email}
                             onChange={setEmail}
-                            onBlur={handleEmailValidation}
                         />
 
                     </div>

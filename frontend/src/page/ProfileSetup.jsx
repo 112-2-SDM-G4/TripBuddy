@@ -3,7 +3,7 @@ import Button from '../component/Button'; // Assuming you have a Button componen
 import { useNavigate } from 'react-router-dom';
 import InputText from "../component/InputText";
 import style from "./ProfileSetup.module.css";
-import { fetchWithJwt } from '../hooks/fetchWithJwt';
+// import { fetchWithJwt } from '../hooks/fetchWithJwt';
 
 
 const ProgressBar = ({ progress, currentStep }) => {
