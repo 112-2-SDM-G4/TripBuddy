@@ -65,8 +65,8 @@ class TripManager(Resource):
             for relation in relations:
                 trip_info = {}
                 schedule = Schedule.get_by_id(relation.schedule_id)
-                trip_info['trip_id'] = schedule.schedule_id
-                trip_info['trip_name'] = schedule.schedule_name
+                trip_info['id'] = schedule.schedule_id
+                trip_info['name'] = schedule.schedule_name
                 trip_info['image'] = None
                 trip_info['date_status'] = check_date_status(schedule.start_date, schedule.end_date)
                 trip_info['start_date'] = date_to_array(schedule.start_date)
