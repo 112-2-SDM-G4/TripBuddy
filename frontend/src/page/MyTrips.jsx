@@ -13,6 +13,7 @@ const Explore = () => {
                 return response.json();
             })
             .then(function (result) {
+                console.log(result);
                 if (result["user_trip"]) {
                     setTrips(result["user_trip"]);
                 } else {

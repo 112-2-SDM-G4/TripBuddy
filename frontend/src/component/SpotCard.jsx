@@ -22,7 +22,7 @@ function SpotCard({ name, src, spotId }) {
             >
                 <img src={src} alt="spot loading" className={style.img} />
                 <div className={style.infocontainer}>
-                    <div>{name}</div>
+                    <div className={style.infotxt}>{name}</div>
                     <div
                         className={style.icon}
                         onClick={(event) => {
