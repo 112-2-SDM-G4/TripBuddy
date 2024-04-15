@@ -28,16 +28,6 @@ const ViewSpot = () => {
     const { language } = useLanguage();
     const [addPage, showAddPage] = useState(false);
     const [spot, setSpot] = useState({
-        spot_id: "spot01",
-        spot_name: "某某公園",
-        spot_image:
-            "https://down-tw.img.susercontent.com/file/tw-11134201-7qula-lk0pv54axu19d0",
-        spot_rate: 4.7,
-        spot_address: "Urayasu, Chiba, Japan",
-        spot_phone: 3242342,
-        spot_open: "9-18",
-
-        //下面是正式的
         place_id: "ChIJCewJkL2LGGAR3Qmk0vCTGkg",
         name: "東京鐵塔",
         address: "4-chōme-2-8 Shibakōen, Minato City, Tokyo 105-0011日本",
@@ -90,12 +80,13 @@ const ViewSpot = () => {
 
     useEffect(() => {
         console.log(id);
-        fetchWithJwt("/api/v1/place/detail", "get", { place_id: id })
+        fetchWithJwt("/api/v1/place/detail?place_id=" + id, "GET")
             .then(function (response) {
                 return response.json();
             })
             .then(function (result) {
                 console.log(result);
+                setSpot(result["result"]);
             });
         return () => {};
     }, [id]);
@@ -106,41 +97,35 @@ const ViewSpot = () => {
                 <AddPageforTrip
                     close={() => showAddPage(false)}
                     spot={{
-                        name: spot["spot_name"],
-                        src: spot["spot_image"],
-                        attractionId: spot["spot_id"],
+                        name: spot["name"],
+                        src: spot["image"],
+                        attractionId: spot["place_id"],
                     }}
                 />
             )}
-            <img src={spot["spot_image"]} alt="Logo" className={style.img} />
+            <img src={spot["image"]} alt="Logo" className={style.img} />
 
             <div className={style.textbox}>
-                <div className={style.title}> {spot["spot_name"]} </div>
+                <div className={style.title}> {spot["name"]} </div>
                 <div className={style.info}>
                     <div className={style.row}>
                         <div className={style.rowname}>
                             {words[language]["rate"]}
                         </div>
 
-                        {spot["spot_rate"]}
+                        {spot["rating"]}
                     </div>
                     <div className={style.row}>
                         <div className={style.rowname}>
                             {words[language]["address"]}
                         </div>
-                        {spot["spot_address"]}
-                    </div>
-                    <div className={style.row}>
-                        <div className={style.rowname}>
-                            {words[language]["phone"]}
-                        </div>
-                        {spot["spot_phone"]}
+                        {spot["address"]}
                     </div>
                     <div className={style.row}>
                         <div className={style.rowname}>
                             {words[language]["open"]}
                         </div>
-                        {spot["spot_open"]}
+                        {spot["opening_hours_d"][0]}
                     </div>
                 </div>
                 <div className={style.submit}>

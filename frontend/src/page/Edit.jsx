@@ -66,6 +66,10 @@ function InitialPage({
 }) {
     const [displayCalendar, setDisplayCalendar] = useState(false);
 
+    const createTrip = () => {
+        setStage(1);
+    };
+
     function formatDate(date) {
         if (!date || date === "") {
             return "";
@@ -133,7 +137,7 @@ function InitialPage({
                 <Button
                     txt={"下一頁"}
                     func={() => {
-                        setStage(1);
+                        createTrip();
                     }}
                     setting={{ width: "100%" }}
                 />

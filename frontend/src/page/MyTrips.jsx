@@ -1,31 +1,37 @@
 import React, { useEffect, useState } from "react";
-
 import style from "./MyTrips.module.css";
 import TripCard from "../component/TripCard";
-import testData from "../assets/testData.json";
+import { fetchWithJwt } from "../hooks/fetchWithJwt";
 
 const Explore = () => {
     const [trips, setTrips] = useState([]);
 
     useEffect(() => {
-        setTrips(testData["testSpots"]);
-
+        fetchWithJwt("/api/v1/trip", "GET")
+            .then(function (response) {
+                console.log(response);
+                return response.json();
+            })
+            .then(function (result) {
+                if (result["user_trip"]) {
+                    setTrips(result["user_trip"]);
+                } else {
+                    alert(result["message"]);
+                }
+            });
         return () => {};
     }, []);
-    
 
     return (
-        <div>
-            <div className={style.container}>
-                {trips.map((trip) => (
-                    <TripCard
-                        key={trip["spot_id"]}
-                        name={trip["spot_name"]}
-                        src={trip["spot_image"]}
-                        tripId={trip["spot_id"]}
-                    />
-                ))}
-            </div>
+        <div className={style.container}>
+            {trips.map((trip) => (
+                <TripCard
+                    key={trip["id"]}
+                    name={trip["name"]}
+                    src={trip["image"]}
+                    tripId={trip["id"]}
+                />
+            ))}
         </div>
     );
 };
