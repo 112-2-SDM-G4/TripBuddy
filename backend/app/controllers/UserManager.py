@@ -132,9 +132,10 @@ class SetUserInfo(Resource):
         return make_response(responce, 200)
     
 class LoginCheckUser(Resource):
-    def post(self):
-        data = request.get_json()
-        user_email = data.get('email')
+    def get(self):
+        user_email = request.args.get('user_email')
+        # data = request.get_json()
+        # user_email = data.get('email')、
         user = User.get_by_email(user_email)
 
         if user is not None:
