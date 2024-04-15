@@ -1,4 +1,4 @@
-export async function fetchWithJwt(url, method = "POST", postData = null) {
+export function fetchWithJwt(url, method = "POST", postData = null) {
     const options = {
         method,
         headers: {
