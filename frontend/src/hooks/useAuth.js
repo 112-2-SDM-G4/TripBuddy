@@ -1,4 +1,5 @@
 import { createContext, useContext, useState } from "react";
+import { fetchWithJwt } from './fetchWithJwt'
 
 const AuthContext = createContext();
 
@@ -57,16 +58,4 @@ export const AuthProvider = ({ children }) => {
 
 export const useAuth = () => useContext(AuthContext);
 
-// fetchWithJwt function adjusted for error handling
-async function fetchWithJwt(url, method = 'POST', postData = null) {
-    const options = {
-        method,
-        headers: {
-            'Content-Type': 'application/json',
-            ...(sessionStorage.getItem('jwtToken') && { 'Authorization': `Bearer ${sessionStorage.getItem('jwtToken')}` }),
-        },
-        ...(postData && { body: JSON.stringify(postData) }),
-    };
 
-    return fetch(url, options);
-}

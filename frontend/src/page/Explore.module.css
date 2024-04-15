@@ -1,28 +1,35 @@
-.container {
+.searchboxcontainer {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.spotscontainer {
     column-gap: 0rem;
     column-count: 2;
     padding-top: 1rem;
     padding-left: 1rem;
     margin-bottom: 5rem;
+    /* margin-top: 4.5rem; */
 }
 
 @media (min-width: 60rem) {
-    .container {
+    .spotscontainer {
         column-count: 3;
     }
 }
 @media (min-width: 78rem) {
-    .container {
+    .spotscontainer {
         column-count: 4;
     }
 }
 @media (min-width: 98rem) {
-    .container {
+    .spotscontainer {
         column-count: 5;
     }
 }
 @media (min-width: 120rem) {
-    .container {
+    .spotscontainer {
         column-count: 6;
     }
 }

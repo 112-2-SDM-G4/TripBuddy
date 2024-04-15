@@ -1,19 +1,24 @@
 import React, { useState } from "react";
-import style from "./AttractionCard.module.css";
+import style from "./SpotCard.module.css";
 import { useNavigate } from "react-router-dom";
 import { AiOutlinePlusCircle } from "react-icons/ai";
 import AddPageforTrip from "./AddPageforTrip";
 
-function AttractionCard({ name, src, attractionId }) {
+function SpotCard({ name, src, spotId }) {
     const navigate = useNavigate();
     const [addPage, showAddPage] = useState(false);
 
     return (
         <>
-            {addPage && <AddPageforTrip close={() => showAddPage(false)} />}
+            {addPage && (
+                <AddPageforTrip
+                    close={() => showAddPage(false)}
+                    spot={{ name, src, spotId }}
+                />
+            )}
             <div
                 className={style.card}
-                onClick={() => navigate(`/attraction/${attractionId}`)}
+                onClick={() => navigate(`/spot/${spotId}`)}
             >
                 <img src={src} alt="spot loading" className={style.img} />
                 <div className={style.infocontainer}>
@@ -33,4 +38,4 @@ function AttractionCard({ name, src, attractionId }) {
     );
 }
 
-export default AttractionCard;
+export default SpotCard;

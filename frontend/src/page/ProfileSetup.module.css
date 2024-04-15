@@ -3,7 +3,7 @@
     flex-direction: column;
     width: 100vw;
     align-items: center;
-    padding-top: 0.5rem;
+    padding-top: 2rem;
 }
 
 .container {
@@ -21,8 +21,8 @@
     height: 1.4rem;
     width: 100%;
     background-color: color-mix(in srgb, var(--fontcolor) 15%, transparent);
-    border-radius: 5px;
-    margin: 20px 0;
+    border-radius: 1rem;
+    margin: 1.5rem 0;
 }
 
 .FillerStyle {
@@ -35,7 +35,7 @@
 
 
 .LabelStyle {
-    padding: 5px;
+    padding: 1rem;
     color: var(--fontcolor);
     font-weight: bold;
 }
@@ -45,38 +45,98 @@
     color: var(--fontcolor);
 }
 
-.button {
-    padding: 10px;
-    margin: 5px;
-    border: 1px solid #ccc;
-    background-color: #f5f5f5;
+.questionnaire {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
+    margin: auto;
+
 }
 
-.activeButton {
-    padding: 10px;
-    margin: 5px;
-    border: 1px solid blue;
-    background-color: lightblue;
+.pageButtons {
+    display: flex; 
+    justify-content: center; 
+    gap: 0.5rem; 
+    margin-top: 1rem; 
+}
+
+.backButton, .nextButton {
+    padding: 0.5rem 1rem; /* Adjust padding */
+    border-radius: 5px; /* Rounded corners */
+    background-color: #f0f0f0; /* Light grey background */
+    border: none; /* No border */
+    color: #333; /* Dark grey text */
+    transition: background-color 0.3s, color 0.3s; /* Smooth transitions on hover */
+}
+
+.backButton:hover, .nextButton:hover {
+    background-color: #ccc; /* Darker background on hover */
+    color: #fff; /* White text on hover */
+}
+
+.btn {
+    color: var(--fontcolor);
+    cursor: pointer;
+    font-size: 2rem;
+    font-weight: 300;
+    line-height: 45px;
+    margin: 0 0 2rem;
+    width: fit-content;
+    position: relative;
+    overflow: hidden; /* Ensures the pseudo-elements do not exceed the button boundaries */
+    background-color: transparent; /* No background for simplicity, adjust as needed */
+    text-decoration: none; /* Ensures no underline unless specified */
+    transition: background-color 0.3s, color 0.3s, letter-spacing 0.3s;
+}
+
+.btn::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 0; /* Initially, the underline is not shown */
+    height: 0.1rem; /* Height of the underline */
+    background-color: var(--primarycolor);
+    
+    transition: width 0.28s ease-in-out;
+}
+
+.btn:hover, .btn.activeButton {
+    color: var(--primarycolor);
+}
+
+.btn:hover::after, .btn.activeButton::after {
+    width: 100%; /* Expands the underline to full width on hover and when active */
+}
+
+.languagePreference {
+    margin: auto;
+    align-items: center;
+    justify-content: center;
+    
 }
 
 .avatarSelector {
     display: flex;
     flex-wrap: wrap;
-    gap: 16px;
+    gap: 2rem;
     /* Adjust the space between the avatars and the button */
     justify-content: center;
+    padding-bottom: 0.7rem;
     /* Add other styling as needed */
 }
 
 .avatar,
 .avatarAddButton {
-    width: 92px;
+    width: 5rem;
     /* Avatar size */
-    height: 92px;
+    height: 5rem;
     /* Avatar size */
     border-radius: 50%;
     /* Makes it circular */
-    border: 1px solid #ccc;
+    border: 0.2rem solid color-mix(in srgb, var(--fontcolor) 15%, transparent);
     /* Example border, adjust as needed */
     display: flex;
     align-items: center;
@@ -84,24 +144,55 @@
     font-size: 2rem;
     /* Adjust '+' size as needed */
     cursor: pointer;
-    background-color: #fff;
+    background: color-mix(in srgb, var(--fontcolor) 15%, transparent);
+    text-decoration-color: var(--fontcolor);
     /* Adjust the background color as needed */
-}
-
-/* If you want a different style for the '+' button */
-.avatarAddButton {
-    background: #f0f0f0;
-    /* Light grey background, adjust as needed */
-    /* Add other styles specific to the '+' button if needed */
 }
 
 /* You might want to add some hover effects */
 .avatar:hover,
 .avatarAddButton:hover {
-    border-color: #000;
+    border-color: var(--fontcolor);
     /* Example hover effect */
 }
 
+.selectedAvatar {
+    border-radius: 50%;
+    width: 5rem;
+    height: 5rem;
+    border: 0.2rem solid var(--fontcolor);
+}
+
+.options {
+    align-items: center;
+    justify-content: center;
+    display: flex;
+}
+
+.field{
+    width: fit-content;
+    margin: auto;
+}
+
+.errorMessage {
+    color: red;
+    /* Style it as needed, for example: */
+    font-size: 1rem;
+    margin-bottom: 0.6rem;
+}
+
+.logoContainer {
+    text-align: center;
+    margin: 2rem;
+}
+
+.logo {
+    width: 8rem;
+}
+
+.introText {
+    text-align: center;
+}
 
 
 @media (max-width: 735px) {
