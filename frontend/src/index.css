@@ -1,0 +1,67 @@
+* {
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+    color: var(--fontcolor);
+}
+html {
+    font-size: 20px;
+}
+@media (max-width: 600px) {
+    html {
+        font-size: 16px;
+    }
+}
+@media (max-width: 325px) {
+    html {
+        font-size: 12px;
+    }
+}
+body {
+    margin: 0;
+    font-family: "Jockey one", "Microsoft JhengHei", "PingFang", -apple-system,
+        BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu",
+        "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+.App {
+    width: 100vw;
+    height: 100vh;
+    max-width: 100dvw;
+    max-height: 100dvh;
+    overflow-x: hidden;
+    overflow-y: auto;
+    background-color: var(--backgroundcolor);
+}
+.App[theme="dark"] {
+    --accentcolor: #88cf46;
+    --primarycolor: #bdd5ea;
+    --secondarycolor: #d9ab42;
+    --backgroundcolor: #464646;
+    --fontcolor: #e2efe7;
+    --fieldcolor: #486160;
+}
+.App[theme="light"] {
+    --accentcolor: #e26c5a;
+    --primarycolor: #3b8ea5;
+    --secondarycolor: #985f2a;
+    --backgroundcolor: #eae8e1;
+    --fontcolor: #050003;
+    --fieldcolor: white;
+}
+
+::-webkit-scrollbar {
+    height: 0.5rem;
+    width: 0.5rem;
+    background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: color-mix(
+        in srgb,
+        var(--secondarycolor) 80%,
+        transparent
+    );
+    border-radius: 10px;
+}
