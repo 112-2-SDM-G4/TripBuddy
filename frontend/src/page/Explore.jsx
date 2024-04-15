@@ -52,7 +52,7 @@ const Explore = () => {
 
     useEffect(() => {
         setSpots(testSpots);
-        fetchWithJwt("/api/v1/place/search", "post", {
+        fetchWithJwt("/api/v1/place/search", "GET", {
             search: "",
         })
             .then(function (response) {
@@ -70,7 +70,7 @@ const Explore = () => {
 
     const handleSearch = async (query) => {
         console.log("Searching for:", query);
-        fetchWithJwt("/api/v1/place/search", "post", {
+        fetchWithJwt("/api/v1/place/search", "GET", {
             search: query,
         })
             .then(function (response) {
