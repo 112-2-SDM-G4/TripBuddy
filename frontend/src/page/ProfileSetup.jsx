@@ -87,25 +87,21 @@ const ProfileSetup = () => {
   // }, [fetchWithJwt]); 
 
   const handleSubmit = async () => {
-    // if (!userInfo.username || !userInfo.photo) {
-    //   setError("Please complete all required fields.");
-    //   return;
-    // }
 
-    // try {
-    //   const response = await fetchWithJwt('/api/v1/user/set_info', 'POST', { userInfo });
-    //   const data = await response.json();
-    //   if (!data.valid) {
-    //     throw new Error(data.message || "Submission failed, please try again.");
-    //   }
-    //   sessionStorage.setItem('username', data.user_name);
-    //   sessionStorage.setItem('language', data.language);
-    //   // Redirect or show success message
-    //   navigate('/explore');
-    // } catch (error) {
-    //   console.error("Profile setup failed:", error);
-    //   setError(error.message);
-    // }
+    try {
+      const response = await fetchWithJwt('/api/v1/user/set_info', 'POST', { userInfo });
+      const data = await response.json();
+      if (!data.valid) {
+        throw new Error(data.message || "Submission failed, please try again.");
+      }
+      sessionStorage.setItem('username', data.user_name);
+      sessionStorage.setItem('language', data.language);
+      // Redirect or show success message
+      navigate('/explore');
+    } catch (error) {
+      console.error("Profile setup failed:", error);
+      setError(error.message);
+    }
   };
 
   const handleUserInfoChange = (value) => {
