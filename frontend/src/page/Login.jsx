@@ -215,9 +215,9 @@ const SignupForm = ({ onSignupSuccess }) => {
                 body: JSON.stringify({ user_email: localEmail })
             });
 
-            if (!response.OK) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
+            // if (!response.OK) {
+            //     throw new Error(`HTTP error! status: ${response.status}`);
+            // }
 
             const data = await response.json();
 
