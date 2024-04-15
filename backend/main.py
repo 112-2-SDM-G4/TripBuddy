@@ -4,6 +4,7 @@ import os
 from dotenv import load_dotenv
 
 from flask import Flask
+from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from app import create_app
 from app.models.create_db import init_db
@@ -12,6 +13,8 @@ from app.services.mail import init_mail
 
 # app = create_app()
 app = Flask(__name__)
+CORS(app)
+
 api = Api(app)
 
 
