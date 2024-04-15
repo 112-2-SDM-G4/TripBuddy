@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState } from "react";
+import { fetchWithJwt } from "./fetchWithJwt";
 
 const AuthContext = createContext();
 
@@ -20,15 +21,16 @@ export const AuthProvider = ({ children }) => {
 
             // const data = await response.json();
             const data = {
-                "valid": true,
-                "jwt_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMTIzNDU2Nzg5MCIsIm5hbWUiOiLlsI_mmI4ifQ.f2QgkBxI2j09ks4XBnzDNOVBo-WKlbRp6f8FxfqgtKg",
-                "user_name": "",
-                "language": "zh",
-                "message": "登入成功",
-                "preference" : true
-            }
+                valid: true,
+                jwt_token:
+                    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMTIzNDU2Nzg5MCIsIm5hbWUiOiLlsI_mmI4ifQ.f2QgkBxI2j09ks4XBnzDNOVBo-WKlbRp6f8FxfqgtKg",
+                user_name: "",
+                language: "zh",
+                message: "登入成功",
+                preference: true,
+            };
             if (data.valid) {
-                sessionStorage.setItem('jwtToken', data.jwt_token);
+                sessionStorage.setItem("jwtToken", data.jwt_token);
                 setUser({ ...data.user }); // Assuming data.user contains user info
                 setIsLoggedIn(true);
                 return { success: true, error: null };
@@ -41,9 +43,8 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-
     const logout = () => {
-        sessionStorage.removeItem('jwtToken');
+        sessionStorage.removeItem("jwtToken");
         setUser({});
         setIsLoggedIn(false);
     };
@@ -56,17 +57,3 @@ export const AuthProvider = ({ children }) => {
 };
 
 export const useAuth = () => useContext(AuthContext);
-
-// fetchWithJwt function adjusted for error handling
-async function fetchWithJwt(url, method = 'POST', postData = null) {
-    const options = {
-        method,
-        headers: {
-            'Content-Type': 'application/json',
-            ...(sessionStorage.getItem('jwtToken') && { 'Authorization': `Bearer ${sessionStorage.getItem('jwtToken')}` }),
-        },
-        ...(postData && { body: JSON.stringify(postData) }),
-    };
-
-    return fetch(url, options);
-}

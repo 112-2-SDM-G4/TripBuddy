@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Button from '../component/Button'; // Assuming you have a Button component
+import { useNavigate } from 'react-router-dom';
 import InputText from "../component/InputText";
 import style from "./ProfileSetup.module.css";
+// import { fetchWithJwt } from '../hooks/fetchWithJwt';
 
 
 const ProgressBar = ({ progress, currentStep }) => {
@@ -14,7 +16,7 @@ const ProgressBar = ({ progress, currentStep }) => {
   );
 };
 
-const AvatarSelector = ({ onSelect, avatars, onUpload }) => {
+const AvatarSelector = ({ onSelect, avatars, onUpload, selectedAvatar }) => {
   return (
     <div className={style.avatarSelector}>
       {avatars.map((avatar, index) => (
@@ -23,7 +25,7 @@ const AvatarSelector = ({ onSelect, avatars, onUpload }) => {
           src={avatar}
           alt={`Avatar ${index + 1}`}
           onClick={() => onSelect(avatar)}
-          className={style.avatar}
+          className={avatar === selectedAvatar ? style.selectedAvatar : style.avatar}
         />
       ))}
       <button
@@ -38,28 +40,77 @@ const AvatarSelector = ({ onSelect, avatars, onUpload }) => {
 
 const ProfileSetup = () => {
   const [currentStep, setCurrentStep] = useState(1);
+  const [selectedAvatar, setSelectedAvatar] = useState(null);
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
+
   const totalSteps = 3;
   // Additional states for form inputs
   const [userInfo, setUserInfo] = useState({
     username: '',
     language: '',
-    photo: null,
-    travelStyle: '',
-    activities: [],
-    travelGroup: '',
-    destinationType: ''
+    // photo: null,
+    tags: []
   });
-  const [preferences, setPreferences] = useState({
-    travelStyle: '',
-    preferredActivities: []
-  });
+  const [tags, setTags] = useState([]);
 
-  const nextStep = () => setCurrentStep(Math.min(currentStep + 1, totalSteps));
-  const prevStep = () => setCurrentStep(Math.max(currentStep - 1, 1));
+  const nextStep = () => {
+    if (currentStep === 1 && (!userInfo.username || !userInfo.language)) {
+      setError("Please enter a username and select a language.");
+      return;
+    }
+    setError(''); // Clear errors if all validations are passed
+    setCurrentStep(Math.min(currentStep + 1, totalSteps));
+  };
 
-  const handleUserInfoChange = (e) => {
-    const { name, value } = e.target;
-    setUserInfo(prev => ({ ...prev, [name]: value }));
+  const prevStep = () => {
+    setError(''); // Clear errors on going back
+    setCurrentStep(Math.max(currentStep - 1, 1));
+  };
+
+  // useEffect(() => {
+  //   const fetchPreferences = async () => {
+  //     try {
+  //       const response = await fetchWithJwt('/api/v1/user/getPreference', 'GET');
+  //       if (!response.ok) {
+  //         throw new Error(`HTTP error! Status: ${response.status}`);
+  //       }
+  //       const data = await response.json();
+  //       setTags(data);
+  //     } catch (error) {
+  //       console.error("Fetching preferences failed:", error);
+  //       setError(error.message);
+  //     }
+  //   };
+
+  //   fetchPreferences();
+  // }, [fetchWithJwt]); 
+
+  const handleSubmit = async () => {
+    // if (!userInfo.username || !userInfo.photo) {
+    //   setError("Please complete all required fields.");
+    //   return;
+    // }
+
+    // try {
+    //   const response = await fetchWithJwt('/api/v1/user/set_info', 'POST', { userInfo });
+    //   const data = await response.json();
+    //   if (!data.valid) {
+    //     throw new Error(data.message || "Submission failed, please try again.");
+    //   }
+    //   sessionStorage.setItem('username', data.user_name);
+    //   sessionStorage.setItem('language', data.language);
+    //   // Redirect or show success message
+    //   navigate('/explore');
+    // } catch (error) {
+    //   console.error("Profile setup failed:", error);
+    //   setError(error.message);
+    // }
+  };
+
+  const handleUserInfoChange = (value) => {
+    setUserInfo(prev => ({ ...prev, username: value }));
+    console.log(userInfo);
   };
 
   const handleChange = (e) => {
@@ -73,10 +124,12 @@ const ProfileSetup = () => {
       }));
     } else {
       setUserInfo(prev => ({ ...prev, [name]: value }));
+      console.log(userInfo);
     }
   };
 
   const handleAvatarSelect = (avatar) => {
+    setSelectedAvatar(avatar);
     setUserInfo(prev => ({ ...prev, photo: avatar }));
   };
 
@@ -100,31 +153,44 @@ const ProfileSetup = () => {
                 Your answers to the following questions will help us tailor your experience and recommendations. It'll only take a minute!
               </p>
             </div>
-            <AvatarSelector
-              onSelect={handleAvatarSelect}
-              avatars={['../../boy.png', '../../panda.png', '../../gamer.png', '../../woman.png']}
-              onUpload={handleAvatarUpload}
-            />
-            <InputText
-              propmt={"Username"}
-              name={"username"}
-              setting={{ require: true, type: 'text' }}
-              value={userInfo.username}
-              onChange={handleUserInfoChange}
-            />
-            <div className={style.languagePreference}>
-              <Button
-                txt="繁體中文"
-                func={() => setUserInfo(prev => ({ ...prev, language: 'Chinese' }))}
-                className={userInfo.language === 'Chinese' ? style.activeButton : style.button}
-              />
-              <Button
-                txt="English"
-                func={() => setUserInfo(prev => ({ ...prev, language: 'English' }))}
-                className={userInfo.language === 'English' ? style.activeButton : style.button}
-              />
+            <div className={style.field}>
+              <div className={style.questionnaire}>
+                <AvatarSelector
+                  onSelect={handleAvatarSelect}
+                  avatars={['../../boy.png', '../../panda.png', '../../gamer.png', '../../woman.png']}
+                  onUpload={handleAvatarUpload}
+                  selectedAvatar={selectedAvatar}
+                />
+                <InputText
+                  propmt={"Username"}
+                  name={"username"}
+                  setting={{ require: true, type: 'text', defaultValue: userInfo.username ? userInfo.username : ''  }}
+                  onChange={handleUserInfoChange}
+                />
+              </div>
+
+              <div className={style.languagePreference}>
+                <p className={style.introText}>Language</p>
+                <div className={style.options}>
+                  <button
+                    name='language'
+                    value='zh'
+                    onClick={handleChange}
+                    className={`${style.btn} ${userInfo.language === 'zh' ? style.activeButton : ""}`}>
+                    繁體中文
+                  </button>
+                  <button
+                    name='language'
+                    value='en'
+                    onClick={handleChange}
+                    className={`${style.btn} ${userInfo.language === 'en' ? style.activeButton : ""}`}>
+                    English
+                  </button>
+                </div>
+              </div>
+              {error && <p className={style.errorMessage}>{error}</p>}
+              <Button txt="Next" func={nextStep} />
             </div>
-            <Button txt="Next" func={nextStep} />
           </div>
         </>
       );
@@ -136,56 +202,17 @@ const ProfileSetup = () => {
         <>
           <div>
             <h2>Travel Preferences</h2>
-            <div>
-              <label>What's your travel style?</label>
-              <select name="travelStyle" value={userInfo.travelStyle} onChange={handleChange}>
-                <option value="Adventurous">Adventurous</option>
-                <option value="Relaxed">Relaxed</option>
-                <option value="Cultural">Cultural</option>
-                <option value="Gastronomic">Gastronomic</option>
-                <option value="Luxurious">Luxurious</option>
-              </select>
-            </div>
 
-            <div>
-              <label>What activities do you enjoy?</label>
-              {['Hiking', 'Swimming', 'Museum Visits', 'Dining Out', 'Shopping', 'Sightseeing'].map((activity) => (
-                <label key={activity}>
-                  <input
-                    type="checkbox"
-                    name="activities"
-                    value={activity}
-                    checked={userInfo.activities.includes(activity)}
-                    onChange={handleChange}
-                  />
-                  {activity}
-                </label>
-              ))}
+            <div className={style.pageButtons}>
+              <Button
+                txt="Back"
+                func={prevStep}
+              />
+              <Button
+                txt="Next"
+                func={nextStep}
+              />
             </div>
-
-            <div>
-              <label>Who do you usually travel with?</label>
-              <select name="travelGroup" value={userInfo.travelGroup} onChange={handleChange}>
-                <option value="Alone">Alone</option>
-                <option value="Partner">Partner</option>
-                <option value="Family">Family</option>
-                <option value="Friends">Friends</option>
-              </select>
-            </div>
-
-            <div>
-              <label>What type of destinations do you prefer?</label>
-              <select name="destinationType" value={userInfo.destinationType} onChange={handleChange}>
-                <option value="Cities">Cities</option>
-                <option value="Countryside">Countryside</option>
-                <option value="Mountains">Mountains</option>
-                <option value="Beaches">Beaches</option>
-                <option value="Historical Sites">Historical Sites</option>
-              </select>
-            </div>
-
-            <Button txt="Back" func={prevStep} />
-            <Button txt="Next" func={nextStep} />
           </div>
         </>
       );
@@ -196,9 +223,20 @@ const ProfileSetup = () => {
         <>
           <div>
             <h2>Welcome to TripBuddy!</h2>
-            <p>Your profile is all set up. Start exploring now!</p>
-            <Button txt="Back" func={prevStep} />
-            <Button txt="Submit" func={nextStep} />
+            <p className={style.introText}>Your profile is all set up. Start exploring now!</p>
+            <div className={style.logoContainer}>
+                <img className={style.logo} src="../../logo.svg" alt="TourBuddy" />
+            </div>
+            <div className={style.pageButtons}>
+              <Button
+                txt="Back"
+                func={prevStep}
+              />
+              <Button
+                txt="Submit"
+                func={handleSubmit}
+              />
+            </div>
           </div>
         </>
       );
