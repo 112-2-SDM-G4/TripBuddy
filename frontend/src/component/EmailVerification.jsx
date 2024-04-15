@@ -24,22 +24,22 @@ const EmailVerification = ({ email, hashed_password, salt }) => {
 
     const verifyEmail = async (verificationCode) => {
         try {
-            // const response = await fetch('/api/v1/user/verify', {
-            //     method: 'POST',
-            //     headers: { 'Content-Type': 'application/json' },
-            //     body: JSON.stringify({ email, hashed_password, salt, verificationCode })
-            // });
+            const response = await fetch('/api/v1/user/verify', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, hashed_password, salt, verificationCode })
+            });
 
-            // if (!response.ok) {
-            //     throw new Error(`HTTP error! Status: ${response.status}`);
-            // }
-
-            // const data = await response.json();
-            const data = {
-                "valid": true,
-                "jwt_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMTIzNDU2Nzg5MCIsIm5hbWUiOiLlsI_mmI4ifQ.f2QgkBxI2j09ks4XBnzDNOVBo-WKlbRp6f8FxfqgtKg",
-                "message": "Register Successfully!!!"
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
             }
+
+            const data = await response.json();
+            // const data = {
+            //     "valid": true,
+            //     "jwt_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMTIzNDU2Nzg5MCIsIm5hbWUiOiLlsI_mmI4ifQ.f2QgkBxI2j09ks4XBnzDNOVBo-WKlbRp6f8FxfqgtKg",
+            //     "message": "Register Successfully!!!"
+            // }
             
             if (data.valid) {
                 const { success, error } = await login(email, hashed_password);

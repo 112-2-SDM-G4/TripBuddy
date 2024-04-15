@@ -71,29 +71,29 @@ const LoginForm = () => {
         setError(''); // Reset error message
         if (email) {
             try {
-                // const response = await fetch('/api/getSalt', {
-                //     method: 'POST',
-                //     headers: {
-                //         'Content-Type': 'application/json',
-                //     },
-                //     body: JSON.stringify({ email })
-                // });
-                // const data = await response.json(); // Get the JSON payload
-                const data_true = {
-                    "valid": true,
-                    "salt": `$2b$10$IHadE3iUTRkVze.OPcKhTe`,
-                    "message": ""
-                }
+                const response = await fetch('/api/v1/user/check_user', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email })
+                });
+                const data = await response.json(); // Get the JSON payload
+                // const data_true = {
+                //     "valid": true,
+                //     "salt": `$2b$10$IHadE3iUTRkVze.OPcKhTe`,
+                //     "message": ""
+                // }
                 // const data_false =
                 // {
                 //     "valid": false,
                 //     "salt": "",
                 //     "message": "該帳號未註冊"
                 // }
-                if (!data_true.valid) {
-                    throw new Error(data_true.message);
+                if (!data.valid) {
+                    throw new Error(data.message);
                 }
-                setSalt(data_true.salt);
+                setSalt(data.salt);
 
             } catch (error) {
                 setError(error.message); // Set error message
@@ -215,22 +215,22 @@ const SignupForm = ({ onSignupSuccess }) => {
         const hashedPassword = SHA256(password + salt).toString();
 
         try {
-            // const response = await fetch('/api/v1/user/send_email', {
-            //     method: 'POST',
-            //     headers: { 'Content-Type': 'application/json' },
-            //     body: JSON.stringify({ localEmail })
-            // });
+            const response = await fetch('/api/v1/user/send_email', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ localEmail })
+            });
 
-            // if (!response.OK) {
-            //     throw new Error(`HTTP error! status: ${response.status}`);
-            // }
-
-            // const data = await response.json();
-
-            const data = {
-                "valid": true,
-                "message": "已寄送驗證信"
+            if (!response.OK) {
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
+
+            const data = await response.json();
+
+            // const data = {
+            //     "valid": true,
+            //     "message": "已寄送驗證信"
+            // }
             // Assuming a successful response
             if (data.valid) {
                 onSignupSuccess(localEmail, salt, hashedPassword); // Pass the email back up to the parent component
