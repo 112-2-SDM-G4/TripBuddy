@@ -71,7 +71,7 @@ const LoginForm = () => {
         setError(''); // Reset error message
         if (email) {
             try {
-                const response = await fetch('/api/v1/user/check_user', {
+                const response = await fetch("http:/localhost:5000"+'/api/v1/user/check_user', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -215,7 +215,7 @@ const SignupForm = ({ onSignupSuccess }) => {
         const hashedPassword = SHA256(password + salt).toString();
 
         try {
-            const response = await fetch('/api/v1/user/send_email', {
+            const response = await fetch("http:/localhost:5000"+'/api/v1/user/send_email', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ localEmail })
