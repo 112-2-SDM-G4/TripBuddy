@@ -52,9 +52,7 @@ const Explore = () => {
 
     useEffect(() => {
         setSpots(testSpots);
-        fetchWithJwt("/api/v1/place/search", "GET", {
-            search: "",
-        })
+        fetchWithJwt("/api/v1/place/search?search=", "GET")
             .then(function (response) {
                 console.log(response);
                 return response.json();
@@ -70,9 +68,7 @@ const Explore = () => {
 
     const handleSearch = async (query) => {
         console.log("Searching for:", query);
-        fetchWithJwt("/api/v1/place/search", "GET", {
-            search: query,
-        })
+        fetchWithJwt("/api/v1/place/search?search=" + query, "GET")
             .then(function (response) {
                 return response.json();
             })
