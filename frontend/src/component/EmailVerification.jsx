@@ -27,7 +27,12 @@ const EmailVerification = ({ email, hashed_password, salt }) => {
             const response = await fetch("http://localhost:5000"+'/api/v1/user/verify', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, hashed_password, salt, verificationCode })
+                body: JSON.stringify({ 
+                    user_email: email, 
+                    hashed_password: hashed_password, 
+                    salt: salt,
+                    token: verificationCode
+                })
             });
 
             if (!response.ok) {

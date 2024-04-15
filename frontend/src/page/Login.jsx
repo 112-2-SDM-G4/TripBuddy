@@ -71,13 +71,7 @@ const LoginForm = () => {
         setError(''); // Reset error message
         if (email) {
             try {
-                const response = await fetch("http://localhost:5000"+'/api/v1/user/check_user', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ email })
-                });
+                const response = await fetch(`http://localhost:5000/api/v1/user/check_user?user_email=${email}`)
                 const data = await response.json(); // Get the JSON payload
                 // const data_true = {
                 //     "valid": true,
@@ -218,7 +212,7 @@ const SignupForm = ({ onSignupSuccess }) => {
             const response = await fetch("http://localhost:5000"+'/api/v1/user/send_email', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ localEmail })
+                body: JSON.stringify({ user_email: localEmail })
             });
 
             if (!response.OK) {
