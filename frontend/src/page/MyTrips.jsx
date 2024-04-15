@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import style from "./MyTrips.module.css";
 import TripCard from "../component/TripCard";
+import { fetchWithJwt } from "../hooks/fetchWithJwt";
 
 const Explore = () => {
     const [trips, setTrips] = useState([]);
