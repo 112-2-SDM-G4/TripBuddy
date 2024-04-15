@@ -30,7 +30,7 @@ class TripManager(Resource):
             schedule = Schedule.get_by_id(trip_id)
             places_in_trip = RelationSpotSch.get_by_schedule(trip_id)
             
-            trip = [[] for _ in range(self.get_trip_length(schedule))]
+            trip_detail = [[] for _ in range(self.get_trip_length(schedule))]
             places_in_trip.sort(key=lambda x: (x.date, x.order))
             for relation_spot_sch in places_in_trip:
                 place = Place.get_by_id(relation_spot_sch.place_id)
@@ -49,9 +49,16 @@ class TripManager(Resource):
                     "money": relation_spot_sch.money,
                     "stay_time": [relation_spot_sch.period_hours, relation_spot_sch.period_minutes],
                 }
-                trip[relation_spot_sch.date].append(place_info)
+                trip_detail[relation_spot_sch.date].append(place_info)
 
-            responce = {"trip": trip}
+            responce = {
+                "id": schedule.schedule_id,
+                "name": schedule.schedule_name,
+                "image": None,
+                "start_date": date_to_array(schedule.start_date),
+                "end_date": date_to_array(schedule.end_date),
+                "trip": trip_detail
+            }
             responce['public'] = schedule.public
 
 
