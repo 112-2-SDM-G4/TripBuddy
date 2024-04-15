@@ -1,4 +1,5 @@
 import os
+import random
 from flask_restful import Resource
 from flask import request, make_response
 from typing import Dict
@@ -16,7 +17,9 @@ GOOGLE_MAPS_API_KEY = os.getenv('GOOGLE_MAPS_API_KEY')
 class PlaceSearch(Resource):
     # @jwt_required()
     def get(self) -> Dict:
-        search_text = request.args.get('search') # TODO: can be edited
+        search_text = request.args.get('search')
+        if str(search_text).strip(' ') == '':
+            search_text = random.choice(['台北 夜市美食', '台北 觀光景點', '東京 景點'])
         google_maps = GoogleMapApi(GOOGLE_MAPS_API_KEY)
         search_res, search_places = google_maps.get_search_info(search_text)
         responses = make_response({
