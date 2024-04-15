@@ -47,7 +47,7 @@ const ProfileSetup = () => {
   const totalSteps = 3;
   // Additional states for form inputs
   const [userInfo, setUserInfo] = useState({
-    username: '',
+    user_name: '',
     language: '',
     // photo: null,
     tags: []
@@ -55,7 +55,7 @@ const ProfileSetup = () => {
   const [tags, setTags] = useState([]);
 
   const nextStep = () => {
-    if (currentStep === 1 && (!userInfo.username || !userInfo.language)) {
+    if (currentStep === 1 && (!userInfo.user_name || !userInfo.language)) {
       setError("Please enter a username and select a language.");
       return;
     }
@@ -95,7 +95,7 @@ const ProfileSetup = () => {
       if (!data.valid) {
         throw new Error(data.message || "Submission failed, please try again.");
       }
-      sessionStorage.setItem('username', data.user_name);
+      sessionStorage.setItem('user_name', data.user_name);
       sessionStorage.setItem('language', data.language);
       // Redirect or show success message
       navigate('/explore');
@@ -106,7 +106,7 @@ const ProfileSetup = () => {
   };
 
   const handleUserInfoChange = (value) => {
-    setUserInfo(prev => ({ ...prev, username: value }));
+    setUserInfo(prev => ({ ...prev, user_name: value }));
     console.log(userInfo);
   };
 
@@ -161,7 +161,7 @@ const ProfileSetup = () => {
                 <InputText
                   propmt={"Username"}
                   name={"username"}
-                  setting={{ require: true, type: 'text', defaultValue: userInfo.username ? userInfo.username : ''  }}
+                  setting={{ require: true, type: 'text', defaultValue: userInfo.user_name ? userInfo.user_name : ''  }}
                   onChange={handleUserInfoChange}
                 />
               </div>
