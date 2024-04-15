@@ -1,4 +1,4 @@
-export async function fetchWithJwt(url, method = "POST", postData = null) {
+export function fetchWithJwt(url, method = "POST", postData = null) {
     const options = {
         method,
         headers: {
@@ -10,5 +10,5 @@ export async function fetchWithJwt(url, method = "POST", postData = null) {
         ...(postData && { body: JSON.stringify(postData) }),
     };
 
-    return fetch("http:/localhost:5000" + url, options);
+    return fetch("http://localhost:5000" + url, options);
 }
