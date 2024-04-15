@@ -91,6 +91,7 @@ const ProfileSetup = () => {
     try {
       const response = await fetchWithJwt('/api/v1/user/set_info', 'POST', { userInfo });
       const data = await response.json();
+      console.log(data.message);
       if (!data.valid) {
         throw new Error(data.message || "Submission failed, please try again.");
       }

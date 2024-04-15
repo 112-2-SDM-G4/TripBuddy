@@ -8,27 +8,21 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState({});
 
     const login = async (email, hashedPassword) => {
-        const url = "/api/v1/login";
-        const postData = { email, hashedPassword };
+        const url = "/api/v1/user/check_password";
+        const postData = { 
+            user_email: email, 
+            hashed_password: hashedPassword };
 
         try {
-            // const response = await fetchWithJwt(url, "POST", postData);
+            const response = await fetchWithJwt(url, "POST", postData);
 
-            // // Check if response.ok to catch HTTP errors
+            // Check if response.ok to catch HTTP errors
             // if (!response.ok) {
             //     throw new Error(`HTTP error! status: ${response.status}`);
             // }
 
-            // const data = await response.json();
-            const data = {
-                valid: true,
-                jwt_token:
-                    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMTIzNDU2Nzg5MCIsIm5hbWUiOiLlsI_mmI4ifQ.f2QgkBxI2j09ks4XBnzDNOVBo-WKlbRp6f8FxfqgtKg",
-                user_name: "",
-                language: "zh",
-                message: "登入成功",
-                preference: true,
-            };
+            const data = await response.json();
+            
             if (data.valid) {
                 sessionStorage.setItem("jwtToken", data.jwt_token);
                 setUser({ ...data.user }); // Assuming data.user contains user info
