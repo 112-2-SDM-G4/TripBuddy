@@ -56,6 +56,7 @@ const Explore = () => {
             search: "",
         })
             .then(function (response) {
+                console.log(response);
                 return response.json();
             })
             .then(function (result) {

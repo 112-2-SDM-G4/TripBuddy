@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { useLanguage } from "../hooks/useLanguage";
-
+import { fetchWithJwt } from "../hooks/fetchWithJwt";
 import style from "./ViewSpot.module.css";
 import Button from "../component/Button";
 import AddPageforTrip from "../component/AddPageforTrip";
@@ -36,10 +36,67 @@ const ViewSpot = () => {
         spot_address: "Urayasu, Chiba, Japan",
         spot_phone: 3242342,
         spot_open: "9-18",
+
+        //下面是正式的
+        place_id: "ChIJCewJkL2LGGAR3Qmk0vCTGkg",
+        name: "東京鐵塔",
+        address: "4-chōme-2-8 Shibakōen, Minato City, Tokyo 105-0011日本",
+        google_maps_uri: "https://maps.google.com/?cid=5195627782660688349",
+        location: (35.6585805, 139.7454329),
+        image: "https://lh3.googleusercontent.com/places/ANXAkqEy8vwNygsL8QZcb1Nt8kGwzwL6FCRgcR327XM_qtgJx6MJLHMsxRgOhEN3OPmMwSEEUzfbmeabFxe3Uz443TMZRnDNaX-Yk5E=s4800-w800-h1204",
+        rating: 4.4,
+        user_rating_count: 71591,
+        opening_hours_d: [
+            "星期一: 09:00 – 22:30",
+            "星期二: 09:00 – 22:30",
+            "星期三: 09:00 – 22:30",
+            "星期四: 09:00 – 22:30",
+            "星期五: 09:00 – 22:30",
+            "星期六: 09:00 – 22:30",
+            "星期日: 09:00 – 22:30",
+        ],
+        opening_hours_p: [
+            {
+                open: { day: 0, hour: 9, minute: 0 },
+                close: { day: 0, hour: 22, minute: 30 },
+            },
+            {
+                open: { day: 1, hour: 9, minute: 0 },
+                close: { day: 1, hour: 22, minute: 30 },
+            },
+            {
+                open: { day: 2, hour: 9, minute: 0 },
+                close: { day: 2, hour: 22, minute: 30 },
+            },
+            {
+                open: { day: 3, hour: 9, minute: 0 },
+                close: { day: 3, hour: 22, minute: 30 },
+            },
+            {
+                open: { day: 4, hour: 9, minute: 0 },
+                close: { day: 4, hour: 22, minute: 30 },
+            },
+            {
+                open: { day: 5, hour: 9, minute: 0 },
+                close: { day: 5, hour: 22, minute: 30 },
+            },
+            {
+                open: { day: 6, hour: 9, minute: 0 },
+                close: { day: 6, hour: 22, minute: 30 },
+            },
+        ],
+        summary: "這座地標讓人想起巴黎艾菲爾鐵塔，設有觀景區和其他景點。",
     });
 
     useEffect(() => {
         console.log(id);
+        fetchWithJwt("/api/v1/place/detail", "get", { place_id: id })
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (result) {
+                console.log(result);
+            });
         return () => {};
     }, [id]);
 
