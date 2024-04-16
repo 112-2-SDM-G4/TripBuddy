@@ -64,7 +64,7 @@ export default function AddPageforTrip({ close, spot }) {
     const handleSubmit = () => {
         console.log(selectTrip);
 
-        fetchWithJwt("/api/v1/single_place/" + selectTrip, "POST", {
+        fetchWithJwt("/api/v1/single_place/" + selectTrip["id"], "POST", {
             place_id: attractionId,
             name: name,
             formatted_address: "addressFromGoogle",
