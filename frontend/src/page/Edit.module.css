@@ -47,7 +47,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 .editpage {
-    padding-top: 1rem;
+    padding-top: 2rem;
     display: flex;
     flex-direction: column;
     width: 90vw;

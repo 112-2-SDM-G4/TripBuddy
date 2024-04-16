@@ -31,7 +31,11 @@
     color: var(--accentcolor);
 }
 .title {
+    max-width: 14rem;
+    overflow: hidden;
     font-size: 1.25rem;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 .stay {
     opacity: 0.9;

@@ -16,6 +16,7 @@ export default function AddPageforTrip({ close, spot }) {
             comment: "註記",
             staytime: "停留時間",
             submit: "儲存",
+            added: "成功新增",
         },
         en: {
             add: "Where to add?",
@@ -24,6 +25,7 @@ export default function AddPageforTrip({ close, spot }) {
             comment: "Comment",
             staytime: "Residence time",
             submit: "Submit",
+            added: "Sucessfully Added",
         },
     };
 
@@ -69,6 +71,7 @@ export default function AddPageforTrip({ close, spot }) {
             name: name,
             formatted_address: "addressFromGoogle",
             google_map_uri: src,
+            image: src,
             comment: Comment,
             money: Budget,
             stay_time: selectTime,
@@ -76,14 +79,11 @@ export default function AddPageforTrip({ close, spot }) {
             order: 0,
         })
             .then(function (response) {
-                console.log(response);
-                return response.json();
-            })
-            .then((response) => {
                 return response.json();
             })
             .then((data) => {
                 console.log(data);
+                alert(words[language]["added"]);
                 close();
             })
             .catch((error) => {

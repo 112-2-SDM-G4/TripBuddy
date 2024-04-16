@@ -41,7 +41,7 @@ export default function Edit() {
                                 "https://maps.google.com/?cid=5195627782660688349",
                             image: "https://lh3.googleusercontent.com/places/ANXAkqEy8vwNygsL8QZcb1Nt8kGwzwL6FCRgcR327XM_qtgJx6MJLHMsxRgOhEN3OPmMwSEEUzfbmeabFxe3Uz443TMZRnDNaX-Yk5E=s4800-w800-h1204",
                             money: 200.0,
-                            name: "東京鐵塔",
+                            name: "東京鐵塔東京鐵塔東京鐵塔東京鐵塔東京鐵塔東京鐵塔東京鐵塔東京鐵塔東京鐵塔",
                             place_id: "ChIJCewJkL2LGGAR3Qmk0vCTGkg",
                             place_summary:
                                 "這座地標讓人想起巴黎艾菲爾鐵塔，設有觀景區和其他景點。",
@@ -448,7 +448,7 @@ function EditPage({ tripinfo, language, id }) {
 
     return (
         <div className={style.editpage}>
-            <div className={style.editpageTitle}>{trip["name"]}</div>
+            <div className={style.editpageTitle}>{tripinfo["name"]}</div>
             <div className={style.selectdate}>
                 {dates.map((d, i) => (
                     <div
