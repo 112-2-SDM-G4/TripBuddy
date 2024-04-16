@@ -21,6 +21,7 @@ export default function Edit() {
     const { language } = useLanguage();
 
     useEffect(() => {
+        console.log(id);
         if (id !== undefined) {
             setTrip({
                 public: false,
@@ -126,6 +127,9 @@ export default function Edit() {
                     } else {
                         alert(result["message"]);
                     }
+                })
+                .catch(function () {
+                    console.log("errrr");
                 });
             setStage(1);
         }
@@ -137,7 +141,9 @@ export default function Edit() {
             {stage === 0 && (
                 <InitialPage setStage={setStage} language={language} />
             )}
-            {stage === 1 && <EditPage tripinfo={trip} language={language} />}
+            {stage === 1 && (
+                <EditPage tripinfo={trip} language={language} id={id} />
+            )}
         </div>
     );
 }
@@ -293,11 +299,12 @@ function InitialPage({ setStage, language }) {
     );
 }
 
-function EditPage({ tripinfo, language }) {
+function EditPage({ tripinfo, language, id }) {
     const [dates, setDates] = useState([]);
     const [selectedDate, setSelectedDate] = useState(0);
     const [trip, setTrip] = useState([]);
     const [spots, setSpots] = useState([]);
+    const [editable, setEditable] = useState(false);
     let navigate = useNavigate();
 
     useEffect(() => {
@@ -372,6 +379,13 @@ function EditPage({ tripinfo, language }) {
 
     useEffect(() => {
         console.log(trip);
+        if (id !== tripinfo["id"]) {
+            return;
+        }
+        if (!editable) {
+            setEditable(true);
+            return;
+        }
         fetchWithJwt("/ap1/v1/trip/" + tripinfo["id"], "PUT", {
             trip: trip,
         })
@@ -399,7 +413,7 @@ function EditPage({ tripinfo, language }) {
                 }
             });
         return () => {};
-    }, [trip, tripinfo]);
+    }, [trip, tripinfo, id]);
 
     const reorderSpots = (newOrder) => {
         const newSpots = newOrder.map((id) =>
