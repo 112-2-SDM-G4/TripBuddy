@@ -49,7 +49,7 @@ class TripManager(Resource):
                     "money": relation_spot_sch.money,
                     "stay_time": [relation_spot_sch.period_hours, relation_spot_sch.period_minutes],
                 }
-                trip_detail[relation_spot_sch.date].append(place_info)
+                trip_detail[relation_spot_sch.date-1].append(place_info)
 
             responce = {
                 "id": schedule.schedule_id,
@@ -161,8 +161,8 @@ class TripManager(Resource):
         # delete origin relations 
         RelationSpotSch.delete_by_trip(trip_id)
 
-        for day_count, day_list in enumerate(data['trip']):
-            for order_count, place_info in enumerate(day_list):
+        for day_count, day_list in enumerate(data['trip'], start=1):
+            for order_count, place_info in enumerate(day_list, start=1):
                 # if spot is not in Place, create new Place
                 place = Place.get_by_id(place_info['place_id'])
                 if not place:

@@ -65,6 +65,10 @@ class PlaceInTrip(Resource):
             place = Place.create(place_info) 
 
         # move the corresponding places than the inserted place
+        # if order = 0 then insert at the end
+        if place_info['order'] == 0:
+            place_info['order'] = RelationSpotSch.get_max_order(trip_id, place_info['date']) + 1
+
         RelationSpotSch.update_order(trip_id, place_info['date'], place_info['order'], increase=True)
         place_info['schedule_id'] = trip_id
         place_info['place_id'] = place.place_id

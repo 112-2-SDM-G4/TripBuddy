@@ -38,6 +38,16 @@ class RelationSpotSch(db.Model):
         return RelationSpotSch.query.filter_by(schedule_id=schedule_id, date=date).filter(RelationSpotSch.order >= order).all()
     
     @staticmethod
+    def get_max_order(schedule_id, date):
+        max_relation = RelationSpotSch.query.filter_by(schedule_id=schedule_id, date=date).order_by(RelationSpotSch.order.desc()).first()
+        if max_relation:
+            max_order = max_relation.order
+        else:
+            max_order = 0
+
+        return max_order
+    
+    @staticmethod
     def create(data):
         data = RelationSpotSch.fill_nullables(data)
         relation = RelationSpotSch(schedule_id=data['schedule_id'],
