@@ -18,7 +18,7 @@ export default function Edit() {
     const { id } = useParams();
     const [stage, setStage] = useState(0);
     const [trip, setTrip] = useState({});
-    const { words, language } = useLanguage();
+    const { language } = useLanguage();
 
     useEffect(() => {
         if (id !== undefined) {

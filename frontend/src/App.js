@@ -30,7 +30,7 @@ function App() {
             <Header />
             {windowSize.width < constants.MOBILE_SCREEN_WIDTH && <Footer />}
             <Routes>
-                <Route path="/">
+                <Route path="/" element={<Login />}>
                     <Route path="login" element={<Login />} />
                     <Route path="reset" element={<ForgotPassword />} />
                     <Route path="reset/:token" element={<ResetPassword />} />
