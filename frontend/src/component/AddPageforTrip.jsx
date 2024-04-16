@@ -27,7 +27,7 @@ export default function AddPageforTrip({ close, spot }) {
         },
     };
 
-    const { name, src, attractionId } = spot;
+    const { name, src, spotId } = spot;
     const { language } = useLanguage();
     const [stage, setStage] = useState(1);
     const [trips, setTrips] = useState([]);
@@ -65,7 +65,7 @@ export default function AddPageforTrip({ close, spot }) {
         console.log(selectTrip);
 
         fetchWithJwt("/api/v1/single_place/" + selectTrip["id"], "POST", {
-            place_id: attractionId,
+            place_id: spotId,
             name: name,
             formatted_address: "addressFromGoogle",
             google_map_uri: src,
