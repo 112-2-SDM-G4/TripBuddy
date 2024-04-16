@@ -42,7 +42,6 @@ function App() {
                     <Route path="spot/:id" element={<ViewSpot />} />
                     <Route path="*" element={<NotFound />} />
                 </Route>
-                <Route path="" element={<Login />} />
             </Routes>
         </div>
     );
