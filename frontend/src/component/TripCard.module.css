@@ -52,20 +52,26 @@
     flex-direction: row;
     padding: 0.5rem;
     font-size: 0.8rem;
-    height: 2.5rem;
+    height: 2.3rem;
 }
 
 .tag {
     display: flex;
     height: 100%;
     width: fit-content;
+    font-weight: bold;
+    font-size: 0.7rem;
     border-radius: 0.35rem;
-    background-color: var(--primarycolor);
+    background-color: color-mix(in srgb, var(--secondarycolor) 75%, transparent);
     color: var(--backgroundcolor);
     opacity: 0.9;
     padding: 0 0.7rem 0 0.7rem;
     align-items: center;
     margin-right: 0.3rem;
+    box-shadow: 0 0.1rem 0.2rem color-mix(in srgb, var(--fontcolor) 75%, transparent);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .icons {
