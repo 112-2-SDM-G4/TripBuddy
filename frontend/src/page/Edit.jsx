@@ -117,7 +117,7 @@ export default function Edit() {
                     [],
                 ],
             });
-            fetchWithJwt("/ap1/v1/trip/" + id, "GET")
+            fetchWithJwt("/api/v1/trip/" + id, "GET")
                 .then(function (response) {
                     return response.json();
                 })
@@ -196,7 +196,7 @@ function InitialPage({ setStage, language }) {
             alert(words[language]["nodate"]);
             return;
         }
-        fetchWithJwt("/ap1/v1/trip", "POST", {
+        fetchWithJwt("/api/v1/trip", "POST", {
             trip_name: tripName,
             start_date: DatetoArray(selectedStart),
             end_date: DatetoArray(selectedEnd),
@@ -386,7 +386,7 @@ function EditPage({ tripinfo, language, id }) {
             setEditable(true);
             return;
         }
-        fetchWithJwt("/ap1/v1/trip/" + tripinfo["id"], "PUT", {
+        fetchWithJwt("/api/v1/trip/" + tripinfo["id"], "PUT", {
             trip: trip,
         })
             .then((response) => {
