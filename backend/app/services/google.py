@@ -13,6 +13,8 @@ class GoogleMapApi():
         self.place_field_mask = [
             'places.id', 
             'places.displayName',
+            'places.formattedAddress',
+            'places.googleMapsUri',
             'places.photos',
         ]
         self.place_params = {
@@ -115,6 +117,8 @@ class GoogleMapApi():
                 info_json = {
                     'place_id': place['id'],
                     'name': place['displayName']['text'],
+                    'address': place['formattedAddress'],
+                    'google_maps_uri': place['googleMapsUri'],
                     'image': photo_url,
                 }
                 place_info_list.append(info_json)
