@@ -35,7 +35,7 @@ export default function AddPageforTrip({ close, spot }) {
     const [selectDay, setSelectDay] = useState(-1);
     const [selectTime, setSelectTime] = useState([]);
     const [Comment, setComment] = useState("");
-    const [Budget, setBudget] = useState("second");
+    const [Budget, setBudget] = useState("");
 
     useEffect(() => {
         fetchWithJwt("/api/v1/trip", "GET")
