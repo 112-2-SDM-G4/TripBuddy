@@ -125,11 +125,13 @@ const ViewSpot = () => {
                         <div className={style.rowname}>
                             {words[language]["open"]}
                         </div>
-                        {spot["opening_hours_d"]
-                            ? spot["opening_hours_d"].map((openday) => {
-                                  return <div>{openday}</div>;
-                              })
-                            : null}
+                        <div className={style.openhrblock}>
+                            {spot["opening_hours_d"]
+                                ? spot["opening_hours_d"].map((openday) => {
+                                      return <div>{openday}</div>;
+                                  })
+                                : null}
+                        </div>
                     </div>
                 </div>
                 <div className={style.submit}>

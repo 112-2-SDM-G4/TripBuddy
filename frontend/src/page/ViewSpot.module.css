@@ -38,6 +38,11 @@
     font-size: 0.8rem;
     line-height: 1.5rem;
 }
+.openhrblock {
+    width: 10rem;
+    display: flex;
+    flex-direction: column;
+}
 .submit {
     position: absolute;
     right: 1rem;
@@ -57,5 +62,6 @@
     }
     .textbox {
         padding-bottom: 5rem;
+        margin-bottom: 5rem;
     }
 }
