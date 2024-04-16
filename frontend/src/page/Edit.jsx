@@ -5,7 +5,7 @@ import Calendar from "../component/Calendar";
 import InputText from "../component/InputText";
 import { useLanguage } from "../hooks/useLanguage";
 import DragBox from "../component/DragBox";
-import testData from "../assets/testData.json";
+import { fetchWithJwt } from "../hooks/fetchWithJwt";
 import { useNavigate, useParams } from "react-router-dom";
 import {
     IoSunny,
@@ -18,16 +18,17 @@ export default function Edit() {
     const { id } = useParams();
     const [stage, setStage] = useState(0);
     const [trip, setTrip] = useState({});
-    const [tripName, setTripName] = useState("");
-    const [selectedStart, setSelectedStart] = useState("");
-    const [selectedEnd, setSelectedEnd] = useState("");
-    const { words, language } = useLanguage();
+    const { language } = useLanguage();
 
     useEffect(() => {
         if (id !== undefined) {
-            console.log(id);
             setTrip({
                 public: false,
+                id: "trip01",
+                name: "嘉義三天兩夜",
+                image: null,
+                start_date: [2024, 1, 2],
+                end_date: [2024, 1, 4],
                 trip: [
                     [
                         {
@@ -115,6 +116,18 @@ export default function Edit() {
                     [],
                 ],
             });
+            fetchWithJwt("/ap1/v1/trip/" + id, "GET")
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(function (result) {
+                    if (result) {
+                        setTrip(result);
+                    } else {
+                        alert(result["message"]);
+                    }
+                });
+            setStage(1);
         }
         return () => {};
     }, [id]);
@@ -122,42 +135,87 @@ export default function Edit() {
     return (
         <div className={style.main}>
             {stage === 0 && (
-                <InitialPage
-                    setStage={setStage}
-                    selectedStart={selectedStart}
-                    setSelectedStart={setSelectedStart}
-                    selectedEnd={selectedEnd}
-                    setSelectedEnd={setSelectedEnd}
-                    words={words}
-                    setTripName={setTripName}
-                />
+                <InitialPage setStage={setStage} language={language} />
             )}
-            {stage === 1 && (
-                <EditPage
-                    selectedStart={selectedStart}
-                    selectedEnd={selectedEnd}
-                    language={language}
-                    tripName={tripName}
-                />
-            )}
+            {stage === 1 && <EditPage tripinfo={trip} language={language} />}
         </div>
     );
 }
 
-function InitialPage({
-    setStage,
-    selectedStart,
-    setSelectedStart,
-    selectedEnd,
-    setSelectedEnd,
-    words,
-    setTripName,
-}) {
+function InitialPage({ setStage, language }) {
+    const words = {
+        zh: {
+            tripname: "請替這個旅程起個名稱",
+            startdate: "起始日期",
+            enddate: "結束日期",
+            area: "地區",
+            Sun: "日",
+            Mon: "一",
+            Tue: "二",
+            Wed: "三",
+            Thu: "四",
+            Fri: "五",
+            Sat: "六",
+            noname: "尚未填寫名稱",
+            nodate: "尚未輸入日期",
+        },
+        en: {
+            tripname: "Please name this trip",
+            startdate: "Start date",
+            enddate: "End date",
+            area: "Area",
+            Sun: "Sun",
+            Mon: "Mon",
+            Tue: "Tue",
+            Wed: "Wed",
+            Thu: "Thu",
+            Fri: "Fri",
+            Sat: "Sat",
+            noname: "Name not found",
+            nodate: "Date not found",
+        },
+    };
     const [displayCalendar, setDisplayCalendar] = useState(false);
+    const [tripName, setTripName] = useState("");
+    const [selectedStart, setSelectedStart] = useState("");
+    const [selectedEnd, setSelectedEnd] = useState("");
+    let navigate = useNavigate();
 
     const createTrip = () => {
+        if (tripName === "") {
+            alert(words[language]["noname"]);
+            return;
+        }
+        if (selectedStart === "" || selectedEnd === "") {
+            alert(words[language]["nodate"]);
+            return;
+        }
+        fetchWithJwt("/ap1/v1/trip", "POST", {
+            trip_name: tripName,
+            start_date: DatetoArray(selectedStart),
+            end_date: DatetoArray(selectedEnd),
+        })
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (result) {
+                if (result["trip_id"]) {
+                    navigate("./" + result["trip_id"]);
+                } else {
+                    alert(result["message"]);
+                }
+            });
+
         setStage(1);
     };
+
+    function DatetoArray(date) {
+        const year = date.getFullYear(); // 获取年份
+        const month = date.getMonth() + 1; // 获取月份（注意加1）
+        const day = date.getDate(); // 获取日期
+
+        return [year, month, day];
+    }
 
     function formatDate(date) {
         if (!date || date === "") {
@@ -235,15 +293,26 @@ function InitialPage({
     );
 }
 
-function EditPage({ selectedStart, selectedEnd, language, tripName }) {
+function EditPage({ tripinfo, language }) {
     const [dates, setDates] = useState([]);
     const [selectedDate, setSelectedDate] = useState(0);
-    const [trip, setTrip] = useState(testData["trip"]);
-    const [spots, setSpots] = useState(testData["trip"][0]);
+    const [trip, setTrip] = useState([]);
+    const [spots, setSpots] = useState([]);
     let navigate = useNavigate();
 
     useEffect(() => {
+        if (tripinfo["trip"]) {
+            setTrip(tripinfo["trip"]);
+            setSpots(tripinfo["trip"][0]);
+        }
+        return () => {};
+    }, [tripinfo]);
+
+    useEffect(() => {
         function formatDateAndWeekday(start, end, language) {
+            if (!start || !end) {
+                return [];
+            }
             const oneDay = 24 * 60 * 60 * 1000;
             const datesArray = [];
 
@@ -279,10 +348,23 @@ function EditPage({ selectedStart, selectedEnd, language, tripName }) {
 
             return datesArray;
         }
-        setDates(formatDateAndWeekday(selectedStart, selectedEnd, language));
+        function tryformatDate(dateArray) {
+            try {
+                return new Date(dateArray[0], dateArray[1] - 1, dateArray[2]);
+            } catch {
+                return false;
+            }
+        }
+        setDates(
+            formatDateAndWeekday(
+                tryformatDate(tripinfo["start_date"]),
+                tryformatDate(tripinfo["end_date"]),
+                language
+            )
+        );
 
         return () => {};
-    }, [selectedStart, selectedEnd, language]);
+    }, [tripinfo, language]);
 
     useEffect(() => {
         setSpots(trip[selectedDate] || []);
@@ -290,12 +372,38 @@ function EditPage({ selectedStart, selectedEnd, language, tripName }) {
 
     useEffect(() => {
         console.log(trip);
+        fetchWithJwt("/ap1/v1/trip/" + tripinfo["id"], "PUT", {
+            trip: trip,
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                return response.json();
+            })
+            .then((data) => {
+                console.log(data);
+            })
+            .catch((error) => {
+                console.log(
+                    "There was a problem with the fetch operation:",
+                    error
+                );
+                if (error.response) {
+                    error.response.json().then((errorMessage) => {
+                        alert(errorMessage.message);
+                        console.log("Error message:", errorMessage.message);
+                    });
+                } else {
+                    console.log("Network error:", error.message);
+                }
+            });
         return () => {};
-    }, [trip]);
+    }, [trip, tripinfo]);
 
     const reorderSpots = (newOrder) => {
         const newSpots = newOrder.map((id) =>
-            spots.find((s) => s.spot_id === id)
+            spots.find((s) => s.relation_id === id)
         );
         const chkempty = (obj) => {
             if (obj && obj.length > 0) {
@@ -329,7 +437,7 @@ function EditPage({ selectedStart, selectedEnd, language, tripName }) {
 
     return (
         <div className={style.editpage}>
-            <div className={style.editpageTitle}>{tripName}</div>
+            <div className={style.editpageTitle}>{trip["name"]}</div>
             <div className={style.selectdate}>
                 {dates.map((d, i) => (
                     <div

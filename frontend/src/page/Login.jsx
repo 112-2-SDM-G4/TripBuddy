@@ -99,9 +99,7 @@ const LoginForm = () => {
         e.preventDefault();
         if (password && salt) {
             // Hash the password with the salt
-            const hashedPassword = SHA256(salt + password).toString();
-            console.log('salt:' +salt);
-            console.log('hashed_password:'+ hashedPassword);
+            const hashedPassword = SHA256(password + salt).toString();
 
             try {
                 const { success, error } = await login(email, hashedPassword);

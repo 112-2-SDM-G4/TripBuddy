@@ -17,12 +17,12 @@ export default function SpotinEdit({ spot, delSpot }) {
                 <>
                     <img
                         className={style.pic}
-                        src={tryvalid(spot["spot_image"])}
+                        src={tryvalid(spot["image"])}
                         alt="暫無圖片"
                     />
                     <div className={style.info}>
                         <div className={style.title}>
-                            {tryvalid(spot["spot_name"])}
+                            {tryvalid(spot["name"])}
                         </div>
                         <div className={style.stay}>{`停留${formatNumber(
                             tryvalid(spot["stay_time"][0])

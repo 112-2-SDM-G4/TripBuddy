@@ -9,8 +9,28 @@ const Calendar = ({
     setSelectedEnd,
 }) => {
     const [date, setDate] = useState(new Date());
-    const { words } = useLanguage();
-
+    const { language } = useLanguage();
+    const words = {
+        zh: {
+            Sun: "日",
+            Mon: "一",
+            Tue: "二",
+            Wed: "三",
+            Thu: "四",
+            Fri: "五",
+            Sat: "六",
+        },
+        en: {
+            area: "Area",
+            Sun: "Sun",
+            Mon: "Mon",
+            Tue: "Tue",
+            Wed: "Wed",
+            Thu: "Thu",
+            Fri: "Fri",
+            Sat: "Sat",
+        },
+    };
     const changeMonth = (increment) => {
         setDate(new Date(date.getFullYear(), date.getMonth() + increment, 1));
     };
@@ -106,13 +126,27 @@ const Calendar = ({
             <table className={style.table}>
                 <thead>
                     <tr>
-                        <th className={style.block}>{words["Sun"]}</th>
-                        <th className={style.block}>{words["Mon"]}</th>
-                        <th className={style.block}>{words["Tue"]}</th>
-                        <th className={style.block}>{words["Wed"]}</th>
-                        <th className={style.block}>{words["Thu"]}</th>
-                        <th className={style.block}>{words["Fri"]}</th>
-                        <th className={style.block}>{words["Sat"]}</th>
+                        <th className={style.block}>
+                            {words[language]["Sun"]}
+                        </th>
+                        <th className={style.block}>
+                            {words[language]["Mon"]}
+                        </th>
+                        <th className={style.block}>
+                            {words[language]["Tue"]}
+                        </th>
+                        <th className={style.block}>
+                            {words[language]["Wed"]}
+                        </th>
+                        <th className={style.block}>
+                            {words[language]["Thu"]}
+                        </th>
+                        <th className={style.block}>
+                            {words[language]["Fri"]}
+                        </th>
+                        <th className={style.block}>
+                            {words[language]["Sat"]}
+                        </th>
                     </tr>
                 </thead>
                 <tbody>

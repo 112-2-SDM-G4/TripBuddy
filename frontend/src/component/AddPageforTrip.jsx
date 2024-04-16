@@ -5,6 +5,7 @@ import { IoMdClose } from "react-icons/io";
 import TimePicker from "./TimePicker";
 import InputText from "../component/InputText";
 import Button from "../component/Button";
+import { fetchWithJwt } from "../hooks/fetchWithJwt";
 
 export default function AddPageforTrip({ close, spot }) {
     const words = {
@@ -25,28 +26,34 @@ export default function AddPageforTrip({ close, spot }) {
             submit: "Submit",
         },
     };
-    const user_trip = [
-        {
-            id: "trip01",
-            name: "嘉義三天兩夜",
-            image: null,
-            start_date: [2024, 1, 2],
-            end_date: [2024, 1, 4],
-        },
-        {
-            id: "trip02",
-            name: "首爾五天四夜",
-            image: null,
-            start_date: [2024, 3, 3],
-            end_date: [2024, 3, 8],
-        },
-    ];
+
     const { name, src, attractionId } = spot;
     const { language } = useLanguage();
     const [stage, setStage] = useState(1);
+    const [trips, setTrips] = useState([]);
     const [selectTrip, setSelectTrip] = useState("");
     const [selectDay, setSelectDay] = useState(-1);
     const [selectTime, setSelectTime] = useState([]);
+    const [Comment, setComment] = useState("");
+    const [Budget, setBudget] = useState("second");
+
+    useEffect(() => {
+        fetchWithJwt("/api/v1/trip", "GET")
+            .then(function (response) {
+                console.log(response);
+                return response.json();
+            })
+            .then(function (result) {
+                console.log(result);
+                if (result["user_trip"]) {
+                    setTrips(result["user_trip"]);
+                } else {
+                    alert(result["message"]);
+                }
+            });
+
+        return () => {};
+    }, []);
 
     const selectAddTarget = (tripid, day) => {
         setSelectTrip(tripid);
@@ -55,7 +62,47 @@ export default function AddPageforTrip({ close, spot }) {
     };
 
     const handleSubmit = () => {
-        close();
+        console.log(selectTrip);
+
+        fetchWithJwt("/api/v1/single_place/" + selectTrip, "POST", {
+            place_id: attractionId,
+            name: name,
+            formatted_address: "addressFromGoogle",
+            google_map_uri: src,
+            comment: Comment,
+            money: Budget,
+            stay_time: selectTime,
+            date: selectDay,
+            order: 0,
+        })
+            .then(function (response) {
+                console.log(response);
+                return response.json();
+            })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                return response.json();
+            })
+            .then((data) => {
+                console.log(data);
+                close();
+            })
+            .catch((error) => {
+                console.log(
+                    "There was a problem with the fetch operation:",
+                    error
+                );
+                if (error.response) {
+                    error.response.json().then((errorMessage) => {
+                        alert(errorMessage.message);
+                        console.log("Error message:", errorMessage.message);
+                    });
+                } else {
+                    console.log("Network error:", error.message);
+                }
+            });
     };
 
     return (
@@ -72,7 +119,7 @@ export default function AddPageforTrip({ close, spot }) {
                             {words[language]["add"]}
                         </div>
                         <div className={style.trips}>
-                            {user_trip.map((trip) => (
+                            {trips.map((trip) => (
                                 <TripBlock
                                     key={trip.id}
                                     trip={trip}
@@ -100,9 +147,11 @@ export default function AddPageforTrip({ close, spot }) {
                             <div className={style.editblock}>
                                 <InputText
                                     propmt={words[language]["comment"]}
+                                    onChange={setComment}
                                 />
                                 <InputText
                                     propmt={words[language]["budget"]}
+                                    onChange={setBudget}
                                     setting={{
                                         type: "number",
                                         defaultValue: "0",
@@ -173,10 +222,11 @@ const TripBlock = ({ trip, selectAddTarget }) => {
         const dates = generateDatesArray(startDate, endDate);
         setDatesArray(dates);
     }, [trip, language]);
+
     useEffect(() => {
         const content = contentRef.current;
         content.style.maxHeight = content.scrollHeight + "px";
-    }, [contentRef.current]);
+    }, [contentRef]);
 
     const toggleCollapse = () => {
         const content = contentRef.current;

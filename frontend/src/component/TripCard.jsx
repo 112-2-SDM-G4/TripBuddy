@@ -11,7 +11,7 @@ function TripCard({ name, src, tripId }) {
         <>
             <div
                 className={style.card}
-                onClick={() => navigate(`/edit`)}
+                onClick={() => navigate(`/edit/${tripId}`)}
                 // onClick={() => navigate(`/edit/${tripId}`)}
             >
                 <img src={src} alt="spot loading" className={style.img} />

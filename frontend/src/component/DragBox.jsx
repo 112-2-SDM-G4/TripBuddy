@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
     DndContext,
     closestCenter,
@@ -34,7 +34,7 @@ function SortableItem(props) {
 }
 
 function DragBox({ spots, onItemsReordered }) {
-    const [items, setItems] = useState(spots.map((s) => s.spot_id));
+    const [items, setItems] = useState(spots.map((s) => s.relation_id));
     const sensors = useSensors(
         useSensor(PointerSensor, {
             activationConstraint: {
@@ -43,7 +43,7 @@ function DragBox({ spots, onItemsReordered }) {
         })
     );
     useEffect(() => {
-        setItems(spots.map((s) => s.spot_id));
+        setItems(spots.map((s) => s.relation_id));
     }, [spots]);
 
     const delSpot = (id) => {
@@ -79,7 +79,7 @@ function DragBox({ spots, onItemsReordered }) {
                 {items.map((item, index) => (
                     <SortableItem key={item} id={item}>
                         <SpotinEdit
-                            spot={spots.find((s) => s.spot_id === item)}
+                            spot={spots.find((s) => s.relation_id === item)}
                             delSpot={() => {
                                 delSpot(item);
                             }}
