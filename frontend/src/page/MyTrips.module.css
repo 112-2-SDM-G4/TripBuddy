@@ -5,4 +5,27 @@
     padding-left: 1rem;
     margin-bottom: 5rem;
     margin-top: 4.5rem;
+    width: 30rem;
+}
+
+.buttoncontainer {
+    position: sticky;
+    width: 31rem;
+    padding-left: 1rem;
+    display: flex;
+    justify-content: center;
+}
+
+.button {
+    width: 100%;
+}
+
+@media (max-width: 735px) {
+    .buttoncontainer {
+        width: 90%;
+        bottom: 3.5rem;
+        margin-left: 1rem;
+        padding-left: 0;
+    }
+    
 }
