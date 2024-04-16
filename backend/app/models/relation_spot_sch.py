@@ -7,7 +7,7 @@ class RelationSpotSch(db.Model):
     place_id = db.Column(db.String(50), db.ForeignKey('Place.place_id'), nullable=False)
     order = db.Column(db.Integer, nullable=False)
     comment = db.Column(db.String(100), nullable=True)
-    money = db.Column(db.Integer, nullable=True)
+    money = db.Column(db.Float, nullable=True)
     category = db.Column(db.String(50), nullable=False)
     date = db.Column(db.Integer, nullable=False)
     period_hours = db.Column(db.Integer, nullable=False)
@@ -17,7 +17,7 @@ class RelationSpotSch(db.Model):
     def fill_nullables(data):
         nullable = ['comment', 'money']
         for key in nullable:
-            if key not in data:
+            if key not in data or data[key] == '':
                 data[key] = None
         return data
     

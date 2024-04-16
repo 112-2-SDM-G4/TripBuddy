@@ -66,17 +66,12 @@ class PlaceInTrip(Resource):
 
         # move the corresponding places than the inserted place
         RelationSpotSch.update_order(trip_id, place_info['date'], place_info['order'], increase=True)
-        relation = RelationSpotSch.create({
-            'schedule_id': trip_id,
-            'place_id': place.place_id,
-            'category': 'common',
-            'date': place_info['date'],
-            'order': place_info['order'],
-            'period_hours': place_info['stay_time'][0],
-            'period_minutes': place_info['stay_time'][1],
-            'comment': place_info['comment'],
-            'money': place_info['money']
-        })
+        place_info['schedule_id'] = trip_id
+        place_info['place_id'] = place.place_id
+        place_info['category'] = "common"
+        place_info['period_hours'] = place_info['stay_time'][0]
+        place_info['period_minutes'] = place_info['stay_time'][1]
+        relation = RelationSpotSch.create(place_info)
         return make_response({'message': 'Place added to trip successfully.',
                               'relation_id': relation.rss_id},
                                 200)
