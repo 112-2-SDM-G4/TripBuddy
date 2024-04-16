@@ -1,20 +1,18 @@
 import React, { useState } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import style from "./Login.module.css";
 import Button from "../component/Button";
 import InputText from "../component/InputText";
-import EmailVerification from '../component/EmailVerification';
-import SHA256 from 'crypto-js/sha256';
-import { useAuth } from '../hooks/useAuth';
+import EmailVerification from "../component/EmailVerification";
+import SHA256 from "crypto-js/sha256";
+import { useAuth } from "../hooks/useAuth";
 
 const Login = () => {
-    const [activeTab, setActiveTab] = useState('login');
-    const [email, setEmail] = useState(''); // Lifted state for email
-    const [password, setPassword] = useState('');
-    const [salt, setSalt] = useState('');
+    const [activeTab, setActiveTab] = useState("login");
+    const [email, setEmail] = useState(""); // Lifted state for email
+    const [password, setPassword] = useState("");
+    const [salt, setSalt] = useState("");
     const [isSignupSuccess, setIsSignupSuccess] = useState(false);
-    
-
 
     const handleTabClick = (tab) => {
         setActiveTab(tab);
@@ -29,49 +27,63 @@ const Login = () => {
         setIsSignupSuccess(true); // Set the flag to show the success message
     };
 
-
     return (
         <div className={style.main}>
-
-
             {!isSignupSuccess ? (
                 <>
                     <div className={style.loginContainer}>
                         <div className={style.tabs}>
-                            <button onClick={() => handleTabClick('login')} className={activeTab === 'login' ? style.active : ''}>Login</button>
-                            <button onClick={() => handleTabClick('signup')} className={activeTab === 'signup' ? style.active : ''}>Signup</button>
+                            <button
+                                onClick={() => handleTabClick("login")}
+                                className={
+                                    activeTab === "login" ? style.active : ""
+                                }
+                            >
+                                Login
+                            </button>
+                            <button
+                                onClick={() => handleTabClick("signup")}
+                                className={
+                                    activeTab === "signup" ? style.active : ""
+                                }
+                            >
+                                Signup
+                            </button>
                         </div>
-                        {activeTab === 'login' && <LoginForm />}
-                        {activeTab === 'signup' && <SignupForm onSignupSuccess={handleSignupSuccess} />}
+                        {activeTab === "login" && <LoginForm />}
+                        {activeTab === "signup" && (
+                            <SignupForm onSignupSuccess={handleSignupSuccess} />
+                        )}
                     </div>
                 </>
             ) : (
                 // Success message
 
-                <EmailVerification email={email} hashed_password={password} salt={salt}/>
-            
-
+                <EmailVerification
+                    email={email}
+                    hashed_password={password}
+                    salt={salt}
+                />
             )}
-
         </div>
     );
 };
 
-
-
 const LoginForm = () => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [salt, setSalt] = useState('');
-    const [error, setError] = useState(''); // State to store error messages
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [salt, setSalt] = useState("");
+    const [error, setError] = useState(""); // State to store error messages
     const navigate = useNavigate();
     const { login } = useAuth();
 
     const handleEmailBlur = async () => {
-        setError(''); // Reset error message
+        setError(""); // Reset error message
         if (email) {
             try {
-                const response = await fetch(`http://localhost:5000/api/v1/user/check_user?user_email=${email}`)
+                const response = await fetch(
+                    `https://planar-effect-420508.de.r.appspot.com/api/v1/user/check_user?user_email=${email}`
+                );
                 const data = await response.json(); // Get the JSON payload
                 // const data_true = {
                 //     "valid": true,
@@ -88,7 +100,6 @@ const LoginForm = () => {
                     throw new Error(data.message);
                 }
                 setSalt(data.salt);
-
             } catch (error) {
                 setError(error.message); // Set error message
             }
@@ -105,14 +116,12 @@ const LoginForm = () => {
                 const { success, error } = await login(email, hashedPassword);
                 if (!success) {
                     throw new Error(error);
-                }
-                else {
-                    navigate('/explore');
+                } else {
+                    navigate("/explore");
                 }
 
                 // Redirect user or do some action after successful login here
                 // e.g., navigate to a dashboard or home page
-
             } catch (error) {
                 setError(error.message);
             }
@@ -121,19 +130,20 @@ const LoginForm = () => {
     return (
         <form method="post" onSubmit={handleSubmit} className={style.form}>
             <div className={style.logoContainer}>
-                <img className={style.logo} src="../../logo.svg" alt="TourBuddy" />
+                <img
+                    className={style.logo}
+                    src="../../logo.svg"
+                    alt="TourBuddy"
+                />
             </div>
             <div className={style.inputWithErrorMessage}>
-
                 {error && <span className={style.errorMessage}>{error}</span>}
-
             </div>
             <div className={style.inputGroup}>
-
                 <InputText
                     propmt={"E-mail"}
                     name={"email"}
-                    setting={{ require: true, type: 'email' }}
+                    setting={{ require: true, type: "email" }}
                     value={email}
                     onChange={setEmail}
                     onBlur={handleEmailBlur}
@@ -142,7 +152,7 @@ const LoginForm = () => {
                 <InputText
                     propmt={"Password"}
                     name={"password"}
-                    setting={{ require: true, type: 'password' }}
+                    setting={{ require: true, type: "password" }}
                     value={password}
                     onChange={setPassword}
                 />
@@ -160,13 +170,22 @@ const LoginForm = () => {
                 <div className={style.thirdSignin}>or you can sign in with</div>
                 <div className={style.icons}>
                     <a href="/auth/google" className={style.icon}>
-                        <img src="../../google-icon.svg" alt="Sign in with google" />
+                        <img
+                            src="../../google-icon.svg"
+                            alt="Sign in with google"
+                        />
                     </a>
                     <a href="/auth/twitter" className={style.icon}>
-                        <img src="../../twitter-icon.svg" alt="Sign in with twitter" />
+                        <img
+                            src="../../twitter-icon.svg"
+                            alt="Sign in with twitter"
+                        />
                     </a>
                     <a href="/auth/facebook" className={style.icon}>
-                        <img src="../../facebook-icon.svg" alt="Sign in with facebook" />
+                        <img
+                            src="../../facebook-icon.svg"
+                            alt="Sign in with facebook"
+                        />
                     </a>
                 </div>
             </div>
@@ -175,21 +194,21 @@ const LoginForm = () => {
 };
 
 const SignupForm = ({ onSignupSuccess }) => {
-    const [localEmail, setLocalEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
-    const [error, setError] = useState('');
+    const [localEmail, setLocalEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [error, setError] = useState("");
 
     const generateSalt = (length = 10) => {
-        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-        let result = '';
+        const characters =
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        let result = "";
         for (let i = 0; i < length; i++) {
             const randomIndex = Math.floor(Math.random() * characters.length);
             result += characters[randomIndex];
         }
         return result;
     };
-
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -209,11 +228,15 @@ const SignupForm = ({ onSignupSuccess }) => {
         const hashedPassword = SHA256(password + salt).toString();
 
         try {
-            const response = await fetch("http://localhost:5000"+'/api/v1/user/send_email', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ user_email: localEmail })
-            });
+            const response = await fetch(
+                "https://planar-effect-420508.de.r.appspot.com" +
+                    "/api/v1/user/send_email",
+                {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ user_email: localEmail }),
+                }
+            );
 
             // if (!response.OK) {
             //     throw new Error(`HTTP error! status: ${response.status}`);
@@ -231,48 +254,46 @@ const SignupForm = ({ onSignupSuccess }) => {
             } else {
                 throw new Error(data.message);
             }
-
         } catch (error) {
             setError(error.message);
         }
-
-
     };
 
     return (
         <form onSubmit={handleSubmit} className={style.form}>
             <div className={style.logoContainer}>
                 {/* You will replace 'logo.svg' with your actual logo */}
-                <img className={style.logo} src="../../logo.svg" alt="TourBuddy" />
+                <img
+                    className={style.logo}
+                    src="../../logo.svg"
+                    alt="TourBuddy"
+                />
             </div>
             <div className={style.inputWithErrorMessage}>
-
                 {error && <span className={style.errorMessage}>{error}</span>}
-
             </div>
             <div className={style.inputGroup}>
                 <InputText
                     propmt={"E-mail"}
                     name={"email"}
                     value={localEmail}
-                    setting={{ require: true, type: 'email' }}
+                    setting={{ require: true, type: "email" }}
                     onChange={setLocalEmail}
                 />
                 <InputText
                     propmt={"Password"}
                     name={"password"}
-                    setting={{ require: true, type: 'password' }}
+                    setting={{ require: true, type: "password" }}
                     onChange={setPassword}
                 />
                 <InputText
                     propmt={"Confirmed Password"}
                     name={"confirmedPassword"}
-                    setting={{ require: true, type: 'password' }}
+                    setting={{ require: true, type: "password" }}
                     onChange={setConfirmPassword}
                 />
             </div>
             <Button txt="Sign Up" setting={{ type: "submit" }} />
-
         </form>
     );
 };

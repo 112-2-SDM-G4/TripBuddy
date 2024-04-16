@@ -22,8 +22,14 @@ FROM nginx:latest
 # 複製 React 應用程式的建置結果到 Nginx 的 HTML 資料夾
 COPY --from=builder /app/build /usr/share/nginx/html
 
-# 開啟 80 端口
-EXPOSE 80
+# 刪除預設 Nginx 配置文件
+RUN rm /etc/nginx/conf.d/default.conf
+
+# 複製自定義 Nginx 配置文件
+COPY nginx.conf /etc/nginx/conf.d/nginx.conf
+
+# 開啟 8080 端口
+EXPOSE 8080
 
 # 預設啟動 Nginx 伺服器
 CMD ["nginx", "-g", "daemon off;"]
