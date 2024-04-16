@@ -372,7 +372,9 @@ function EditPage({ tripinfo, language }) {
 
     useEffect(() => {
         console.log(trip);
-        fetchWithJwt("/ap1/v1/trip/" + tripinfo["trip"], "PUT")
+        fetchWithJwt("/ap1/v1/trip/" + tripinfo["id"], "PUT", {
+            trip: trip,
+        })
             .then((response) => {
                 if (!response.ok) {
                     throw new Error("Network response was not ok");
@@ -397,7 +399,7 @@ function EditPage({ tripinfo, language }) {
                 }
             });
         return () => {};
-    }, [trip]);
+    }, [trip, tripinfo]);
 
     const reorderSpots = (newOrder) => {
         const newSpots = newOrder.map((id) =>

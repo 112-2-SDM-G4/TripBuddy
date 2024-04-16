@@ -30,7 +30,7 @@ function App() {
             <Header />
             {windowSize.width < constants.MOBILE_SCREEN_WIDTH && <Footer />}
             <Routes>
-                <Route path="/" element={<Login />}>
+                <Route path="/">
                     <Route path="login" element={<Login />} />
                     <Route path="reset" element={<ForgotPassword />} />
                     <Route path="reset/:token" element={<ResetPassword />} />
@@ -42,6 +42,7 @@ function App() {
                     <Route path="spot/:id" element={<ViewSpot />} />
                     <Route path="*" element={<NotFound />} />
                 </Route>
+                <Route path="" element={<Login />} />
             </Routes>
         </div>
     );
