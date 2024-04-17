@@ -45,7 +45,7 @@ const ProfileSetup = () => {
   const navigate = useNavigate();
 
   const totalSteps = 3;
-  // Additional states for form inputs
+  
   const [userInfo, setUserInfo] = useState({
     user_name: '',
     language: '',
@@ -64,7 +64,7 @@ const ProfileSetup = () => {
   };
 
   const prevStep = () => {
-    setError(''); // Clear errors on going back
+    setError('');
     setCurrentStep(Math.max(currentStep - 1, 1));
   };
 

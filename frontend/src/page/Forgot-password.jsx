@@ -17,7 +17,7 @@ const Reset = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    
+        
         if (!email) {
             setEmailError('Email is required.');
             setIsSubmittedSuccessfully(false);
@@ -31,27 +31,25 @@ const Reset = () => {
         }
     
         try {
-            // const response = await fetch('/api/v1/user/send_email', {
+            // const response = await fetch("http://localhost:5000"+'/api/v1/user/forget_password', {
             //     method: 'POST',
-            //     headers: {
-            //         'Content-Type': 'application/json',
-            //     },
-            //     body: JSON.stringify({ email })
+            //     headers: { 'Content-Type': 'application/json' },
+            //     body: JSON.stringify({ email: email })
             // });
             // const data = await response.json(); // Get the JSON payload
-            const sample_data1 = {
+            const data = {
                 "valid": true, // 若帳號存在且已發送重設 mail
                 "message": "已發送密碼重置郵件"
             }
 
-            const sample_data2 = {
-                "valid": false, // 若帳號不存在
-                "message": "該帳號未註冊"
+            // const sample_data2 = {
+            //     "valid": false, // 若帳號不存在
+            //     "message": "該帳號未註冊"
+            // }
+            if (!data.valid) {
+                throw new Error(data.message);
             }
-            if (!sample_data1.valid) {
-                throw new Error(sample_data1.message);
-            }
-            setEmailError(sample_data1.message);
+            setEmailError(data.message);
             setIsSubmittedSuccessfully(true);
 
         } catch (error) {
@@ -68,20 +66,7 @@ const Reset = () => {
 
     // Conditional rendering based on submission status
     if (isSubmittedSuccessfully) {
-        return (
-            <div className={style.main}>
-                <div className={style.loginContainer}>
-                    <div className={style.logoContainer}>
-                        <img className={style.logo} src="../../circle-check.svg" alt="cirle-check"/>
-                    </div>
-                    <h2>Password Reset Email Sent!</h2>
-                    <div className={style.description}>
-                        <p className={style.text}>We've sent an email to <strong>{email}</strong>. Follow the instructions in the email to reset your password.</p>
-                    </div>
-                    <Button txt="Return to Login" func={goBack} />
-                </div>
-            </div>
-        );
+        navigate('/reset');
     }
 
     return (
@@ -90,7 +75,7 @@ const Reset = () => {
                 <button onClick={goBack} className={style.backButton}>
                     <FaArrowLeft /> {/* Back icon */}
                 </button>
-                <form action='/reset' className={style.form}>
+                <form className={style.form}>
                     <div className={style.logoContainer}>
                         <img className={style.logo} src="../../logo.svg" alt="TourBuddy" />
                     </div>

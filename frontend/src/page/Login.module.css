@@ -64,7 +64,7 @@ button.active {
     margin-top: 0.6rem;
 }
 
-/* Adjust your label and input container if necessary */
+
 .inputWithErrorMessage {
     display: flex;
     flex-direction: column;

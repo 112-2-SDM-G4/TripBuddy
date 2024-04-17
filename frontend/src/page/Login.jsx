@@ -154,7 +154,7 @@ const LoginForm = () => {
             />
 
             <div className={style.links}>
-                <a href="/reset">Forgot Password?</a>
+                <a href="/forget-password">Forgot Password?</a>
             </div>
             <div className={style.socialLogin}>
                 <div className={style.thirdSignin}>or you can sign in with</div>

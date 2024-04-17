@@ -32,8 +32,8 @@ function App() {
             <Routes>
                 <Route path="/">
                     <Route path="login" element={<Login />} />
-                    <Route path="reset" element={<ForgotPassword />} />
-                    <Route path="reset/:token" element={<ResetPassword />} />
+                    <Route path="forget-password" element={<ForgotPassword />} />
+                    <Route path="reset" element={<ResetPassword />} />
                     <Route path="profile-setup" element={<ProfileSetup />} />
                     <Route path="edit" element={<Edit />} />
                     <Route path="edit/:id" element={<Edit />} />

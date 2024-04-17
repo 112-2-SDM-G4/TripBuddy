@@ -62,19 +62,6 @@
     margin-top: 1rem; 
 }
 
-.backButton, .nextButton {
-    padding: 0.5rem 1rem; /* Adjust padding */
-    border-radius: 5px; /* Rounded corners */
-    background-color: #f0f0f0; /* Light grey background */
-    border: none; /* No border */
-    color: #333; /* Dark grey text */
-    transition: background-color 0.3s, color 0.3s; /* Smooth transitions on hover */
-}
-
-.backButton:hover, .nextButton:hover {
-    background-color: #ccc; /* Darker background on hover */
-    color: #fff; /* White text on hover */
-}
 
 .btn {
     color: var(--fontcolor);
@@ -85,9 +72,9 @@
     margin: 0 0 2rem;
     width: fit-content;
     position: relative;
-    overflow: hidden; /* Ensures the pseudo-elements do not exceed the button boundaries */
-    background-color: transparent; /* No background for simplicity, adjust as needed */
-    text-decoration: none; /* Ensures no underline unless specified */
+    overflow: hidden;
+    background-color: transparent; 
+    text-decoration: none; 
     transition: background-color 0.3s, color 0.3s, letter-spacing 0.3s;
 }
 
@@ -96,8 +83,8 @@
     position: absolute;
     left: 0;
     bottom: 0;
-    width: 0; /* Initially, the underline is not shown */
-    height: 0.1rem; /* Height of the underline */
+    width: 0; 
+    height: 0.1rem;
     background-color: var(--primarycolor);
     
     transition: width 0.28s ease-in-out;
@@ -108,7 +95,7 @@
 }
 
 .btn:hover::after, .btn.activeButton::after {
-    width: 100%; /* Expands the underline to full width on hover and when active */
+    width: 100%;
 }
 
 .languagePreference {
@@ -122,34 +109,26 @@
     display: flex;
     flex-wrap: wrap;
     gap: 2rem;
-    /* Adjust the space between the avatars and the button */
     justify-content: center;
     padding-bottom: 0.7rem;
-    /* Add other styling as needed */
 }
 
 .avatar,
 .avatarAddButton {
     width: 5rem;
-    /* Avatar size */
     height: 5rem;
-    /* Avatar size */
     border-radius: 50%;
-    /* Makes it circular */
     border: 0.2rem solid color-mix(in srgb, var(--fontcolor) 15%, transparent);
-    /* Example border, adjust as needed */
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 2rem;
-    /* Adjust '+' size as needed */
     cursor: pointer;
     background: color-mix(in srgb, var(--fontcolor) 15%, transparent);
     text-decoration-color: var(--fontcolor);
-    /* Adjust the background color as needed */
+    
 }
 
-/* You might want to add some hover effects */
 .avatar:hover,
 .avatarAddButton:hover {
     border-color: var(--fontcolor);
@@ -176,7 +155,6 @@
 
 .errorMessage {
     color: red;
-    /* Style it as needed, for example: */
     font-size: 1rem;
     margin-bottom: 0.6rem;
 }

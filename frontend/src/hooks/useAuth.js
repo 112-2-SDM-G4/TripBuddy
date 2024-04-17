@@ -16,11 +16,6 @@ export const AuthProvider = ({ children }) => {
         try {
             const response = await fetchWithJwt(url, "POST", postData);
 
-            // Check if response.ok to catch HTTP errors
-            // if (!response.ok) {
-            //     throw new Error(`HTTP error! status: ${response.status}`);
-            // }
-
             const data = await response.json();
             
             if (data.valid) {
