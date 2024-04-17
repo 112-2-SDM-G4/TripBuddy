@@ -21,9 +21,7 @@ function SearchBox({ onSearch }) {
     };
 
     return (
-        <form
-            onFormSubmit={handleSubmit} 
-            className={style.container} >
+        <form onSubmit={handleSubmit} className={style.container}>
             <input
                 type="text"
                 value={query}

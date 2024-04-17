@@ -10,5 +10,8 @@ export function fetchWithJwt(url, method = "POST", postData = null) {
         ...(postData && { body: JSON.stringify(postData) }),
     };
 
-    return fetch("http://localhost:5000" + url, options);
+    return fetch(
+        "https://planar-effect-420508.de.r.appspot.com" + url,
+        options
+    );
 }
