@@ -1,0 +1,82 @@
+{
+    "trip": [
+        [
+            {
+                "spot_id": "spot01",
+                "spot_name": "某某公園",
+                "spot_image": "https://photo.travelking.com.tw/weekend/945_e_1.jpg",
+                "comment": "早上來感覺很漂亮",
+                "budget": 200,
+                "stay_time": [1, 0]
+            },
+            {
+                "spot_id": "spot02",
+                "spot_name": "某某小吃攤",
+                "spot_image": "https://img.ezfly.com/ims/I000/036/165.jpg",
+                "comment": "必吃大腸包小腸",
+                "budget": 60,
+                "stay_time": [0, 30]
+            }
+        ],
+        [
+            {
+                "spot_id": "spot03",
+                "spot_name": "某某廣場",
+                "spot_image": "urlFromGoogle",
+                "comment": "",
+                "budget": 0,
+                "stay_time": [1, 30]
+            },
+            {
+                "spot_id": "spot05",
+                "spot_name": "某某山上",
+                "spot_image": "urlFromGoogle",
+                "comment": "這邊夜景很讚！！！",
+                "budget": 0,
+                "stay_time": [2, 0]
+            }
+        ]
+    ],
+    "testSpots": [
+        {
+            "spot_id": "spot01",
+            "spot_name": "某某公園",
+            "spot_image": "https://upload.wikimedia.org/wikipedia/commons/f/fa/20230630_Song_Yu-qi.jpg"
+        },
+        {
+            "spot_id": "spot02",
+            "spot_name": "某某小吃攤",
+            "spot_image": "https://hips.hearstapps.com/hmg-prod/images/getygerteg-64d4c26d64da8.jpg?crop=0.493xw:0.987xh;0,0&resize=640:*"
+        },
+        {
+            "spot_id": "spot08",
+            "spot_name": "某某景點",
+            "spot_image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSazC6FJYrFAwLPgUg6rtCnzF8kmZ2G9v36s6wvnK9BXu1XplBPlJZI5ZwQiMyBraI3NUk&usqp=CAU"
+        },
+        {
+            "spot_id": "spot03",
+            "spot_name": "某某餐廳",
+            "spot_image": "https://pbs.twimg.com/media/F8OnxyJbcAAfpQX?format=jpg&name=4096x4096"
+        },
+        {
+            "spot_id": "spot04",
+            "spot_name": "某某地點",
+            "spot_image": "https://down-tw.img.susercontent.com/file/tw-11134201-7qula-lk0pv54axu19d0"
+        },
+        {
+            "spot_id": "spot05",
+            "spot_name": "某某地點",
+            "spot_image": "https://cdn1.wishnote.tw/550/2021/01/15/550_1558569_1610684440.webp"
+        },
+        {
+            "spot_id": "spot06",
+            "spot_name": "某某地點",
+            "spot_image": "https://upload.wikimedia.org/wikipedia/commons/f/fa/20230630_Song_Yu-qi.jpg"
+        },
+        {
+            "spot_id": "spot07",
+            "spot_name": "某某地點",
+            "spot_image": "https://i.ytimg.com/vi/LD-LsSgSftQ/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLBnVw-Rij7a9G13r7TGXdsMpXemOg"
+        }
+    ]
+}
