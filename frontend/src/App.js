@@ -29,13 +29,10 @@ function App() {
             {/* {isLoggedIn && <Header />} */}
             <Header />
 
-            {isLoggedIn 
-                ? <Navigate to="explore" replace={true} />
-                : <Navigate to="login" replace={true} />
-            }
-
             <Routes>
-                <Route path="/">
+                {/* <Route path="/"> */}
+                    <Route path="/" element={isLoggedIn ? <Navigate to="explore" replace={true} />
+                                                        : <Navigate to="login" replace={true} />} />
                     <Route path="explore" element={<Explore />} />
                     <Route path="login" element={<Login />} />
                     <Route path="forget-password" element={<ForgotPassword />} />
@@ -46,7 +43,7 @@ function App() {
                     <Route path="mytrips" element={<MyTrips />} />
                     <Route path="spot/:id" element={<ViewSpot />} />
                     <Route path="*" element={<NotFound />} />
-                </Route>
+                {/* </Route> */}
             </Routes>
             {windowSize.width < constants.MOBILE_SCREEN_WIDTH && <Footer />}
 
