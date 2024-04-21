@@ -6,6 +6,7 @@ import InputText from "../component/InputText";
 import EmailVerification from "../component/EmailVerification";
 import SHA256 from "crypto-js/sha256";
 import { useAuth } from "../hooks/useAuth";
+import { baseFetch } from "../hooks/baseFetch";
 
 const Login = () => {
     const [activeTab, setActiveTab] = useState("login");
@@ -81,9 +82,7 @@ const LoginForm = () => {
         setError(""); // Reset error message
         if (email) {
             try {
-                const response = await fetch(
-                    `https://planar-effect-420508.de.r.appspot.com/api/v1/user/check_user?user_email=${email}`
-                );
+                const response = await baseFetch(`/api/v1/user/check_user?user_email=${email}`, 'GET');
                 const data = await response.json(); // Get the JSON payload
                 // const data_true = {
                 //     "valid": true,
@@ -120,8 +119,6 @@ const LoginForm = () => {
                     navigate("/explore");
                 }
 
-                // Redirect user or do some action after successful login here
-                // e.g., navigate to a dashboard or home page
             } catch (error) {
                 setError(error.message);
             }
@@ -198,6 +195,7 @@ const SignupForm = ({ onSignupSuccess }) => {
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [error, setError] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
 
     const generateSalt = (length = 10) => {
         const characters =
@@ -213,6 +211,17 @@ const SignupForm = ({ onSignupSuccess }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!localEmail) {
+            setError('Email is required.');
+            return; // Stop the function if the email is empty
+        }
+        if (!emailPattern.test(localEmail)) {
+            setError('Please enter a valid email address.');
+            return;
+        }
+
         if (password.length < 8) {
             setError("Password must be at least 8 characters long.");
             return;
@@ -223,19 +232,14 @@ const SignupForm = ({ onSignupSuccess }) => {
             setError("Passwords do not match.");
             return;
         }
-
+        setIsLoading(true);
         const salt = generateSalt(); // Generate a "salt"
         const hashedPassword = SHA256(password + salt).toString();
 
         try {
-            const response = await fetch(
-                "https://planar-effect-420508.de.r.appspot.com" +
-                    "/api/v1/user/send_email",
-                {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ user_email: localEmail }),
-                }
+            const response = await baseFetch(
+                "/api/v1/user/send_email", "POST", 
+                { user_email: localEmail }
             );
 
             // if (!response.OK) {
@@ -256,7 +260,10 @@ const SignupForm = ({ onSignupSuccess }) => {
             }
         } catch (error) {
             setError(error.message);
+        } finally {
+            setIsLoading(false); // Stop loading regardless of outcome
         }
+
     };
 
     return (
@@ -293,7 +300,13 @@ const SignupForm = ({ onSignupSuccess }) => {
                     onChange={setConfirmPassword}
                 />
             </div>
-            <Button txt="Sign Up" setting={{ type: "submit" }} />
+            <Button
+                txt={!isLoading ? "Sign Up" : <span className={style.loadingEffect}>Signing Up...</span>}
+                func={handleSubmit}
+                setting={{ type: "submit", disabled: isLoading }}
+            // Add additional props if needed to pass className
+            />
+
         </form>
     );
 };

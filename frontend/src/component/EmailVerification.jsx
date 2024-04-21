@@ -4,6 +4,7 @@ import style from "./EmailVerification.module.css";
 import Button from "./Button";
 import InputCode from "./InputCode";
 import { useAuth } from "../hooks/useAuth";
+import { baseFetch } from "../hooks/baseFetch";
 
 const EmailVerification = ({ email, hashed_password, salt }) => {
     const [verificationStatus, setVerificationStatus] = useState("error");
@@ -24,20 +25,13 @@ const EmailVerification = ({ email, hashed_password, salt }) => {
 
     const verifyEmail = async (verificationCode) => {
         try {
-            const response = await fetch(
-                "https://planar-effect-420508.de.r.appspot.com" +
-                    "/api/v1/user/verify",
+            const response = await baseFetch("/api/v1/user/verify", 'POST',
                 {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        user_email: email,
-                        hashed_password: hashed_password,
-                        salt: salt,
-                        token: verificationCode,
-                    }),
-                }
-            );
+                    user_email: email,
+                    hashed_password: hashed_password,
+                    salt: salt,
+                    token: verificationCode,
+                });
 
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);

@@ -3,10 +3,11 @@ import { Routes, Route } from "react-router-dom";
 
 import * as constants from "./constants";
 
+
 //import { useAuth } from "./hooks/useAuth";
 import { useTheme } from "./hooks/useTheme";
 import { useWindowSize } from "./hooks/useWindowSize";
-
+import ProtectedRoute from "./hooks/ProtectedRoute";
 import Header from "./component/Header";
 import Footer from "./component/Footer";
 import Login from "./page/Login";
@@ -21,7 +22,8 @@ import NotFound from "./page/NotFound";
 
 function App() {
     const { isDarkMode } = useTheme();
-    //const { isLoggedIn } = useAuth();
+    // const { isLoggedIn } = useAuth();
+    // const navigate = useNavigate();
     const windowSize = useWindowSize();
 
     return (
@@ -34,11 +36,11 @@ function App() {
                     <Route path="login" element={<Login />} />
                     <Route path="forget-password" element={<ForgotPassword />} />
                     <Route path="reset" element={<ResetPassword />} />
-                    <Route path="profile-setup" element={<ProfileSetup />} />
-                    <Route path="edit" element={<Edit />} />
-                    <Route path="edit/:id" element={<Edit />} />
-                    <Route path="explore" element={<Explore />} />
-                    <Route path="mytrips" element={<MyTrips />} />
+                    <Route path="profile-setup" element={<ProtectedRoute><ProfileSetup /></ProtectedRoute>} />
+                    <Route path="edit" element={<ProtectedRoute><Edit /></ProtectedRoute>} />
+                    <Route path="edit/:id" element={<ProtectedRoute><Edit /></ProtectedRoute>} />
+                    <Route path="explore" element={<ProtectedRoute><Explore /></ProtectedRoute>} />
+                    <Route path="mytrips" element={<ProtectedRoute><MyTrips /></ProtectedRoute>}/>
                     <Route path="spot/:id" element={<ViewSpot />} />
                     <Route path="*" element={<NotFound />} />
                 </Route>

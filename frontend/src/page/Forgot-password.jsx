@@ -5,11 +5,13 @@ import style from "./Forgot-password.module.css";
 import Button from "../component/Button";
 import InputText from "../component/InputText";
 import { FaArrowLeft } from 'react-icons/fa';
+import { baseFetch } from "../hooks/baseFetch";
 
 const Reset = () => {
     const [email, setEmail] = useState('');
     const [emailError, setEmailError] = useState('');
     const [isSubmittedSuccessfully, setIsSubmittedSuccessfully] = useState(false); // New state to track submission status
+    const [isLoading, setIsLoading] = useState(false);
 
     const navigate = useNavigate();
 
@@ -17,7 +19,7 @@ const Reset = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        
+
         if (!email) {
             setEmailError('Email is required.');
             setIsSubmittedSuccessfully(false);
@@ -29,18 +31,18 @@ const Reset = () => {
         } else {
             setEmailError('');
         }
-    
+
+        setIsLoading(true);
+
         try {
-            // const response = await fetch("http://localhost:5000"+'/api/v1/user/forget_password', {
-            //     method: 'POST',
-            //     headers: { 'Content-Type': 'application/json' },
-            //     body: JSON.stringify({ email: email })
-            // });
-            // const data = await response.json(); // Get the JSON payload
-            const data = {
-                "valid": true, // 若帳號存在且已發送重設 mail
-                "message": "已發送密碼重置郵件"
-            }
+            const response = await baseFetch('/api/v1/user/forget_password', "POST",
+                { email: email }
+            );
+            const data = await response.json(); // Get the JSON payload
+            // const data = {
+            //     "valid": true, // 若帳號存在且已發送重設 mail
+            //     "message": "已發送密碼重置郵件"
+            // }
 
             // const sample_data2 = {
             //     "valid": false, // 若帳號不存在
@@ -55,9 +57,10 @@ const Reset = () => {
         } catch (error) {
             setEmailError(error.message); // Set error message
             setIsSubmittedSuccessfully(false);
+        } finally {
+            setIsLoading(false); // Stop loading regardless of outcome
         }
-        // Your password reset submission logic here...
-        // For example, you could call an API endpoint to initiate the password reset process
+
     };
 
     const goBack = () => {
@@ -96,10 +99,13 @@ const Reset = () => {
 
                     </div>
                     <Button
-                        txt={"Reset My Password"}
-                        func={handleSubmit} // Assuming your Button component takes an onclick function through a prop named 'func',
-                        setting={{ type: "submit" }}
+                        txt={!isLoading ? "Submit" : <span className={style.loadingEffect}>Sending an email...</span>}
+                        func={handleSubmit}
+                        setting={{ type: "submit", disabled: isLoading }}
+                    // Add additional props if needed to pass className
                     />
+
+
                 </form>
             </div>
         </div>
