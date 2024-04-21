@@ -1,9 +1,9 @@
 import React from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 
 import * as constants from "./constants";
 
-//import { useAuth } from "./hooks/useAuth";
+import { useAuth } from "./hooks/useAuth";
 import { useTheme } from "./hooks/useTheme";
 import { useWindowSize } from "./hooks/useWindowSize";
 
@@ -21,28 +21,35 @@ import NotFound from "./page/NotFound";
 
 function App() {
     const { isDarkMode } = useTheme();
-    //const { isLoggedIn } = useAuth();
+    const { isLoggedIn } = useAuth();
     const windowSize = useWindowSize();
 
     return (
         <div className="App" theme={isDarkMode ? "dark" : "light"}>
             {/* {isLoggedIn && <Header />} */}
             <Header />
-            {windowSize.width < constants.MOBILE_SCREEN_WIDTH && <Footer />}
+
+            {isLoggedIn 
+                ? <Navigate to="explore" replace={true} />
+                : <Navigate to="login" replace={true} />
+            }
+
             <Routes>
                 <Route path="/">
+                    <Route path="explore" element={<Explore />} />
                     <Route path="login" element={<Login />} />
                     <Route path="forget-password" element={<ForgotPassword />} />
                     <Route path="reset" element={<ResetPassword />} />
                     <Route path="profile-setup" element={<ProfileSetup />} />
                     <Route path="edit" element={<Edit />} />
                     <Route path="edit/:id" element={<Edit />} />
-                    <Route path="explore" element={<Explore />} />
                     <Route path="mytrips" element={<MyTrips />} />
                     <Route path="spot/:id" element={<ViewSpot />} />
                     <Route path="*" element={<NotFound />} />
                 </Route>
             </Routes>
+            {windowSize.width < constants.MOBILE_SCREEN_WIDTH && <Footer />}
+
         </div>
     );
 }
