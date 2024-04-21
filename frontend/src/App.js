@@ -1,5 +1,5 @@
 import React from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 
 import * as constants from "./constants";
 
@@ -30,9 +30,12 @@ function App() {
         <div className="App" theme={isDarkMode ? "dark" : "light"}>
             {/* {isLoggedIn && <Header />} */}
             <Header />
-            {windowSize.width < constants.MOBILE_SCREEN_WIDTH && <Footer />}
+
             <Routes>
-                <Route path="/">
+                {/* <Route path="/"> */}
+                    <Route path="/" element={isLoggedIn ? <Navigate to="explore" replace={true} />
+                                                        : <Navigate to="login" replace={true} />} />
+                    <Route path="explore" element={<Explore />} />
                     <Route path="login" element={<Login />} />
                     <Route path="forget-password" element={<ForgotPassword />} />
                     <Route path="reset" element={<ResetPassword />} />
@@ -43,8 +46,10 @@ function App() {
                     <Route path="mytrips" element={<ProtectedRoute><MyTrips /></ProtectedRoute>}/>
                     <Route path="spot/:id" element={<ViewSpot />} />
                     <Route path="*" element={<NotFound />} />
-                </Route>
+                {/* </Route> */}
             </Routes>
+            {windowSize.width < constants.MOBILE_SCREEN_WIDTH && <Footer />}
+
         </div>
     );
 }

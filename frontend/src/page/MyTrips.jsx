@@ -18,7 +18,7 @@ const MyTrips = () => {
         // {
         //     "id": "234",
         //     "name": "trip nameee",
-        //     "image": "https://",
+        //     "image": "https://picsum.photos/200",
         // }
     ]);
 
