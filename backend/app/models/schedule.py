@@ -6,6 +6,7 @@ class Schedule(db.Model):
     ledger_id = db.Column(db.Integer, db.ForeignKey('Ledger.ledger_id'), nullable=False)
     post_id = db.Column(db.Integer, db.ForeignKey('Post.post_id'), nullable=False)
     schedule_name = db.Column(db.String(50), nullable=False)
+    location = db.Column(db.String(50), nullable=True)
     start_date = db.Column(db.DateTime, nullable=False)
     end_date = db.Column(db.DateTime, nullable=False)
     public = db.Column(db.Boolean, nullable=False, default=False)

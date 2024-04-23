@@ -28,6 +28,8 @@ class TripManager(Resource):
                 return make_response({'message': 'User does not have access to this trip.'}, 403)
             
             schedule = Schedule.get_by_id(trip_id)
+            schedule_image = None
+
             places_in_trip = RelationSpotSch.get_by_schedule(trip_id)
             
             trip_detail = [[] for _ in range(self.get_trip_length(schedule))]
@@ -51,15 +53,20 @@ class TripManager(Resource):
                 }
                 trip_detail[relation_spot_sch.date-1].append(place_info)
 
+                # set schedule image as the first image of the place
+                if schedule_image == None and place.image != None:
+                    schedule_image = place.image
+
             responce = {
                 "id": schedule.schedule_id,
                 "name": schedule.schedule_name,
-                "image": None,
+                "image": schedule_image,
                 "start_date": date_to_array(schedule.start_date),
                 "end_date": date_to_array(schedule.end_date),
-                "trip": trip_detail
+                "location": schedule.location,
+                "trip": trip_detail,
+                "public": schedule.public
             }
-            responce['public'] = schedule.public
 
 
         else: # get all schedules accessible by the user
@@ -74,7 +81,7 @@ class TripManager(Resource):
                 schedule = Schedule.get_by_id(relation.schedule_id)
                 trip_info['id'] = schedule.schedule_id
                 trip_info['name'] = schedule.schedule_name
-                trip_info['image'] = None
+                # trip_info['image'] = None
                 trip_info['date_status'] = check_date_status(schedule.start_date, schedule.end_date)
                 trip_info['start_date'] = date_to_array(schedule.start_date)
                 trip_info['end_date'] = date_to_array(schedule.end_date)
@@ -97,6 +104,8 @@ class TripManager(Resource):
 
         # create new ledger for the schedule
         ledger_params = {
+            'exchange': data['exchange'],
+            'standard': data['standard'],
         }
         ledger = Ledger.create(ledger_params)
 
@@ -111,6 +120,7 @@ class TripManager(Resource):
         schedule_params = {
             'ledger_id': ledger.ledger_id,
             'post_id': post.post_id,
+            'location': data['location'] 
         }
         if 'trip_name' not in data or data['trip_name'] == '':
             return make_response({'message': 'Trip name is required.'}, 400)
