@@ -10,6 +10,7 @@ from app import create_app
 from app.models.create_db import init_db
 from app.routes import initialize_routes
 from app.services.mail import init_mail
+from datetime import timedelta
 
 # app = create_app()
 app = Flask(__name__)
@@ -27,6 +28,7 @@ app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_DEFAULT_SENDER')
 app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
 app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
 app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=6)
 
 INSTANCE_NAME = os.getenv("INSTANCE_NAME")
 PUBLIC_IP_ADDRESS = os.getenv("DB_PUBLIC_IP_ADDRESS")
