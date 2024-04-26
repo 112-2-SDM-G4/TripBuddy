@@ -2,6 +2,7 @@ import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 
 import * as constants from "./constants";
+
 import { useAuth } from "./hooks/useAuth";
 import { useTheme } from "./hooks/useTheme";
 import { useWindowSize } from "./hooks/useWindowSize";
@@ -41,7 +42,14 @@ function App() {
                         )
                     }
                 />
-                <Route path="explore" element={<Explore />} />
+                <Route
+                    path="explore"
+                    element={
+                        <ProtectedRoute>
+                            <Explore />
+                        </ProtectedRoute>
+                    }
+                />
                 <Route path="login" element={<Login />} />
                 <Route path="forget-password" element={<ForgotPassword />} />
                 <Route path="reset" element={<ResetPassword />} />
@@ -85,8 +93,22 @@ function App() {
                         </ProtectedRoute>
                     }
                 />
-                <Route path="spot/:id" element={<ViewSpot />} />
-                <Route path="*" element={<NotFound />} />
+                <Route
+                    path="spot/:id"
+                    element={
+                        <ProtectedRoute>
+                            <ViewSpot />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="*"
+                    element={
+                        <ProtectedRoute>
+                            <NotFound />
+                        </ProtectedRoute>
+                    }
+                />
                 {/* </Route> */}
             </Routes>
             {windowSize.width < constants.MOBILE_SCREEN_WIDTH && <Footer />}

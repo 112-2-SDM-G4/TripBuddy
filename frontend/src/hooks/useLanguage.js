@@ -8,7 +8,7 @@ export const LanguageProvider = ({ children }) => {
     };
     useEffect(() => {
         document.documentElement.lang = language;
-        document.title = language === "en" ? "Tour buddy" : "旅遊伴";
+        document.title = language === "en" ? "Trip buddy" : "旅遊伴";
     }, [language]);
     return (
         <LanguageContext.Provider value={{ language, toggleLanguage }}>
