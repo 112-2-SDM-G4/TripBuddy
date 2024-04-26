@@ -19,7 +19,7 @@ export default function TimePicker({ changeTime }) {
 
     useEffect(() => {
         changeTime([hour, minute]);
-    }, [hour, minute]);
+    }, [hour, minute, changeTime]);
 
     const handleHourChange = (event) => {
         setHour(event.target.value);

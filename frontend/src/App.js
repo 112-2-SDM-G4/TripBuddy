@@ -2,9 +2,7 @@ import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 
 import * as constants from "./constants";
-
-
-//import { useAuth } from "./hooks/useAuth";
+import { useAuth } from "./hooks/useAuth";
 import { useTheme } from "./hooks/useTheme";
 import { useWindowSize } from "./hooks/useWindowSize";
 import ProtectedRoute from "./hooks/ProtectedRoute";
@@ -22,7 +20,7 @@ import NotFound from "./page/NotFound";
 
 function App() {
     const { isDarkMode } = useTheme();
-    // const { isLoggedIn } = useAuth();
+    const { isLoggedIn } = useAuth();
     // const navigate = useNavigate();
     const windowSize = useWindowSize();
 
@@ -33,23 +31,65 @@ function App() {
 
             <Routes>
                 {/* <Route path="/"> */}
-                    <Route path="/" element={isLoggedIn ? <Navigate to="explore" replace={true} />
-                                                        : <Navigate to="login" replace={true} />} />
-                    <Route path="explore" element={<Explore />} />
-                    <Route path="login" element={<Login />} />
-                    <Route path="forget-password" element={<ForgotPassword />} />
-                    <Route path="reset" element={<ResetPassword />} />
-                    <Route path="profile-setup" element={<ProtectedRoute><ProfileSetup /></ProtectedRoute>} />
-                    <Route path="edit" element={<ProtectedRoute><Edit /></ProtectedRoute>} />
-                    <Route path="edit/:id" element={<ProtectedRoute><Edit /></ProtectedRoute>} />
-                    <Route path="explore" element={<ProtectedRoute><Explore /></ProtectedRoute>} />
-                    <Route path="mytrips" element={<ProtectedRoute><MyTrips /></ProtectedRoute>}/>
-                    <Route path="spot/:id" element={<ViewSpot />} />
-                    <Route path="*" element={<NotFound />} />
+                <Route
+                    path="/"
+                    element={
+                        isLoggedIn ? (
+                            <Navigate to="explore" replace={true} />
+                        ) : (
+                            <Navigate to="login" replace={true} />
+                        )
+                    }
+                />
+                <Route path="explore" element={<Explore />} />
+                <Route path="login" element={<Login />} />
+                <Route path="forget-password" element={<ForgotPassword />} />
+                <Route path="reset" element={<ResetPassword />} />
+                <Route
+                    path="profile-setup"
+                    element={
+                        <ProtectedRoute>
+                            <ProfileSetup />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="edit"
+                    element={
+                        <ProtectedRoute>
+                            <Edit />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="edit/:id"
+                    element={
+                        <ProtectedRoute>
+                            <Edit />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="explore"
+                    element={
+                        <ProtectedRoute>
+                            <Explore />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="mytrips"
+                    element={
+                        <ProtectedRoute>
+                            <MyTrips />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route path="spot/:id" element={<ViewSpot />} />
+                <Route path="*" element={<NotFound />} />
                 {/* </Route> */}
             </Routes>
             {windowSize.width < constants.MOBILE_SCREEN_WIDTH && <Footer />}
-
         </div>
     );
 }
