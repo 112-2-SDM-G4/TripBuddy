@@ -4,6 +4,7 @@ from tests.test import Test
 from app.controllers.Base import ExampleController
 from app.controllers.PlaceManager import PlaceSearch, PlaceDetail, PlaceInTrip
 from app.controllers.UserManager import SendVerifyEmail, UserVerification, SetUserInfo, LoginCheckUser, LoginCheckPassword, ForgetPassword, ResetPassword
+from app.controllers.LedgerManager import Currency
 from flask_restful import Api
 
 BASE_ROUTE = '/api/v1'
@@ -26,3 +27,4 @@ def initialize_routes(api: Api):
     api.add_resource(LoginCheckPassword, f'{BASE_ROUTE}/user/check_password')
     api.add_resource(ForgetPassword, f'{BASE_ROUTE}/user/forget_password')
     api.add_resource(ResetPassword, f'{BASE_ROUTE}/user/reset_password')
+    api.add_resource(Currency, f'{BASE_ROUTE}/ledger/change_currency')
