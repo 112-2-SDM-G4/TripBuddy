@@ -6,6 +6,7 @@ import TimePicker from "./TimePicker";
 import InputText from "../component/InputText";
 import Button from "../component/Button";
 import { fetchWithJwt } from "../hooks/fetchWithJwt";
+import { useAuth } from "../hooks/useAuth";
 
 export default function AddPageforTrip({ close, spot }) {
     const words = {
@@ -31,31 +32,13 @@ export default function AddPageforTrip({ close, spot }) {
 
     const { name, src, spotId } = spot;
     const { language } = useLanguage();
+    const { user } = useAuth();
     const [stage, setStage] = useState(1);
-    const [trips, setTrips] = useState([]);
     const [selectTrip, setSelectTrip] = useState("");
     const [selectDay, setSelectDay] = useState(-1);
     const [selectTime, setSelectTime] = useState([]);
     const [Comment, setComment] = useState("");
     const [Budget, setBudget] = useState("");
-
-    useEffect(() => {
-        fetchWithJwt("/api/v1/trip", "GET")
-            .then(function (response) {
-                console.log(response);
-                return response.json();
-            })
-            .then(function (result) {
-                console.log(result);
-                if (result["user_trip"]) {
-                    setTrips(result["user_trip"]);
-                } else {
-                    alert(result["message"]);
-                }
-            });
-
-        return () => {};
-    }, []);
 
     const selectAddTarget = (tripid, day) => {
         setSelectTrip(tripid);
@@ -116,7 +99,7 @@ export default function AddPageforTrip({ close, spot }) {
                             {words[language]["add"]}
                         </div>
                         <div className={style.trips}>
-                            {trips.map((trip) => (
+                            {user["trips"].map((trip) => (
                                 <TripBlock
                                     key={trip.id}
                                     trip={trip}

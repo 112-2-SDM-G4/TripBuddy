@@ -17,128 +17,37 @@ import {
     IoAlertCircle,
     IoAddCircleOutline,
 } from "react-icons/io5";
+import { useAuth } from "../hooks/useAuth";
 
 export default function Edit() {
     const { id } = useParams();
     const [stage, setStage] = useState(0);
     const [trip, setTrip] = useState({});
     const { language } = useLanguage();
+    const navigate = useNavigate();
 
     useEffect(() => {
-        console.log(id);
         if (id !== undefined) {
-            // setTrip({
-            //     public: false,
-            //     id: "trip01",
-            //     name: "嘉義三天兩夜",
-            //     image: null,
-            //     start_date: [2024, 1, 2],
-            //     end_date: [2024, 1, 4],
-            //     trip: [
-            //         [
-            //             {
-            //                 relation_id: 12,
-            //                 comment: "早上來感覺很漂亮",
-            //                 formatted_address:
-            //                     "4-chōme-2-8 Shibakōen, Minato City, Tokyo 105-0011日本",
-            //                 google_maps_uri:
-            //                     "https://maps.google.com/?cid=5195627782660688349",
-            //                 image: "https://lh3.googleusercontent.com/places/ANXAkqEy8vwNygsL8QZcb1Nt8kGwzwL6FCRgcR327XM_qtgJx6MJLHMsxRgOhEN3OPmMwSEEUzfbmeabFxe3Uz443TMZRnDNaX-Yk5E=s4800-w800-h1204",
-            //                 money: 200.0,
-            //                 name: "東京鐵塔東京鐵塔東京鐵塔東京鐵塔東京鐵塔東京鐵塔東京鐵塔東京鐵塔東京鐵塔",
-            //                 place_id: "ChIJCewJkL2LGGAR3Qmk0vCTGkg",
-            //                 place_summary:
-            //                     "這座地標讓人想起巴黎艾菲爾鐵塔，設有觀景區和其他景點。",
-            //                 rating: 4.4,
-            //                 regular_opening_hours: [
-            //                     "星期一: 09:00 – 22:30",
-            //                     "星期二: 09:00 – 22:30",
-            //                     "星期三: 09:00 – 22:30",
-            //                     "星期四: 09:00 – 22:30",
-            //                     "星期五: 09:00 – 22:30",
-            //                     "星期六: 09:00 – 22:30",
-            //                     "星期日: 09:00 – 22:30",
-            //                 ],
-            //                 stay_time: [1, 0],
-            //                 user_rating_count: 71591,
-            //             },
-            //             {
-            //                 relation_id: 15,
-            //                 comment: null,
-            //                 formatted_address:
-            //                     "2-chōme-3-1 Asakusa, Taito City, Tokyo 111-0032日本",
-            //                 google_maps_uri:
-            //                     "https://maps.google.com/?cid=15683880811625452221",
-            //                 image: "https://lh5.googleusercontent.com/p/AF1QipPDdrqtwIEd_Ty0Oo21LmVjVV9oBXxFwXMw5amL=w408-h306-k-no",
-            //                 money: null,
-            //                 name: "淺草寺 雷門",
-            //                 place_id: "ChIJ0YwG28aOGGARvRKAXIBWqNk",
-            //                 place_summary:
-            //                     "位於淺草寺入口處的莊嚴大門，掛有 3.9 公尺高的燈籠。",
-            //                 rating: 4.5,
-            //                 regular_opening_hours: [
-            //                     "星期一: 24 小時營業",
-            //                     " 星期二: 24 小時營業",
-            //                     " 星期三: 24 小時營業",
-            //                     " 星期四: 24 小時營業",
-            //                     " 星期五: 24 小時營業",
-            //                     " 星期六: 24 小時營業",
-            //                     " 星期日: 24 小時營業",
-            //                 ],
-            //                 stay_time: [1, 0],
-            //                 user_rating_count: 29588,
-            //             },
-            //         ],
-            //         [
-            //             {
-            //                 relation_id: 16,
-            //                 comment: "讚讚",
-            //                 formatted_address:
-            //                     "1-chōme-1-2 Oshiage, Sumida City, Tokyo 131-0045日本",
-            //                 google_maps_uri:
-            //                     "https://maps.google.com/?cid=9015449659807889194",
-            //                 image: "https://lh5.googleusercontent.com/p/AF1QipPkHrinKramHo5HstdfR12_EqIkcb1eG3D3Fkwe=w408-h544-k-no",
-            //                 money: 0.0,
-            //                 name: "東京晴空塔",
-            //                 place_id: "ChIJ35ov0dCOGGARKvdDH7NPHX0",
-            //                 place_summary:
-            //                     "世界上最高的獨立廣播塔，上面的觀景台可飽覽 360 度全景。",
-            //                 rating: 4.4,
-            //                 regular_opening_hours: [
-            //                     "星期一: 10:00 – 21:00",
-            //                     " 星期二: 10:00 – 21:00",
-            //                     " 星期三: 10:00 – 21:00",
-            //                     " 星期四: 10:00 – 21:00",
-            //                     " 星期五: 10:00 – 21:00",
-            //                     " 星期六: 10:00 – 21:00",
-            //                     " 星期日: 10:00 – 21:00",
-            //                 ],
-            //                 stay_time: [0, 30],
-            //                 user_rating_count: 84392,
-            //             },
-            //         ],
-            //         [],
-            //         [],
-            //     ],
-            // });
             fetchWithJwt("/api/v1/trip/" + id, "GET")
                 .then(function (response) {
                     return response.json();
                 })
                 .then(function (result) {
-                    if (result) {
+                    if (result["trip"]) {
                         setTrip(result);
                     } else {
-                        alert(result["message"]);
+                        navigate("/login");
+                        console.log(result["message"]);
                     }
                 })
                 .catch(function () {
+                    navigate("/login");
                     console.log("errrr");
                 });
             setStage(1);
         }
         return () => {};
-    }, [id]);
+    }, [id, navigate]);
 
     return (
         <div className={style.main}>
@@ -197,6 +106,7 @@ function InitialPage({ setStage, language }) {
     const [selectedExchange, setSelectedExchange] = useState("");
     const [selectedStandard, setSelectedStandard] = useState("");
     let navigate = useNavigate();
+    let { updateUserData } = useAuth();
 
     const createTrip = () => {
         if (tripName === "") {
@@ -216,12 +126,12 @@ function InitialPage({ setStage, language }) {
             standard: selectedStandard,
         })
             .then(function (response) {
-                console.log(response);
                 return response.json();
             })
             .then(function (result) {
                 console.log(result);
                 if (result["trip_id"]) {
+                    updateUserData();
                     navigate("./" + result["trip_id"]);
                 } else {
                     alert(result["message"]);
@@ -415,6 +325,9 @@ function EditPage({ tripinfo, language, id }) {
     const [openExplore, setOpenExplore] = useState(false);
     const windowSize = useWindowSize();
 
+    console.log(tripinfo);
+    console.log(trip);
+
     useEffect(() => {
         function formatDateAndWeekday(start, end, language) {
             if (!start || !end) {
@@ -470,6 +383,8 @@ function EditPage({ tripinfo, language, id }) {
             )
         );
 
+        setTrip(tripinfo["trip"] ? tripinfo["trip"] : []);
+        setSpots(tripinfo["trip"] ? tripinfo["trip"][0] : []);
         return () => {};
     }, [tripinfo, language]);
 
@@ -582,7 +497,14 @@ function EditPage({ tripinfo, language, id }) {
                     openExplore ? null : style.hidden
                 }`}
             >
-                <Explore fixcol={exploreCol()} />
+                <div className={`${style.title} ${style.exploretitle}`}>
+                    景點搜尋
+                </div>
+                <Explore
+                    fixcol={exploreCol()}
+                    tripid={id}
+                    location={"Taiwan"}
+                />
             </div>
         </div>
     );
