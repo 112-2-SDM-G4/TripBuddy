@@ -4,7 +4,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import * as constants from "./constants";
 
 
-//import { useAuth } from "./hooks/useAuth";
+import { useAuth } from "./hooks/useAuth";
 import { useTheme } from "./hooks/useTheme";
 import { useWindowSize } from "./hooks/useWindowSize";
 import ProtectedRoute from "./hooks/ProtectedRoute";
@@ -22,7 +22,7 @@ import NotFound from "./page/NotFound";
 
 function App() {
     const { isDarkMode } = useTheme();
-    // const { isLoggedIn } = useAuth();
+    const { isLoggedIn } = useAuth();
     // const navigate = useNavigate();
     const windowSize = useWindowSize();
 

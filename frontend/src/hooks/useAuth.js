@@ -9,22 +9,35 @@ export const AuthProvider = ({ children }) => {
 
     const login = async (email, hashedPassword) => {
         const url = "/api/v1/user/check_password";
-        const postData = { 
+        const postData = {
             user_email: email, 
-            hashed_password: hashedPassword };
+            hashed_password: hashedPassword
+        };
 
         try {
-            const response = await fetchWithJwt(url, "POST", postData);
+            const loginResponse = await fetchWithJwt(url, "POST", postData);
+            const loginData = await loginResponse.json();
 
-            const data = await response.json();
-            
-            if (data.valid) {
-                sessionStorage.setItem("jwtToken", data.jwt_token);
-                setUser({ ...data.user }); // Assuming data.user contains user info
+            if (loginData.valid) {
+                sessionStorage.setItem("jwtToken", loginData.jwt_token);
                 setIsLoggedIn(true);
+            
+            } else {
+                return { success: false, error: loginData.message };
+            }
+            // Fetch trip data after successful login
+            const tripResponse = await fetchWithJwt("/api/v1/trip", "GET");
+            const tripData = await tripResponse.json();
+            console.log(tripData)
+
+            if (tripResponse.ok) {
+                const userData = {trips: tripData.user_trip};
+                setUser(userData);
+                sessionStorage.setItem("user", JSON.stringify(userData)); // Optional: Store user data in sessionStorage
+                
                 return { success: true, error: null };
             } else {
-                return { success: false, error: data.message };
+                throw new Error("Failed to fetch trips");
             }
         } catch (error) {
             console.error(error);
@@ -34,6 +47,7 @@ export const AuthProvider = ({ children }) => {
 
     const logout = () => {
         sessionStorage.removeItem("jwtToken");
+        sessionStorage.removeItem("user"); // Remove user data from sessionStorage
         setUser({});
         setIsLoggedIn(false);
     };
