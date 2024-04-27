@@ -5,7 +5,7 @@ import SpotCard from "../component/SpotCard";
 import SearchBox from "../component/SearchBox";
 import Loader from "../component/Loader";
 
-const Explore = () => {
+const Explore = ({ fixcol }) => {
     const [isLoading, setIsLoading] = useState(true);
     const [spots, setSpots] = useState([]);
 
@@ -47,7 +47,10 @@ const Explore = () => {
                 <SearchBox onSearch={handleSearch} />
             </div>
 
-            <div className={style.spotscontainer}>
+            <div
+                className={style.spotscontainer}
+                style={fixcol ? { columnCount: fixcol } : null}
+            >
                 {spots.map((spot) => (
                     <SpotCard
                         key={spot["place_id"]}

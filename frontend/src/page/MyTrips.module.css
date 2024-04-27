@@ -2,16 +2,15 @@
     display: flex;
     flex-direction: column;
     padding-top: 1rem;
-    padding-left: 1rem;
     margin-bottom: 5rem;
     margin-top: 4.5rem;
+    align-items: center;
     width: auto;
 }
 
 .buttoncontainer {
     position: sticky;
     width: 31rem;
-    padding-left: 1rem;
     display: flex;
     justify-content: center;
 }
@@ -27,5 +26,4 @@
         margin-left: 1rem;
         padding-left: 0;
     }
-    
 }

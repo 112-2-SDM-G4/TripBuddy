@@ -4,8 +4,10 @@ import Button from "../component/Button";
 import Calendar from "../component/Calendar";
 import InputText from "../component/InputText";
 import SearchableSelect from "../component/SearchableSelect";
-import { useLanguage } from "../hooks/useLanguage";
 import DragBox from "../component/DragBox";
+import Explore from "./Explore";
+import { useLanguage } from "../hooks/useLanguage";
+import { useWindowSize } from "../hooks/useWindowSize";
 import { fetchWithJwt } from "../hooks/fetchWithJwt";
 import { useNavigate, useParams } from "react-router-dom";
 import CountryData from "../assets/Country.json";
@@ -209,11 +211,16 @@ function InitialPage({ setStage, language }) {
             trip_name: tripName,
             start_date: DatetoArray(selectedStart),
             end_date: DatetoArray(selectedEnd),
+            location: selectedLocation,
+            exchange: selectedExchange,
+            standard: selectedStandard,
         })
             .then(function (response) {
+                console.log(response);
                 return response.json();
             })
             .then(function (result) {
+                console.log(result);
                 if (result["trip_id"]) {
                     navigate("./" + result["trip_id"]);
                 } else {
@@ -276,7 +283,7 @@ function InitialPage({ setStage, language }) {
                                     search: "搜尋",
                                 },
                                 en: {
-                                    select: "Please select",
+                                    select: "Select",
                                     search: "Search",
                                 },
                             }}
@@ -304,7 +311,7 @@ function InitialPage({ setStage, language }) {
                                     search: "搜尋",
                                 },
                                 en: {
-                                    select: "Please select",
+                                    select: "Select",
                                     search: "Search",
                                 },
                             }}
@@ -312,7 +319,9 @@ function InitialPage({ setStage, language }) {
                                 CountryData,
                                 language
                             )}
-                            onSelect={() => {}}
+                            onSelect={(money) => {
+                                setSelectedExchange(money);
+                            }}
                             setvalue={selectedExchange}
                         />
                     </div>
@@ -333,7 +342,9 @@ function InitialPage({ setStage, language }) {
                                 CountryData,
                                 language
                             )}
-                            onSelect={() => {}}
+                            onSelect={(value) => {
+                                setSelectedStandard(value);
+                            }}
                         />
                     </div>
                 </div>
@@ -401,7 +412,8 @@ function EditPage({ tripinfo, language, id }) {
     const [spots, setSpots] = useState(
         tripinfo["trip"] ? tripinfo["trip"][0] : []
     );
-    let navigate = useNavigate();
+    const [openExplore, setOpenExplore] = useState(false);
+    const windowSize = useWindowSize();
 
     useEffect(() => {
         function formatDateAndWeekday(start, end, language) {
@@ -519,42 +531,58 @@ function EditPage({ tripinfo, language, id }) {
         }
     };
     const openAddSpot = () => {
-        navigate("../explore");
+        setOpenExplore((prev) => !prev);
+    };
+    const exploreCol = () => {
+        if (windowSize.width < 1200) {
+            return 2;
+        } else {
+            return 3;
+        }
     };
 
     return (
-        <div className={style.editpage}>
-            <div className={style.editpageTitle}>{tripinfo["name"]}</div>
-            <div className={style.selectdate}>
-                {dates.map((d, i) => (
-                    <div
-                        className={`${style.date} ${
-                            i === selectedDate ? style.selected : null
-                        }`}
-                        key={"dates" + i}
-                        onClick={() => {
-                            setSelectedDate(i);
-                        }}
-                    >{`第${i + 1}天`}</div>
-                ))}
-            </div>
-            <div className={style.datedetail}>
-                <div className={style.dateinfos}>
-                    <div>
-                        {dates[selectedDate]
-                            ? dates[selectedDate].date + " "
-                            : ""}
-                        {dates[selectedDate]
-                            ? dates[selectedDate].weekday + " "
-                            : ""}
-                        {getWeather()}
-                    </div>
-                    <IoAddCircleOutline
-                        className={style.addspot}
-                        onClick={openAddSpot}
-                    />
+        <div className={style.editpagecontainer}>
+            <div className={style.editpage}>
+                <div className={style.editpageTitle}>{tripinfo["name"]}</div>
+                <div className={style.selectdate}>
+                    {dates.map((d, i) => (
+                        <div
+                            className={`${style.date} ${
+                                i === selectedDate ? style.selected : null
+                            }`}
+                            key={"dates" + i}
+                            onClick={() => {
+                                setSelectedDate(i);
+                            }}
+                        >{`第${i + 1}天`}</div>
+                    ))}
                 </div>
-                <DragBox spots={spots} onItemsReordered={reorderSpots} />
+                <div className={style.datedetail}>
+                    <div className={style.dateinfos}>
+                        <div>
+                            {dates[selectedDate]
+                                ? dates[selectedDate].date + " "
+                                : ""}
+                            {dates[selectedDate]
+                                ? dates[selectedDate].weekday + " "
+                                : ""}
+                            {getWeather()}
+                        </div>
+                        <IoAddCircleOutline
+                            className={style.addspot}
+                            onClick={openAddSpot}
+                        />
+                    </div>
+                    <DragBox spots={spots} onItemsReordered={reorderSpots} />
+                </div>
+            </div>
+            <div
+                className={`${style.explorepage} ${
+                    openExplore ? null : style.hidden
+                }`}
+            >
+                <Explore fixcol={exploreCol()} />
             </div>
         </div>
     );

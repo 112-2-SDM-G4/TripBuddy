@@ -8,10 +8,10 @@
     height: 100vh;
     max-width: 100dvw;
     max-height: 100dvh;
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
-    z-index: 2;
+    z-index: 6;
     display: flex;
     justify-content: center;
     align-items: center;

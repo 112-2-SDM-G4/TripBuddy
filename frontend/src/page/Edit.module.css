@@ -66,6 +66,27 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     height: 0;
 }
 
+.editpagecontainer {
+    display: flex;
+}
+.explorepage {
+    transition: all 1s ease;
+    max-width: 45vw;
+    overflow: hidden;
+}
+.hidden {
+    max-width: 0vw;
+}
+@media (max-width: 1070px) {
+    .explorepage {
+        position: absolute;
+        max-width: 100vw;
+        width: 100vw;
+        left: 0rem;
+        top: 0;
+        background-color: var(--backgroundcolor);
+    }
+}
 .editpage {
     padding-top: 2rem;
     display: flex;

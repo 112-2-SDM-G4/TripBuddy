@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { fetchWithJwt } from "./fetchWithJwt";
 
 const AuthContext = createContext();
@@ -10,8 +10,8 @@ export const AuthProvider = ({ children }) => {
     const login = async (email, hashedPassword) => {
         const url = "/api/v1/user/check_password";
         const postData = {
-            user_email: email, 
-            hashed_password: hashedPassword
+            user_email: email,
+            hashed_password: hashedPassword,
         };
 
         try {
@@ -21,20 +21,19 @@ export const AuthProvider = ({ children }) => {
             if (loginData.valid) {
                 sessionStorage.setItem("jwtToken", loginData.jwt_token);
                 setIsLoggedIn(true);
-            
             } else {
                 return { success: false, error: loginData.message };
             }
             // Fetch trip data after successful login
             const tripResponse = await fetchWithJwt("/api/v1/trip", "GET");
             const tripData = await tripResponse.json();
-            console.log(tripData)
+            console.log(tripData);
 
             if (tripResponse.ok) {
-                const userData = {trips: tripData.user_trip};
+                const userData = { trips: tripData.user_trip };
                 setUser(userData);
                 sessionStorage.setItem("user", JSON.stringify(userData)); // Optional: Store user data in sessionStorage
-                
+
                 return { success: true, error: null };
             } else {
                 throw new Error("Failed to fetch trips");
@@ -51,6 +50,16 @@ export const AuthProvider = ({ children }) => {
         setUser({});
         setIsLoggedIn(false);
     };
+
+    useEffect(() => {
+        const jwt_token = sessionStorage.getItem("jwtToken");
+        const userData = sessionStorage.getItem("user");
+        if (jwt_token && userData) {
+            setUser(userData);
+            setIsLoggedIn(true);
+        }
+        return () => {};
+    }, []);
 
     return (
         <AuthContext.Provider value={{ isLoggedIn, login, logout, user }}>
