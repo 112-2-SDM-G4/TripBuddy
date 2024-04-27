@@ -6,7 +6,6 @@ import * as constants from "./constants";
 import { useAuth } from "./hooks/useAuth";
 import { useTheme } from "./hooks/useTheme";
 import { useWindowSize } from "./hooks/useWindowSize";
-import ProtectedRoute from "./hooks/ProtectedRoute";
 import Header from "./component/Header";
 import Footer from "./component/Footer";
 import Login from "./page/Login";
@@ -42,73 +41,17 @@ function App() {
                         )
                     }
                 />
-                <Route
-                    path="explore"
-                    element={
-                        <ProtectedRoute>
-                            <Explore />
-                        </ProtectedRoute>
-                    }
-                />
+                <Route path="explore" element={<Explore />} />
                 <Route path="login" element={<Login />} />
                 <Route path="forget-password" element={<ForgotPassword />} />
                 <Route path="reset" element={<ResetPassword />} />
-                <Route
-                    path="profile-setup"
-                    element={
-                        <ProtectedRoute>
-                            <ProfileSetup />
-                        </ProtectedRoute>
-                    }
-                />
-                <Route
-                    path="edit"
-                    element={
-                        <ProtectedRoute>
-                            <Edit />
-                        </ProtectedRoute>
-                    }
-                />
-                <Route
-                    path="edit/:id"
-                    element={
-                        <ProtectedRoute>
-                            <Edit />
-                        </ProtectedRoute>
-                    }
-                />
-                <Route
-                    path="explore"
-                    element={
-                        <ProtectedRoute>
-                            <Explore />
-                        </ProtectedRoute>
-                    }
-                />
-                <Route
-                    path="mytrips"
-                    element={
-                        <ProtectedRoute>
-                            <MyTrips />
-                        </ProtectedRoute>
-                    }
-                />
-                <Route
-                    path="spot/:id"
-                    element={
-                        <ProtectedRoute>
-                            <ViewSpot />
-                        </ProtectedRoute>
-                    }
-                />
-                <Route
-                    path="*"
-                    element={
-                        <ProtectedRoute>
-                            <NotFound />
-                        </ProtectedRoute>
-                    }
-                />
+                <Route path="profile-setup" element={<ProfileSetup />} />
+                <Route path="edit" element={<Edit />} />
+                <Route path="edit/:id" element={<Edit />} />
+                <Route path="explore" element={<Explore />} />
+                <Route path="mytrips" element={<MyTrips />} />
+                <Route path="spot/:id" element={<ViewSpot />} />
+                <Route path="*" element={<NotFound />} />
                 {/* </Route> */}
             </Routes>
             {windowSize.width < constants.MOBILE_SCREEN_WIDTH && <Footer />}

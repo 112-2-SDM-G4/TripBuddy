@@ -1,11 +1,15 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { fetchWithJwt } from "./fetchWithJwt";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [user, setUser] = useState({});
+    const navigate = useNavigate();
+    const location = useLocation();
+    const { pathname } = location;
 
     const login = async (email, hashedPassword) => {
         const url = "/api/v1/user/check_password";
@@ -24,16 +28,15 @@ export const AuthProvider = ({ children }) => {
             } else {
                 return { success: false, error: loginData.message };
             }
-            // Fetch trip data after successful login
+
             const tripResponse = await fetchWithJwt("/api/v1/trip", "GET");
             const tripData = await tripResponse.json();
-            console.log(tripData);
 
             if (tripResponse.ok) {
                 const userData = { trips: tripData.user_trip };
                 setUser(userData);
                 sessionStorage.setItem("user", JSON.stringify(userData)); // Optional: Store user data in sessionStorage
-
+                console.log(userData);
                 return { success: true, error: null };
             } else {
                 throw new Error("Failed to fetch trips");
@@ -55,14 +58,43 @@ export const AuthProvider = ({ children }) => {
         const jwt_token = sessionStorage.getItem("jwtToken");
         const userData = sessionStorage.getItem("user");
         if (jwt_token && userData) {
-            setUser(userData);
+            setUser(JSON.parse(userData));
             setIsLoggedIn(true);
+        } else if (
+            pathname.includes("login") ||
+            pathname.includes("forget-password") ||
+            pathname.includes("reset")
+        ) {
+            return;
+        } else {
+            navigate("/login");
         }
         return () => {};
-    }, []);
+    }, [navigate, pathname]);
+
+    const updateUserData = async () => {
+        try {
+            const tripResponse = await fetchWithJwt("/api/v1/trip", "GET");
+            const tripData = await tripResponse.json();
+            if (tripResponse.ok) {
+                const userData = { trips: tripData.user_trip };
+                setUser(userData);
+                sessionStorage.setItem("user", JSON.stringify(userData)); // Optional: Store user data in sessionStorage
+                console.log(userData);
+                return { success: true, error: null };
+            } else {
+                throw new Error("Failed to fetch trips");
+            }
+        } catch (error) {
+            console.error(error);
+            return { success: false, error: error.message };
+        }
+    };
 
     return (
-        <AuthContext.Provider value={{ isLoggedIn, login, logout, user }}>
+        <AuthContext.Provider
+            value={{ isLoggedIn, login, logout, user, updateUserData }}
+        >
             {children}
         </AuthContext.Provider>
     );
