@@ -18,10 +18,22 @@
     overflow-y: scroll;
 }
 .initialblock {
-    margin-top: 5rem;
+    margin-top: 3rem;
     width: 80vw;
     max-width: 28rem;
     margin-bottom: 5rem;
+}
+.title {
+    font-size: 1.25rem;
+    font-weight: bold;
+    padding-bottom: 1rem;
+}
+.row {
+    display: flex;
+    justify-content: space-between;
+}
+.selectbar > div:first-child {
+    font-size: 0.75rem;
 }
 .pickdate {
     display: grid;
@@ -44,6 +56,14 @@
 }
 input[type="date"]::-webkit-calendar-picker-indicator {
     opacity: 0;
+}
+.calendarcontainer {
+    height: 20rem;
+    overflow: hidden;
+    transition: all 1s ease;
+}
+.hidecalendar {
+    height: 0;
 }
 
 .editpage {

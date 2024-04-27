@@ -9,7 +9,7 @@
     width: 25%;
     max-width: 40rem;
     height: auto;
-    object-fit: fill;
+    object-fit: cover;
     box-shadow: 0rem 0.5rem 1rem
         color-mix(in srgb, var(--secondarycolor) 15%, transparent);
     user-select: none;
@@ -29,9 +29,11 @@
 }
 .row {
     display: flex;
+    padding-top: 1rem;
 }
 .rowname {
     width: 6rem;
+    min-width: 6rem;
 }
 .info {
     padding-top: 0.5rem;
@@ -59,6 +61,7 @@
     .img {
         width: 100%;
         margin-bottom: 1rem;
+        max-height: 50vh;
     }
     .textbox {
         padding-bottom: 5rem;

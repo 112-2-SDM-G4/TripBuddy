@@ -1,0 +1,537 @@
+{
+    "places": [
+        {
+            "country": {
+                "zh": "台灣",
+                "en": "Taiwan"
+            },
+            "latitude": "25°02′12″N",
+            "longitude": "121°31′31″E",
+            "money": {
+                "zh": "新台幣",
+                "en": "TWD",
+                "symbol": "NT$"
+            }
+        },
+        {
+            "country": {
+                "zh": "日本",
+                "en": "Japan"
+            },
+            "latitude": "35°41′22″N",
+            "longitude": "139°41′30″E",
+            "money": {
+                "zh": "日圓",
+                "en": "JPY",
+                "symbol": "¥"
+            }
+        },
+        {
+            "country": {
+                "zh": "南韓",
+                "en": "Korea"
+            },
+            "latitude": "37°33′19″N",
+            "longitude": "126°58′38″E",
+            "money": {
+                "zh": "韓元",
+                "en": "KRW",
+                "symbol": "₩"
+            }
+        },
+        {
+            "country": {
+                "zh": "泰國",
+                "en": "Thailand"
+            },
+            "latitude": "13°45′35″N",
+            "longitude": "100°31′32″E",
+            "money": {
+                "zh": "泰銖",
+                "en": "THB",
+                "symbol": "฿"
+            }
+        },
+        {
+            "country": {
+                "zh": "越南",
+                "en": "Vietnam"
+            },
+            "latitude": "21°02′02″N",
+            "longitude": "105°51′07″E",
+            "money": {
+                "zh": "越南盾",
+                "en": "VND",
+                "symbol": "₫"
+            }
+        },
+        {
+            "country": {
+                "zh": "菲律賓",
+                "en": "Philippines"
+            },
+            "latitude": "14°35′04″N",
+            "longitude": "120°58′55″E",
+            "money": {
+                "zh": "菲律賓披索",
+                "en": "PHP",
+                "symbol": "₱"
+            }
+        },
+        {
+            "country": {
+                "zh": "印度尼西亞",
+                "en": "Indonesia"
+            },
+            "latitude": "6°12′12″S",
+            "longitude": "106°49′22″E",
+            "money": {
+                "zh": "印尼盾",
+                "en": "IDR",
+                "symbol": "Rp"
+            }
+        },
+        {
+            "country": {
+                "zh": "馬來西亞",
+                "en": "Malaysia"
+            },
+            "latitude": "3°08′58″N",
+            "longitude": "101°42′42″E",
+            "money": {
+                "zh": "馬來西亞令吉",
+                "en": "MYR",
+                "symbol": "RM"
+            }
+        },
+        {
+            "country": {
+                "zh": "新加坡",
+                "en": "Singapore"
+            },
+            "latitude": "1°17′01″N",
+            "longitude": "103°51′09″E",
+            "money": {
+                "zh": "新加坡元",
+                "en": "SGD",
+                "symbol": "S$"
+            }
+        },
+        {
+            "country": {
+                "zh": "香港",
+                "en": "Hong Kong"
+            },
+            "latitude": "22°17′N",
+            "longitude": "114°09′E",
+            "money": {
+                "zh": "港元",
+                "en": "HKD",
+                "symbol": "HK$"
+            }
+        },
+        {
+            "country": {
+                "zh": "中國",
+                "en": "China"
+            },
+            "latitude": "39°55′25″N",
+            "longitude": "116°23′29″E",
+            "money": {
+                "zh": "人民幣",
+                "en": "CNY",
+                "symbol": "¥"
+            }
+        },
+        {
+            "country": {
+                "zh": "澳門",
+                "en": "Macao"
+            },
+            "latitude": "22°11′N",
+            "longitude": "113°33′E",
+            "money": {
+                "zh": "澳門元",
+                "en": "MOP",
+                "symbol": "MOP$"
+            }
+        },
+        {
+            "country": {
+                "zh": "美國",
+                "en": "USA"
+            },
+            "latitude": "38°53′N",
+            "longitude": "77°02′W",
+            "money": {
+                "zh": "美元",
+                "en": "USD",
+                "symbol": "$"
+            }
+        },
+        {
+            "country": {
+                "zh": "法國",
+                "en": "France"
+            },
+            "latitude": "48°51′24″N",
+            "longitude": "2°21′03″E",
+            "money": {
+                "zh": "歐元",
+                "en": "EUR",
+                "symbol": "€"
+            }
+        },
+        {
+            "country": {
+                "zh": "意大利",
+                "en": "Italy"
+            },
+            "latitude": "41°54′02″N",
+            "longitude": "12°29′01″E",
+            "money": {
+                "zh": "歐元",
+                "en": "EUR",
+                "symbol": "€"
+            }
+        },
+        {
+            "country": {
+                "zh": "西班牙",
+                "en": "Spain"
+            },
+            "latitude": "40°24′N",
+            "longitude": "3°41′W",
+            "money": {
+                "zh": "歐元",
+                "en": "EUR",
+                "symbol": "€"
+            }
+        },
+        {
+            "country": {
+                "zh": "英國",
+                "en": "United Kingdom"
+            },
+            "latitude": "51°30′N",
+            "longitude": "0°07′W",
+            "money": {
+                "zh": "英鎊",
+                "en": "GBP",
+                "symbol": "£"
+            }
+        },
+        {
+            "country": {
+                "zh": "德國",
+                "en": "Germany"
+            },
+            "latitude": "52°31′N",
+            "longitude": "13°24′E",
+            "money": {
+                "zh": "歐元",
+                "en": "EUR",
+                "symbol": "€"
+            }
+        },
+        {
+            "country": {
+                "zh": "加拿大",
+                "en": "Canada"
+            },
+            "latitude": "45°24′N",
+            "longitude": "75°40′W",
+            "money": {
+                "zh": "加元",
+                "en": "CAD",
+                "symbol": "CA$"
+            }
+        },
+        {
+            "country": {
+                "zh": "澳大利亞",
+                "en": "Australia"
+            },
+            "latitude": "35°17′S",
+            "longitude": "149°08′E",
+            "money": {
+                "zh": "澳幣",
+                "en": "AUD",
+                "symbol": "A$"
+            }
+        },
+        {
+            "country": {
+                "zh": "巴西",
+                "en": "Brazil"
+            },
+            "latitude": "15°47′38″S",
+            "longitude": "47°52′58″W",
+            "money": {
+                "zh": "巴西雷亞爾",
+                "en": "BRL",
+                "symbol": "R$"
+            }
+        },
+        {
+            "country": {
+                "zh": "俄羅斯",
+                "en": "Russia"
+            },
+            "latitude": "55°45′N",
+            "longitude": "37°37′E",
+            "money": {
+                "zh": "盧布",
+                "en": "RUB",
+                "symbol": "₽"
+            }
+        },
+        {
+            "country": {
+                "zh": "阿根廷",
+                "en": "Argentina"
+            },
+            "latitude": "34°36′S",
+            "longitude": "58°24′W",
+            "money": {
+                "zh": "阿根廷披索",
+                "en": "ARS",
+                "symbol": "$"
+            }
+        },
+        {
+            "country": {
+                "zh": "印度",
+                "en": "India"
+            },
+            "latitude": "28°36′50″N",
+            "longitude": "77°12′30″E",
+            "money": {
+                "zh": "印度盧比",
+                "en": "INR",
+                "symbol": "₹"
+            }
+        },
+        {
+            "country": {
+                "zh": "南非",
+                "en": "South Africa"
+            },
+            "latitude": "25°45′S",
+            "longitude": "28°12′E",
+            "money": {
+                "zh": "南非蘭特",
+                "en": "ZAR",
+                "symbol": "R"
+            }
+        },
+        {
+            "country": {
+                "zh": "埃及",
+                "en": "Egypt"
+            },
+            "latitude": "30°02′N",
+            "longitude": "31°14′E",
+            "money": {
+                "zh": "埃及鎊",
+                "en": "EGP",
+                "symbol": "E£"
+            }
+        },
+        {
+            "country": {
+                "zh": "紐西蘭",
+                "en": "New Zealand"
+            },
+            "latitude": "41°17′S",
+            "longitude": "174°46′E",
+            "money": {
+                "zh": "紐西蘭幣",
+                "en": "NZD",
+                "symbol": "NZ$"
+            }
+        },
+        {
+            "country": {
+                "zh": "瑞士",
+                "en": "Switzerland"
+            },
+            "latitude": "46°57′N",
+            "longitude": "7°27′E",
+            "money": {
+                "zh": "瑞士法郎",
+                "en": "CHF",
+                "symbol": "CHF"
+            }
+        },
+        {
+            "country": {
+                "zh": "荷蘭",
+                "en": "Netherlands"
+            },
+            "latitude": "52°23′N",
+            "longitude": "4°53′E",
+            "money": {
+                "zh": "歐元",
+                "en": "EUR",
+                "symbol": "€"
+            }
+        },
+        {
+            "country": {
+                "zh": "希臘",
+                "en": "Greece"
+            },
+            "latitude": "37°58′N",
+            "longitude": "23°43′E",
+            "money": {
+                "zh": "歐元",
+                "en": "EUR",
+                "symbol": "€"
+            }
+        },
+        {
+            "country": {
+                "zh": "瑞典",
+                "en": "Sweden"
+            },
+            "latitude": "59°20′N",
+            "longitude": "18°03′E",
+            "money": {
+                "zh": "瑞典克朗",
+                "en": "SEK",
+                "symbol": "kr"
+            }
+        },
+        {
+            "country": {
+                "zh": "挪威",
+                "en": "Norway"
+            },
+            "latitude": "59°57′N",
+            "longitude": "10°45′E",
+            "money": {
+                "zh": "挪威克朗",
+                "en": "NOK",
+                "symbol": "kr"
+            }
+        },
+        {
+            "country": {
+                "zh": "丹麥",
+                "en": "Denmark"
+            },
+            "latitude": "55°41′N",
+            "longitude": "12°34′E",
+            "money": {
+                "zh": "丹麥克朗",
+                "en": "DKK",
+                "symbol": "kr"
+            }
+        },
+        {
+            "country": {
+                "zh": "奧地利",
+                "en": "Austria"
+            },
+            "latitude": "48°12′N",
+            "longitude": "16°22′E",
+            "money": {
+                "zh": "歐元",
+                "en": "EUR",
+                "symbol": "€"
+            }
+        },
+        {
+            "country": {
+                "zh": "芬蘭",
+                "en": "Finland"
+            },
+            "latitude": "60°10′N",
+            "longitude": "24°56′E",
+            "money": {
+                "zh": "歐元",
+                "en": "EUR",
+                "symbol": "€"
+            }
+        },
+        {
+            "country": {
+                "zh": "比利時",
+                "en": "Belgium"
+            },
+            "latitude": "50°51′N",
+            "longitude": "4°21′E",
+            "money": {
+                "zh": "歐元",
+                "en": "EUR",
+                "symbol": "€"
+            }
+        },
+        {
+            "country": {
+                "zh": "愛爾蘭",
+                "en": "Ireland"
+            },
+            "latitude": "53°20′N",
+            "longitude": "6°15′W",
+            "money": {
+                "zh": "歐元",
+                "en": "EUR",
+                "symbol": "€"
+            }
+        },
+        {
+            "country": {
+                "zh": "捷克",
+                "en": "Czech Republic"
+            },
+            "latitude": "50°05′N",
+            "longitude": "14°28′E",
+            "money": {
+                "zh": "捷克克朗",
+                "en": "CZK",
+                "symbol": "Kč"
+            }
+        },
+        {
+            "country": {
+                "zh": "以色列",
+                "en": "Israel"
+            },
+            "latitude": "31°47′N",
+            "longitude": "35°13′E",
+            "money": {
+                "zh": "以色列新謝克爾",
+                "en": "ILS",
+                "symbol": "₪"
+            }
+        },
+        {
+            "country": {
+                "zh": "土耳其",
+                "en": "Turkey"
+            },
+            "latitude": "39°55′N",
+            "longitude": "32°51′E",
+            "money": {
+                "zh": "土耳其里拉",
+                "en": "TRY",
+                "symbol": "₺"
+            }
+        },
+        {
+            "country": {
+                "zh": "克羅地亞",
+                "en": "Croatia"
+            },
+            "latitude": "45°48′N",
+            "longitude": "16°00′E",
+            "money": {
+                "zh": "克羅地亞庫納",
+                "en": "HRK",
+                "symbol": "kn"
+            }
+        }
+    ]
+}
