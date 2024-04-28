@@ -6,9 +6,8 @@ class GoogleMapApi():
     """
     A Toolkit to utilize Google Maps API for getting formatted data.
     """
-    def __init__(self, API_KEY, mode='production') -> None:
+    def __init__(self, API_KEY) -> None:
         self.api_key = API_KEY
-        self.mode = mode
         # For text search(Places)
         self.place_field_mask = [
             'places.id', 
@@ -19,13 +18,9 @@ class GoogleMapApi():
         ]
         self.place_params = {
             "key": self.api_key,
-            "languageCode": "zh_TW",
             "rankPreference": "RELEVANCE",
+            "maxResultCount": 15,
         }
-        if self.mode == 'production':
-            self.place_params['maxResultCount'] = 15
-        else: # dev
-            self.place_params['maxResultCount'] = 5
 
         # For place photos
         self.photo_params = {
@@ -40,31 +35,44 @@ class GoogleMapApi():
             # basic
             'id', 'displayName', 'formattedAddress',
             'location', 'googleMapsUri',
-            'businessStatus',
             'photos',
             # advanced
-            'regularOpeningHours', 'priceLevel',
-            'rating', 'userRatingCount', 'websiteUri',
+            'regularOpeningHours', 
+            'rating', 'userRatingCount',
             # preferred
             'editorialSummary'
         ]
         self.detail_params = {
             "key": self.api_key,
-            "languageCode": "zh_TW",
+            "languageCode": "zh-TW",
         }
 
 
     def get_places(
             self,
             search_text: str,
-            language_code: str = "zh_TW",
+            language_code: str,
+            location_lat: float,
+            location_lng: float,
     ) -> Tuple[requests.models.Response, List[Dict]]:
-        """Google Maps Places API - Text Search """
+        """Google Maps Places API - Text Search"""
         place_api_url = f"https://places.googleapis.com/v1/places:searchText?fields={('%2C').join(self.place_field_mask)}"
-        params = self.place_params.copy()
-        params['languageCode'] = language_code
-        params['textQuery'] = search_text
-        res = requests.post(place_api_url, params=params)
+        data = dict()
+        data['locationBias'] = {
+            "circle": {
+                "center": {
+                    "latitude": location_lat,
+                    "longitude": location_lng,
+                },
+                "radius": 10000
+            }
+        }
+        if language_code == "zh":
+            data['languageCode'] = "zh-TW"
+        else:
+            data['languageCode'] = language_code
+        data['textQuery'] = search_text
+        res = requests.post(place_api_url, params=self.place_params, json=data)
         if res.ok:
             res_json = json.loads(res.text)['places']
         else:
@@ -89,10 +97,12 @@ class GoogleMapApi():
     def get_search_info(
         self,
         search_text: str,
-        language_code: str = "zh_TW",
+        language_code: str,
+        location_lat: float,
+        location_lng: float,
     ) -> Tuple[requests.models.Response, List[dict]]:
         """Google Maps Places API - Text Search + Photos"""
-        res, places = self.get_places(search_text, language_code)
+        res, places = self.get_places(search_text, language_code, location_lat, location_lng)
         place_info_list = list()
         if res.ok:
             for place in places:
@@ -118,7 +128,7 @@ class GoogleMapApi():
                     'place_id': place['id'],
                     'name': place['displayName']['text'],
                     'address': place['formattedAddress'],
-                    'google_maps_uri': place['googleMapsUri'],
+                    'google_map_uri': place['googleMapsUri'],
                     'image': photo_url,
                 }
                 place_info_list.append(info_json)
@@ -133,12 +143,15 @@ class GoogleMapApi():
     def get_place_detail(
             self,
             place_id: str,
-            language_code: str = "zh_TW",
+            language_code: str,
     ) -> Tuple[requests.models.Response, List[dict]]:
         """Google Maps Places API - Place Detail + Photos"""
         detail_api_url = f"https://places.googleapis.com/v1/places/{place_id}?fields={('%2C').join(self.detail_field_mask)}"
         params = self.detail_params.copy()
-        params['languageCode'] = language_code
+        if language_code == "zh":
+            params['languageCode'] = "zh-TW"
+        else:
+            params['languageCode'] = language_code
         res = requests.get(detail_api_url, params=params)
         if res.ok:
             place = json.loads(res.text)
@@ -158,18 +171,16 @@ class GoogleMapApi():
 
             # return value formatting
             res_json = {
-                'id': place['id'],
+                'place_id': place['id'],
                 'name': place['displayName']['text'],
                 'address': place['formattedAddress'],
-                'location': (place['location']['latitude'], place['location']['longitude']),
-                'google_maps_uri': place['googleMapsUri'],
+                'google_map_uri': place['googleMapsUri'],
                 'image': photo_url,
             }
             # exception handling
             res_json['rating'] = place['rating'] if 'rating' in place.keys() else None
             res_json['user_rating_count'] = place['userRatingCount'] if 'userRatingCount' in place.keys() else None
-            res_json['opening_hours_d'] = place['regularOpeningHours']['weekdayDescriptions'] if 'regularOpeningHours' in place.keys() else None
-            res_json['opening_hours_p'] = place['regularOpeningHours']['periods'] if 'regularOpeningHours' in place.keys() else None
+            res_json['regular_opening_hours'] = place['regularOpeningHours']['weekdayDescriptions'] if 'regularOpeningHours' in place.keys() else None
             res_json['summary'] = place['editorialSummary']['text'] if 'editorialSummary' in place.keys() else None
 
         else: # searching failed

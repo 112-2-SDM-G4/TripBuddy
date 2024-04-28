@@ -2,7 +2,8 @@ from app.models.create_db import db
 
 class Place(db.Model):
     __tablename__ = 'Place'
-    place_id = db.Column(db.String(50), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    place_id = db.Column(db.String(255), nullable=False)
     name = db.Column(db.String(50), nullable=False)
     formatted_address = db.Column(db.String(500), nullable=False)
     google_map_uri = db.Column(db.String(500), nullable=False)
@@ -11,8 +12,9 @@ class Place(db.Model):
     rating  = db.Column(db.Float, nullable=True)
     user_rating_count = db.Column(db.Integer, nullable=True)
     image = db.Column(db.String(511), nullable=True)
+    language = db.Column(db.String(50), nullable=False)
 
-    def __init__(self, place_id, name, formatted_address, google_map_uri, place_summary, regular_opening_hours, rating, user_rating_count, image):
+    def __init__(self, place_id, name, formatted_address, google_map_uri, place_summary, regular_opening_hours, rating, user_rating_count, image, language):
         self.place_id = place_id
         self.name = name
         self.formatted_address = formatted_address
@@ -22,7 +24,9 @@ class Place(db.Model):
         self.rating = rating
         self.user_rating_count = user_rating_count
         self.image = image
+        self.language = language
 
+    #TODO: Warning! If query with google_place_id, it might return two results
     @staticmethod
     def get_by_id(id):
         return Place.query.get(id)
@@ -43,6 +47,7 @@ class Place(db.Model):
                       rating=data['rating'],
                       user_rating_count=data['user_rating_count'],
                       image=data['image'],
+                      language=data['language'],
                       )
         db.session.add(place)
         db.session.commit()

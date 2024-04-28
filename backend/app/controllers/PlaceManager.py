@@ -18,12 +18,18 @@ class PlaceSearch(Resource):
     # @jwt_required()
     def get(self) -> Dict:
         search_text = request.args.get('search')
+        language = request.args.get('language')
+        location_lat = float(request.args.get('location_lat'))
+        location_lng = float(request.args.get('location_lng'))
         if str(search_text).strip(' ') == '':
             search_text = random.choice(['台北 夜市美食', '台北 觀光景點', '東京 景點'])
         google_maps = GoogleMapApi(GOOGLE_MAPS_API_KEY)
-        search_res, search_places = google_maps.get_search_info(search_text)
+        search_res, search_places = google_maps.get_search_info(search_text, language, location_lat, location_lng)
         responses = make_response({
-            'result': search_places
+            'result': search_places,
+            'language': language,
+            'location_lat': location_lat,
+            'location_lng': location_lng,
         }, search_res.status_code
         )
         responses.headers["Content-Type"] = "application/json"
@@ -33,15 +39,43 @@ class PlaceSearch(Resource):
 class PlaceDetail(Resource):
     # @jwt_required()
     def get(self) -> Dict:
-        place_id = request.args.get('place_id') # TODO: can be edited
-        google_maps = GoogleMapApi(GOOGLE_MAPS_API_KEY)
-        detail_res, place_detail = google_maps.get_place_detail(place_id)
-        responses = make_response({
-            'result': place_detail
-        }, detail_res.status_code
-        )
-        responses.headers["Content-Type"] = "application/json"
-        return responses
+        place_id = request.args.get('place_id')
+        language = request.args.get('language')
+
+        # check database
+        place_info = Place.query.filter_by(
+            place_id=place_id,
+            language=language
+        ).first()
+        def to_dict(row):
+            return {column.name: str(getattr(row, column.name)) for column in row.__table__.columns}
+
+        if place_info:
+            place_detail = to_dict(place_info)
+            place_detail['address'] = place_detail['formatted_address']
+            place_detail['summary'] = place_detail['place_summary']
+            place_detail.pop('id')
+            place_detail.pop('formatted_address')
+            place_detail.pop('place_summary')
+            return make_response({'result': place_detail, 'language': language}, 200)
+        else:
+            google_maps = GoogleMapApi(GOOGLE_MAPS_API_KEY)
+            detail_res, place_detail = google_maps.get_place_detail(place_id, language)
+            responses = make_response({
+                'result': place_detail.copy(),
+                'language': language,
+            }, detail_res.status_code
+            )
+            # save to database
+            place_detail['formatted_address'] = place_detail['address']
+            place_detail['place_summary'] = place_detail['summary']
+            place_detail['language'] = language
+            place_detail.pop('address')
+            place_detail.pop('summary')
+            if 'regular_opening_hours' in place_detail:
+                place_detail['regular_opening_hours'] = array_to_str(place_detail['regular_opening_hours'])
+            Place.create(place_detail)
+            return responses
     
 class PlaceInTrip(Resource):
     @jwt_required()
