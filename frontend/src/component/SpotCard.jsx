@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { AiOutlinePlusCircle } from "react-icons/ai";
 import AddPageforTrip from "./AddPageforTrip";
 
-function SpotCard({ name, src, spotId }) {
+function SpotCard({ name, src, spotId, refreshTrip, spotData }) {
     const navigate = useNavigate();
     const [addPage, showAddPage] = useState(false);
 
@@ -14,6 +14,8 @@ function SpotCard({ name, src, spotId }) {
                 <AddPageforTrip
                     close={() => showAddPage(false)}
                     spot={{ name, src, spotId }}
+                    spotData={spotData}
+                    refreshTrip={refreshTrip ? refreshTrip : null}
                 />
             )}
             <div

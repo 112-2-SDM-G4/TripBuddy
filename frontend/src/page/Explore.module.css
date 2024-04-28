@@ -1,6 +1,8 @@
 .container {
     display: flex;
     flex-direction: column;
+    position: relative;
+    padding-top: 5rem;
 }
 
 .searchboxcontainer {

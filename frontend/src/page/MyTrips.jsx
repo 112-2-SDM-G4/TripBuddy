@@ -11,6 +11,7 @@ const MyTrips = () => {
     const navigate = useNavigate();
     const { language } = useLanguage();
     const { user } = useAuth();
+    console.log(user["trips"]);
 
     return (
         <>

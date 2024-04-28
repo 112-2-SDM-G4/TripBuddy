@@ -5,9 +5,10 @@ import Calendar from "../component/Calendar";
 import InputText from "../component/InputText";
 import SearchableSelect from "../component/SearchableSelect";
 import DragBox from "../component/DragBox";
-import Explore from "./Explore";
+import Loader from "../component/Loader";
+import SearchBox from "../component/SearchBox";
+import SpotCard from "../component/SpotCard";
 import { useLanguage } from "../hooks/useLanguage";
-import { useWindowSize } from "../hooks/useWindowSize";
 import { fetchWithJwt } from "../hooks/fetchWithJwt";
 import { useNavigate, useParams } from "react-router-dom";
 import CountryData from "../assets/Country.json";
@@ -16,6 +17,8 @@ import {
     IoRainy,
     IoAlertCircle,
     IoAddCircleOutline,
+    IoChevronBack,
+    IoEllipsisHorizontalSharp,
 } from "react-icons/io5";
 import { useAuth } from "../hooks/useAuth";
 
@@ -49,13 +52,36 @@ export default function Edit() {
         return () => {};
     }, [id, navigate]);
 
+    const refreshTrip = () => {
+        fetchWithJwt("/api/v1/trip/" + id, "GET")
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (result) {
+                if (result["trip"]) {
+                    setTrip(result);
+                } else {
+                    navigate("/login");
+                    console.log(result["message"]);
+                }
+            })
+            .catch(function () {
+                navigate("/login");
+                console.log("errrr");
+            });
+    };
+
     return (
         <div className={style.main}>
             {stage === 0 && (
                 <InitialPage setStage={setStage} language={language} />
             )}
             {stage === 1 && (
-                <EditPage tripinfo={trip} language={language} id={id} />
+                <EditPage
+                    tripinfo={trip}
+                    language={language}
+                    refreshTrip={refreshTrip}
+                />
             )}
         </div>
     );
@@ -117,6 +143,14 @@ function InitialPage({ setStage, language }) {
             alert(words[language]["nodate"]);
             return;
         }
+        console.log({
+            trip_name: tripName,
+            start_date: DatetoArray(selectedStart),
+            end_date: DatetoArray(selectedEnd),
+            location: selectedLocation,
+            exchange: selectedExchange,
+            standard: selectedStandard,
+        });
         fetchWithJwt("/api/v1/trip", "POST", {
             trip_name: tripName,
             start_date: DatetoArray(selectedStart),
@@ -129,12 +163,11 @@ function InitialPage({ setStage, language }) {
                 return response.json();
             })
             .then(function (result) {
-                console.log(result);
                 if (result["trip_id"]) {
                     updateUserData();
                     navigate("./" + result["trip_id"]);
                 } else {
-                    alert(result["message"]);
+                    console.log(result);
                 }
             });
 
@@ -165,11 +198,17 @@ function InitialPage({ setStage, language }) {
     };
 
     const getUniqueMoneyValues = (data, language) => {
-        const uniqueMoneyValues = new Set();
+        const uniqueMoneyValues = new Map();
         data.places.forEach((place) => {
-            uniqueMoneyValues.add(place.money[language]);
+            const id = place.money["en"]; // 假设 "en" 是唯一标识
+            if (!uniqueMoneyValues.has(id)) {
+                uniqueMoneyValues.set(id, {
+                    value: place.money[language],
+                    id: id,
+                });
+            }
         });
-        return Array.from(uniqueMoneyValues);
+        return Array.from(uniqueMoneyValues.values());
     };
 
     return (
@@ -197,17 +236,18 @@ function InitialPage({ setStage, language }) {
                                     search: "Search",
                                 },
                             }}
-                            options={CountryData.places.map(
-                                (c) => c.country[language]
-                            )}
+                            options={CountryData.places.map((c) => {
+                                return {
+                                    value: c.country[language],
+                                    id: c.id,
+                                };
+                            })}
                             onSelect={(value) => {
-                                setSelectedLocation(value);
+                                setSelectedLocation(value.id);
                                 const place = CountryData.places.find(
-                                    (place) => place.country[language] === value
+                                    (place) => place.id === value.id
                                 );
-                                const money = place
-                                    ? place.money[language]
-                                    : "";
+                                const money = place ? place.money["en"] : "";
                                 setSelectedExchange(money);
                             }}
                         />
@@ -230,7 +270,7 @@ function InitialPage({ setStage, language }) {
                                 language
                             )}
                             onSelect={(money) => {
-                                setSelectedExchange(money);
+                                setSelectedExchange(money.id);
                             }}
                             setvalue={selectedExchange}
                         />
@@ -253,7 +293,7 @@ function InitialPage({ setStage, language }) {
                                 language
                             )}
                             onSelect={(value) => {
-                                setSelectedStandard(value);
+                                setSelectedStandard(value.id);
                             }}
                         />
                     </div>
@@ -315,7 +355,7 @@ function InitialPage({ setStage, language }) {
     );
 }
 
-function EditPage({ tripinfo, language, id }) {
+function EditPage({ tripinfo, language, refreshTrip }) {
     const [dates, setDates] = useState([]);
     const [selectedDate, setSelectedDate] = useState(0);
     const [trip, setTrip] = useState(tripinfo["trip"] ? tripinfo["trip"] : []);
@@ -323,10 +363,6 @@ function EditPage({ tripinfo, language, id }) {
         tripinfo["trip"] ? tripinfo["trip"][0] : []
     );
     const [openExplore, setOpenExplore] = useState(false);
-    const windowSize = useWindowSize();
-
-    console.log(tripinfo);
-    console.log(trip);
 
     useEffect(() => {
         function formatDateAndWeekday(start, end, language) {
@@ -448,18 +484,14 @@ function EditPage({ tripinfo, language, id }) {
     const openAddSpot = () => {
         setOpenExplore((prev) => !prev);
     };
-    const exploreCol = () => {
-        if (windowSize.width < 1200) {
-            return 2;
-        } else {
-            return 3;
-        }
-    };
 
     return (
         <div className={style.editpagecontainer}>
             <div className={style.editpage}>
-                <div className={style.editpageTitle}>{tripinfo["name"]}</div>
+                <div className={`${style.editpageTitle}`}>
+                    {tripinfo["name"]}
+                    <IoEllipsisHorizontalSharp className={`${style.backbt}`} />
+                </div>
                 <div className={style.selectdate}>
                     {dates.map((d, i) => (
                         <div
@@ -497,15 +529,89 @@ function EditPage({ tripinfo, language, id }) {
                     openExplore ? null : style.hidden
                 }`}
             >
-                <div className={`${style.title} ${style.exploretitle}`}>
-                    景點搜尋
-                </div>
                 <Explore
-                    fixcol={exploreCol()}
-                    tripid={id}
                     location={"Taiwan"}
+                    refreshTrip={refreshTrip}
+                    close={() => setOpenExplore(false)}
                 />
             </div>
         </div>
     );
 }
+
+const Explore = ({ refreshTrip, location, close }) => {
+    const words = {
+        zh: {
+            search: "景點搜尋",
+        },
+        en: {
+            search: "Spot Search",
+        },
+    };
+    const { language } = useLanguage();
+    const [isLoading, setIsLoading] = useState(true);
+    const [spots, setSpots] = useState([]);
+
+    useEffect(() => {
+        fetchWithJwt(`/api/v1/place/search?language=${language}&search=`, "GET")
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (result) {
+                if (result["result"]) {
+                    console.log(result["result"]);
+                    setSpots(result["result"]);
+                    setIsLoading(false);
+                }
+            });
+
+        return () => {};
+    }, [language]);
+
+    const handleSearch = async (query) => {
+        console.log("Searching for:", query);
+        setIsLoading(true);
+        fetchWithJwt(
+            `/api/v1/place/search?search=${query}&language=${language}`,
+            "GET"
+        )
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (result) {
+                if (result["result"]) {
+                    setSpots(result["result"]);
+                    setIsLoading(false);
+                }
+            });
+    };
+
+    return (
+        <div className={style.container}>
+            <Loader isLoading={isLoading} />
+            <div className={`${style.title} ${style.exploretitle}`}>
+                <IoChevronBack
+                    className={`${style.backbt}`}
+                    onClick={() => close()}
+                />
+                {words[language]["search"]}
+            </div>
+            <div className={style.searchboxcontainer}>
+                <SearchBox onSearch={handleSearch} />
+            </div>
+
+            <div className={style.spotscontainer}>
+                {spots.map((spot) => (
+                    <SpotCard
+                        key={spot["place_id"]}
+                        name={spot["name"]}
+                        src={spot["image"]}
+                        spotId={spot["place_id"]}
+                        spotData={spot}
+                        refreshTrip={refreshTrip}
+                    />
+                ))}
+            </div>
+        </div>
+    );
+};

@@ -7,8 +7,9 @@ import InputText from "../component/InputText";
 import Button from "../component/Button";
 import { fetchWithJwt } from "../hooks/fetchWithJwt";
 import { useAuth } from "../hooks/useAuth";
+import { useParams } from "react-router-dom";
 
-export default function AddPageforTrip({ close, spot }) {
+export default function AddPageforTrip({ close, spot, refreshTrip, spotData }) {
     const words = {
         zh: {
             add: "要加在哪?",
@@ -30,7 +31,7 @@ export default function AddPageforTrip({ close, spot }) {
         },
     };
 
-    const { name, src, spotId } = spot;
+    const { name, src } = spot;
     const { language } = useLanguage();
     const { user } = useAuth();
     const [stage, setStage] = useState(1);
@@ -50,11 +51,7 @@ export default function AddPageforTrip({ close, spot }) {
         console.log(selectTrip);
 
         fetchWithJwt("/api/v1/single_place/" + selectTrip["id"], "POST", {
-            place_id: spotId,
-            name: name,
-            formatted_address: "addressFromGoogle",
-            google_map_uri: src,
-            image: src,
+            ...spotData,
             comment: Comment,
             money: Budget,
             stay_time: selectTime,
@@ -67,6 +64,9 @@ export default function AddPageforTrip({ close, spot }) {
             .then((data) => {
                 console.log(data);
                 alert(words[language]["added"]);
+                if (refreshTrip) {
+                    refreshTrip();
+                }
                 close();
             })
             .catch((error) => {
@@ -163,6 +163,8 @@ const TripBlock = ({ trip, selectAddTarget }) => {
     const [datesArray, setDatesArray] = useState([]);
     const { language } = useLanguage();
     const contentRef = useRef(null);
+    const content = contentRef.current;
+    const { id } = useParams();
 
     useEffect(() => {
         const startDate = new Date(
@@ -204,9 +206,13 @@ const TripBlock = ({ trip, selectAddTarget }) => {
     }, [trip, language]);
 
     useEffect(() => {
-        const content = contentRef.current;
-        content.style.maxHeight = content.scrollHeight + "px";
-    }, [contentRef]);
+        if (content) {
+            content.style.maxHeight = "0px";
+            if (id && id.toString() === trip.id.toString()) {
+                content.style.maxHeight = content.scrollHeight + "px";
+            }
+        }
+    }, [id, trip.id, content]);
 
     const toggleCollapse = () => {
         const content = contentRef.current;
@@ -219,7 +225,12 @@ const TripBlock = ({ trip, selectAddTarget }) => {
 
     return (
         <div className={style.tripblock}>
-            <div className={style.tripname} onClick={() => toggleCollapse()}>
+            <div
+                className={style.tripname}
+                onClick={() => {
+                    toggleCollapse();
+                }}
+            >
                 {trip.name}
             </div>
             <div ref={contentRef} className={`${style.foldable}`}>

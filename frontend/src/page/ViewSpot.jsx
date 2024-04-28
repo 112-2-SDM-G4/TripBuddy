@@ -27,15 +27,6 @@ const ViewSpot = () => {
             summary: "Summary:",
         },
     };
-    const daysOfWeek = [
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday",
-        "Sunday",
-    ];
     const { id } = useParams();
     const { language } = useLanguage();
     const [addPage, showAddPage] = useState(false);
@@ -58,11 +49,6 @@ const ViewSpot = () => {
     const handleRedirect = () => {
         window.location.href = spot["google_maps_uri"]; // 替换为目标网页的 URL
     };
-    const formatTime = (time) => {
-        const hour = time.hour < 10 ? `0${time.hour}` : time.hour;
-        const minute = time.minute < 10 ? `0${time.minute}` : time.minute;
-        return `${hour}:${minute}`;
-    };
 
     return (
         <>
@@ -77,6 +63,7 @@ const ViewSpot = () => {
                                 src: spot["image"],
                                 attractionId: spot["place_id"],
                             }}
+                            spotData={spot}
                         />
                     )}
                     <img src={spot["image"]} alt="Logo" className={style.img} />
@@ -115,34 +102,17 @@ const ViewSpot = () => {
                                     {words[language]["open"]}
                                 </div>
                                 <div className={style.openhrblock}>
-                                    {language === "zh" &&
-                                        spot["opening_hours_d"].map(
-                                            (openday, index) => {
-                                                return (
-                                                    <div key={"zh" + index}>
-                                                        {openday}
-                                                    </div>
-                                                );
-                                            }
-                                        )}
-                                    {language === "en" &&
-                                        spot["opening_hours_p"].map(
-                                            (time, index) => (
-                                                <div key={"en" + index}>
-                                                    <strong>
-                                                        {
-                                                            daysOfWeek[
-                                                                time.open.day
-                                                            ]
-                                                        }
-                                                        :
-                                                    </strong>
-                                                    {"  "}
-                                                    {formatTime(time.open)} -
-                                                    {formatTime(time.close)}
-                                                </div>
-                                            )
-                                        )}
+                                    {spot["opening_hours_d"]
+                                        ? spot["opening_hours_d"].map(
+                                              (openday, index) => {
+                                                  return (
+                                                      <div key={"zh" + index}>
+                                                          {openday}
+                                                      </div>
+                                                  );
+                                              }
+                                          )
+                                        : null}
                                 </div>
                             </div>
                         </div>

@@ -11,21 +11,22 @@ export default function SearchableSelect({
     const { language } = useLanguage();
     const [isOpen, setIsOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
-    const [selectedOption, setSelectedOption] = useState(
-        setvalue ? setvalue : null
-    );
+    const [selectedOption, setSelectedOption] = useState(null);
 
     useEffect(() => {
         setSearchTerm("");
-        setSelectedOption("");
+        setSelectedOption(null);
         setIsOpen(false);
         return () => {};
     }, [language]);
 
     useEffect(() => {
-        setSelectedOption(setvalue);
+        if (setvalue) {
+            const selected = options.find((op) => op.id === setvalue);
+            setSelectedOption(selected);
+        }
         return () => {};
-    }, [setvalue]);
+    }, [setvalue, options]);
 
     const handleToggle = () => {
         setIsOpen(!isOpen);
@@ -40,7 +41,7 @@ export default function SearchableSelect({
 
     const filteredOptions = options.filter((option) =>
         searchTerm
-            ? option.toLowerCase().includes(searchTerm.toLowerCase())
+            ? option.value.toLowerCase().includes(searchTerm.toLowerCase())
             : true
     );
 
@@ -49,7 +50,7 @@ export default function SearchableSelect({
             <div className={style.container} onClick={handleToggle}>
                 <div className={style.selected}>
                     {selectedOption
-                        ? selectedOption
+                        ? selectedOption.value
                         : words[language]["select"]}
                 </div>
                 <div className={`dropdown-icon ${isOpen ? "open" : ""}`}>
@@ -68,11 +69,11 @@ export default function SearchableSelect({
                     <ul className={style.options}>
                         {filteredOptions.map((option) => (
                             <li
-                                key={words["en"]["select"] + option}
+                                key={words["en"]["select"] + option.id}
                                 onClick={() => handleSelect(option)}
                                 className={style.option}
                             >
-                                {option}
+                                {option.value}
                             </li>
                         ))}
                     </ul>
