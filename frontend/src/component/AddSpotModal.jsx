@@ -181,7 +181,7 @@ const AddSpotModal = ({ isOpen, onClose }) => {
                                     </div>
                                     <div className={style.openhrblock}>
                                         {language === "zh" &&
-                                            spot["opening_hours_d"].map(
+                                            spot["opening_hours_d"]?.map(
                                                 (openday, index) => {
                                                     return (
                                                         <div key={"zh" + index}>
@@ -191,7 +191,7 @@ const AddSpotModal = ({ isOpen, onClose }) => {
                                                 }
                                             )}
                                         {language === "en" &&
-                                            spot["opening_hours_p"].map(
+                                            spot["opening_hours_p"]?.map(
                                                 (time, index) => (
                                                     <div key={"en" + index}>
                                                         <strong>
