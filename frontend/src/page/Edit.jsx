@@ -6,7 +6,7 @@ import InputText from "../component/InputText";
 import SearchableSelect from "../component/SearchableSelect";
 import DragBox from "../component/DragBox";
 import Loader from "../component/Loader";
-import SearchBox from "../component/SearchBox";
+import TripSearchBox from "../component/TripSearchBox";
 import SpotCard from "../component/SpotCard";
 import { useLanguage } from "../hooks/useLanguage";
 import { fetchWithJwt } from "../hooks/fetchWithJwt";
@@ -597,7 +597,7 @@ const Explore = ({ refreshTrip, location, close }) => {
                 {words[language]["search"]}
             </div>
             <div className={style.searchboxcontainer}>
-                <SearchBox onSearch={handleSearch} />
+                <TripSearchBox onSearch={handleSearch} />
             </div>
 
             <div className={style.spotscontainer}>

@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import style from "./SpotCard.module.css";
 import { AiOutlinePlusCircle } from "react-icons/ai";
 import AddPageforTrip from "./AddPageforTrip";
+import { useNavigate } from "react-router-dom";
 
-function SpotCard({ name, src, spotId, refreshTrip, spotData }) {
+function SpotCard({ name, src, spotId, refreshTrip, spotData, onClick }) {
     const navigate = useNavigate();
     const [addPage, showAddPage] = useState(false);
 
