@@ -23,9 +23,9 @@ function Header() {
           {windowSize.width > constants.MOBILE_SCREEN_WIDTH && <NavbarItems />}
 
         <div className={style.switchcontainer}>
-            {/* <div className={style.switch} onClick={toggleLanguage}>
+            <div className={style.switch} onClick={toggleLanguage}>
             <IoLanguage size={20}/>
-            </div> */}
+            </div>
 
             <div className={style.switch}>
               <ColorButton

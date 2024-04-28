@@ -140,7 +140,7 @@ const AddSpotModal = ({ isOpen, onClose }) => {
                             ))}
                         </div>
                     </>)
-                : (spot &&
+                : (
                     <>
                         <div className={style.viewspotcontainer}>
                             <div className={style.imgcontainer}>
@@ -184,27 +184,36 @@ const AddSpotModal = ({ isOpen, onClose }) => {
                                             spot["opening_hours_d"]?.map(
                                                 (openday, index) => {
                                                     return (
-                                                        <div key={"zh" + index}>
-                                                            {openday}
+                                                        <div key={"zh" + index} className={style.openhrrow}>
+                                                            <div>{openday.split(":")[0]}</div>
+                                                            <div>{openday.split(/:(.*)/s)[1]}</div>
                                                         </div>
                                                     );
                                                 }
                                             )}
+
                                         {language === "en" &&
                                             spot["opening_hours_p"]?.map(
                                                 (time, index) => (
-                                                    <div key={"en" + index}>
-                                                        <strong>
-                                                            {
-                                                                daysOfWeek[
-                                                                    time.open.day
-                                                                ]
-                                                            }
-                                                            :
-                                                        </strong>
+                                                    <div key={"en" + index} className={style.openhrrow}>
+                                                        <div>
+                                                            <strong>
+                                                                {
+                                                                    daysOfWeek[
+                                                                        time.open.day
+                                                                    ]
+                                                                }
+                                                            </strong>
+                                                        </div>
                                                         {"  "}
-                                                        {formatTime(time.open)} -
-                                                        {formatTime(time.close)}
+
+                                                        <div>
+                                                        {formatTime(time.open)} 
+                                                        {(time?.close !== undefined) 
+                                                            ? " - " + formatTime(time.close)
+                                                            : " ~ "}
+                                                        </div>
+                                                        
                                                     </div>
                                                 )
                                             )}

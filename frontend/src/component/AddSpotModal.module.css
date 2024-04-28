@@ -98,6 +98,17 @@
     width: 8rem;
 }
 
+.openhrblock {
+    width: 10rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.openhrrow {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
 
 @media (min-width: 60rem) {
     .spotscontainer {
@@ -106,13 +117,19 @@
     .img {
         height: 20rem;
     }
+    .openhrblock {
+        width: 15rem;
+    }
 }
 @media (min-width: 78rem) {
     .spotscontainer {
-        column-count: 4;
+        column-count: 3;
     }
     .img {
         height: 25rem;
+    }
+    .openhrblock {
+        width: 15rem;
     }
 }
 @media (min-width: 98rem) {
