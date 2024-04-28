@@ -68,11 +68,15 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 .editpagecontainer {
     display: flex;
+    position: relative;
 }
 .explorepage {
     transition: all 1s ease;
     max-width: 45vw;
     overflow: hidden;
+}
+.exploretitle {
+    margin: 2rem 0rem -5rem 2rem;
 }
 .hidden {
     max-width: 0vw;
