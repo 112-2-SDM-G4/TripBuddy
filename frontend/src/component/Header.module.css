@@ -2,7 +2,7 @@
     width: 100%;
     height: 3.5rem;
     background-color: var(--backgroundcolor);
-    z-index: 3;
+    z-index: 2;
     padding: 1rem;
     display: flex;
     flex-direction: row;

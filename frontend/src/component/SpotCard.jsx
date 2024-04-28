@@ -1,11 +1,9 @@
 import React, { useState } from "react";
 import style from "./SpotCard.module.css";
-import { useNavigate } from "react-router-dom";
 import { AiOutlinePlusCircle } from "react-icons/ai";
 import AddPageforTrip from "./AddPageforTrip";
 
-function SpotCard({ name, src, spotId }) {
-    const navigate = useNavigate();
+function SpotCard({ name, src, spotId, onClick }) {
     const [addPage, showAddPage] = useState(false);
 
     return (
@@ -18,7 +16,7 @@ function SpotCard({ name, src, spotId }) {
             )}
             <div
                 className={style.card}
-                onClick={() => navigate(`/spot/${spotId}`)}
+                onClick={onClick}
             >
                 <img src={src} alt="spot loading" className={style.img} />
                 <div className={style.infocontainer}>
@@ -26,8 +24,9 @@ function SpotCard({ name, src, spotId }) {
                     <div
                         className={style.icon}
                         onClick={(event) => {
-                            showAddPage(true);
                             event.stopPropagation();
+                            showAddPage(true);
+                            
                         }}
                     >
                         <AiOutlinePlusCircle size={20} />
