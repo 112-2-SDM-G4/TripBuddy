@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { IoSearch } from "react-icons/io5";
 import { useLanguage } from "../hooks/useLanguage";
-import style from "./SearchBox.module.css";
+import style from "./SpotSearchBox.module.css";
 
-function SearchBox({ onSearch }) {
+function SpotSearchBox({ onSearch }) {
     const words = {
         zh: { search: "搜尋..." },
         en: { search: "Search..." },
@@ -44,4 +44,4 @@ function SearchBox({ onSearch }) {
     );
 }
 
-export default SearchBox;
+export default SpotSearchBox;

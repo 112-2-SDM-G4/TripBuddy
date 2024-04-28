@@ -33,6 +33,10 @@ function Header() {
                   setIsDarkMode={setIsDarkMode}
               ></ColorButton>
             </div> 
+
+            <div className={style.avatar}>
+
+            </div>
         </div> 
     </div>
   );

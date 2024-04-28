@@ -1,13 +1,20 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+
 import { useAuth } from "../hooks/useAuth";
 import { useLanguage } from "../hooks/useLanguage";
 
 import style from "./MyTrips.module.css";
 import TripCard from "../component/TripCard";
 import Button from "../component/Button";
+import AddSpotModal from "../component/AddSpotModal";
 
 const MyTrips = () => {
+    const [isSpotModalOpen, setIsSpotModalOpen] = useState(false);
+
+    const openSpotModal = () => setIsSpotModalOpen(true);
+    const closeSpotModal = () => setIsSpotModalOpen(false);
+
     const navigate = useNavigate();
     const { language } = useLanguage();
     const { user } = useAuth();
@@ -15,6 +22,11 @@ const MyTrips = () => {
 
     return (
         <>
+            <AddSpotModal 
+                    isOpen={isSpotModalOpen} 
+                    onClose={closeSpotModal} 
+            />
+
             <div className={style.container}>
                 {user["trips"]
                     ? user["trips"].map((trip) => (
@@ -23,6 +35,7 @@ const MyTrips = () => {
                               name={trip["name"]}
                               src={trip["image"]}
                               tripId={trip["id"]}
+                              openSpotModal={openSpotModal}
                           />
                       ))
                     : null}

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { fetchWithJwt } from "../hooks/fetchWithJwt";
 import style from "./Explore.module.css";
 import SpotCard from "../component/SpotCard";
-import SearchBox from "../component/SearchBox";
+import TripSearchBox from "../component/TripSearchBox";
 import Loader from "../component/Loader";
 import { useLanguage } from "../hooks/useLanguage";
 
@@ -49,7 +49,7 @@ const Explore = () => {
         <div className={style.container}>
             <Loader isLoading={isLoading} />
             <div className={style.searchboxcontainer}>
-                <SearchBox onSearch={handleSearch} />
+                <TripSearchBox onSearch={handleSearch} />
             </div>
 
             <div className={style.spotscontainer}>
