@@ -15,3 +15,7 @@ class Tags(db.Model):
     @staticmethod
     def get_by_name_zh(name_zh):
         return Tags.query.filter_by(name_zh=name_zh).first()
+    
+    @staticmethod
+    def get_all():
+        return Tags.query.all()
