@@ -92,10 +92,11 @@ class PlaceInTrip(Resource):
             return make_response({'message': 'User does not have access to this trip.'}, 403)
 
         place_info = request.get_json()
-        place = Place.get_by_id(place_info['place_id'])
+        place = Place.get_by_google_place_id_and_language(place_info['place_id'], place_info['language'])
         if not place:
             if 'regular_opening_hours' in place_info:
                 place_info['regular_opening_hours'] = array_to_str(place_info['regular_opening_hours'])
+            place_info['formatted_address'] = place_info['address']
             place = Place.create(place_info) 
 
         # move the corresponding places than the inserted place

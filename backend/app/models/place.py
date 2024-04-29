@@ -32,6 +32,14 @@ class Place(db.Model):
         return Place.query.get(id)
     
     @staticmethod
+    def get_by_google_place_id(place_id):
+        return Place.query.filter_by(place_id=place_id) # return a list of Place objects
+    
+    @staticmethod
+    def get_by_google_place_id_and_language(place_id, language):
+        return Place.query.filter_by(place_id=place_id, language=language).first()
+    
+    @staticmethod
     def create(data):
         nullable = ['place_summary', 'regular_opening_hours', 'rating', 'user_rating_count', 'image']
         for key in nullable:

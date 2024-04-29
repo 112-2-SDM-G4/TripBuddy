@@ -3,22 +3,29 @@ from app.models.create_db import db
 class Schedule(db.Model):
     __tablename__ = 'Schedule' # default is the lowercase of the class name
     schedule_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    ledger_id = db.Column(db.Integer, db.ForeignKey('Ledger.ledger_id'), nullable=False)
     post_id = db.Column(db.Integer, db.ForeignKey('Post.post_id'), nullable=False)
     schedule_name = db.Column(db.String(50), nullable=False)
-    location = db.Column(db.String(50), nullable=True)
     start_date = db.Column(db.DateTime, nullable=False)
     end_date = db.Column(db.DateTime, nullable=False)
     public = db.Column(db.Boolean, nullable=False, default=False)
     create_time = db.Column(db.DateTime, nullable=False, default=db.func.now())
     update_time = db.Column(db.DateTime, nullable=True, onupdate=db.func.now())
+    location = db.Column(db.String(50), nullable=False)
+    location_lng = db.Column(db.Float, nullable=False)
+    location_lat = db.Column(db.Float, nullable=False)
+    standard = db.Column(db.String(50), nullable=False)
+    exchange = db.Column(db.String(50), nullable=True)
 
-    def __init__(self, led_id, post_id, schedule_name, start_date, end_date):
-        self.ledger_id = led_id
+    def __init__(self, post_id, schedule_name, start_date, end_date, location, location_lng, location_lat, standard, exchange=None):
         self.post_id = post_id
         self.schedule_name = schedule_name
         self.start_date = start_date
         self.end_date = end_date
+        self.location = location
+        self.location_lng = location_lng
+        self.location_lat = location_lat
+        self.standard = standard
+        self.exchange = exchange
 
     @staticmethod
     def get_all():
@@ -30,11 +37,16 @@ class Schedule(db.Model):
     
     @staticmethod
     def create(data):
-        schedule = Schedule(led_id=data['ledger_id'],
+        schedule = Schedule(
                             post_id=data['post_id'],
                             schedule_name=data['schedule_name'],
                             start_date=data['start_date'],
                             end_date=data['end_date'],
+                            location=data['location_name_zh'],
+                            location_lng=data['location_lng'],
+                            location_lat=data['location_lat'],
+                            standard=data['standard'],
+                            exchange=data['exchange']
                             )
         db.session.add(schedule)
         db.session.commit()
@@ -43,11 +55,6 @@ class Schedule(db.Model):
     @staticmethod
     def update(id, data):
         schedule = Schedule.query.get(id)
-        schedule.ledger_id = data['ledger_id']
-        schedule.post_id = data['post_id']
-        schedule.schedule_name = data['sch_name']
-        schedule.start_date = data['start_date']
-        schedule.end_date = data['end_date']
         schedule.public = data['public']
         db.session.commit()
         return schedule

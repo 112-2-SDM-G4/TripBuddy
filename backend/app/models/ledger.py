@@ -3,11 +3,10 @@ from app.models.create_db import db
 class Ledger(db.Model):
     __tablename__ = 'Ledger'
     ledger_id = db.Column(db.Integer, primary_key=True)
-    exchange = db.Column(db.String(50), nullable=False)
-    standard = db.Column(db.String(50), nullable=False)
-    # name = db.Column(db.String(50), nullable=False)
-    # time = db.Column(db.DateTime, nullable=False)
-    # total_price = db.Column(db.Float, nullable=False)
+    schedule_id = db.Column(db.Integer, db.ForeignKey('Schedule.schedule_id'), nullable=False)
+    item_name = db.Column(db.String(255), nullable=False)
+    amount = db.Column(db.Float, nullable=False)
+    currency = db.Column(db.String(50), nullable=False)
 
     # def __init__(self, name, time, total_price):
         # self.name = name
@@ -21,11 +20,10 @@ class Ledger(db.Model):
     @staticmethod
     def create(data):
         ledger = Ledger(
-            exchange=data['exchange'],
-            standard=data['standard']
-            # name=data['name'],
-            # time=data['time'],
-            # total_price=data['total_price']
+            schedule_id = data['schedule_id'],
+            item_name = data['item_name'],
+            amount = data['amount'],
+            currency = data['currency']
         )
         db.session.add(ledger)
         db.session.commit()
@@ -34,11 +32,10 @@ class Ledger(db.Model):
     @staticmethod
     def update(id, data):
         ledger = Ledger.query.get(id)
-        ledger.exchange = data['exchange']
-        ledger.standard = data['standard']
-        # ledger.name = data['name']
-        # ledger.time = data['time']
-        # ledger.total_price = data['total_price']
+        ledger.schedule_id = data['schedule_id']
+        ledger.item_name = data['item_name']
+        ledger.amount = data['amount']
+        ledger.currency = data['currency']
         db.session.commit()
         return ledger
     

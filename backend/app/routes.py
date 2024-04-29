@@ -15,7 +15,8 @@ def initialize_routes(api: Api):
     api.add_resource(ExampleController, f'{BASE_ROUTE}/example/<string:id>')
     api.add_resource(TripManager, 
                      f'{BASE_ROUTE}/trip',
-                     f'{BASE_ROUTE}/trip/<string:trip_id>')
+                     f'{BASE_ROUTE}/trip/<string:trip_id>',
+                     f'{BASE_ROUTE}/trip/<string:trip_id>/<string:lang>')
     api.add_resource(PlaceSearch, f'{BASE_ROUTE}/place/search')
     api.add_resource(PlaceDetail, f'{BASE_ROUTE}/place/detail')
     api.add_resource(PlaceInTrip, f'{BASE_ROUTE}/single_place/<string:trip_id>',

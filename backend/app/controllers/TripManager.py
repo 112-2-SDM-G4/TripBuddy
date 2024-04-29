@@ -4,18 +4,33 @@ from flask import request, make_response, jsonify
 
 from app.controllers.utils import *
 from app.models.schedule import Schedule
-from app.models.ledger import Ledger
 from app.models.post import Post
 from app.models.place import Place
+from app.models.tags import Tags
 from app.models.relation_user_sch import RelationUserSch
 from app.models.relation_spot_sch import RelationSpotSch
+from app.models.relation_sch_tag import RelationSchTag
 
 class TripManager(Resource):
     def get_trip_length(self, trip):
         return (trip.end_date - trip.start_date).days + 1
 
+    def get_trip_location_id(self, trip):
+        location_tag = Tags.get_by_name_zh(trip.location)
+        if location_tag:
+            return location_tag.tag_id
+        return None
+    
+    def get_trip_photo(self, trip):
+        places_in_trip = RelationSpotSch.get_by_schedule(trip.schedule_id)
+        for relation_spot_sch in places_in_trip:
+            place = Place.get_by_google_place_id(relation_spot_sch.place_id).first()
+            if place and place.image != None:
+                return place.image
+        return None
+        
     @jwt_required()
-    def get(self, trip_id=None):
+    def get(self, trip_id=None, lang='zh'):
         if trip_id: # get a specific schedule detail
             user_id = varify_user(get_jwt_identity())
             if user_id == None:
@@ -28,14 +43,15 @@ class TripManager(Resource):
                 return make_response({'message': 'User does not have access to this trip.'}, 403)
             
             schedule = Schedule.get_by_id(trip_id)
-            schedule_image = None
 
             places_in_trip = RelationSpotSch.get_by_schedule(trip_id)
             
             trip_detail = [[] for _ in range(self.get_trip_length(schedule))]
             places_in_trip.sort(key=lambda x: (x.date, x.order))
             for relation_spot_sch in places_in_trip:
-                place = Place.get_by_id(relation_spot_sch.place_id)
+                place = Place.get_by_google_place_id_and_language(relation_spot_sch.place_id, lang)
+                if place == None:
+                    continue
                 place_info = {
                     'relation_id': relation_spot_sch.rss_id,
                     'place_id': place.place_id,
@@ -53,19 +69,18 @@ class TripManager(Resource):
                 }
                 trip_detail[relation_spot_sch.date-1].append(place_info)
 
-                # set schedule image as the first image of the place
-                if schedule_image == None and place.image != None:
-                    schedule_image = place.image
-
             responce = {
                 "id": schedule.schedule_id,
                 "name": schedule.schedule_name,
-                "image": schedule_image,
+                "image": self.get_trip_photo(schedule), # random photo from places
                 "start_date": date_to_array(schedule.start_date),
                 "end_date": date_to_array(schedule.end_date),
-                "location": schedule.location,
+                "location_id": self.get_trip_location_id(schedule),
+                "location": [schedule.location_lng, schedule.location_lat],
                 "trip": trip_detail,
-                "public": schedule.public
+                "public": schedule.public,
+                "standard": schedule.standard,
+                "exchange": schedule.exchange,
             }
 
 
@@ -81,10 +96,11 @@ class TripManager(Resource):
                 schedule = Schedule.get_by_id(relation.schedule_id)
                 trip_info['id'] = schedule.schedule_id
                 trip_info['name'] = schedule.schedule_name
-                # trip_info['image'] = None
+                trip_info['image'] = self.get_trip_photo(schedule) # random photo from places
                 trip_info['date_status'] = check_date_status(schedule.start_date, schedule.end_date)
                 trip_info['start_date'] = date_to_array(schedule.start_date)
                 trip_info['end_date'] = date_to_array(schedule.end_date)
+                trip_info['location_id'] = self.get_trip_location_id(schedule)
                 trips.append(trip_info) 
 
             responce = {
@@ -100,27 +116,23 @@ class TripManager(Resource):
             return make_response({'message': 'User not found.'}, 400)
         
         data = request.get_json()
-            
-
-        # create new ledger for the schedule
-        ledger_params = {
-            'exchange': data['exchange'],
-            'standard': data['standard'],
-        }
-        ledger = Ledger.create(ledger_params)
 
         # create new post for the schedule
         post_params = {
             'content': None,
             'like_count': 0,
         }
-        post = Post.create(post_params)
+        trip_post = Post.create(post_params)
+        print("New Trip Post ID: ", trip_post.post_id)
 
         # create new schedule
         schedule_params = {
-            'ledger_id': ledger.ledger_id,
-            'post_id': post.post_id,
-            'location': data['location'] 
+            'post_id': trip_post.post_id,
+            'location_name_zh': Tags.get_by_id(data['location_id']).name_zh,
+            'location_lng': data['location'][0],
+            'location_lat': data['location'][1],
+            'standard': data['standard'],
+            'exchange': data['exchange'] if 'exchange' in data else None,
         }
         if 'trip_name' not in data or data['trip_name'] == '':
             return make_response({'message': 'Trip name is required.'}, 400)
@@ -135,15 +147,24 @@ class TripManager(Resource):
             return make_response({'message': 'Invalid date.'}, 400)
         
         schedule = Schedule.create(schedule_params)
+        print("New Trip ID: ", schedule.schedule_id)
 
         
-        relation = RelationUserSch.create({
+        user_sch_relation = RelationUserSch.create({
             'user_id': user_id,
             'schedule_id': schedule.schedule_id,
             'access': True,
             'heart': False,
             'rate': None,
         })
+        print("New Trip User Relation ID: ", user_sch_relation.rus_id)
+
+        sch_location_relation = RelationSchTag.create({
+            'schedule_id': schedule.schedule_id,
+            'tag_id': data['location_id'],
+        })
+        print("New Trip Location Relation ID: ", sch_location_relation.rst_id)
+
 
         respose = {
             'trip_id': schedule.schedule_id,
@@ -174,10 +195,11 @@ class TripManager(Resource):
         for day_count, day_list in enumerate(data['trip'], start=1):
             for order_count, place_info in enumerate(day_list, start=1):
                 # if spot is not in Place, create new Place
-                place = Place.get_by_id(place_info['place_id'])
+                place = Place.get_by_google_place_id_and_language(place_info['place_id'], place_info['language'])
                 if not place:
                     if 'regular_opening_hours' in place_info:
                         place_info['regular_opening_hours'] = array_to_str(place_info['regular_opening_hours'])
+                    place_info['formatted_address'] = place_info['address']
                     place = Place.create(place_info)
 
                 # create new relation if not exist, update if exist
@@ -208,13 +230,12 @@ class TripManager(Resource):
         # delete relations
         RelationUserSch.delete(user_email, trip_id)
         RelationSpotSch.delete_by_trip(trip_id)
+        RelationSchTag.delete_by_trip(trip_id)
 
         # delete schedule, ledger, post
         schedule = Schedule.get_by_id(trip_id)
-        ledger_id = schedule.ledger_id
         post_id = schedule.post_id
         Schedule.delete(trip_id)
-        Ledger.delete(ledger_id)
         Post.delete(post_id)
         
 
