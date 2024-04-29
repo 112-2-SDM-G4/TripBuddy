@@ -104,6 +104,7 @@ function InitialPage({ setStage, language }) {
             Sat: "六",
             noname: "尚未填寫名稱",
             nodate: "尚未輸入日期",
+            nodetail: "尚未選擇目標國家/貨幣",
             next: "下一頁",
         },
         en: {
@@ -121,6 +122,7 @@ function InitialPage({ setStage, language }) {
             Sat: "Sat",
             noname: "Name not found",
             nodate: "Date not found",
+            nodetail: "Country not found",
             next: "Next page",
         },
     };
@@ -143,11 +145,19 @@ function InitialPage({ setStage, language }) {
             alert(words[language]["nodate"]);
             return;
         }
+        if (selectedLocation === "" || selectedStandard === "") {
+            alert(words[language]["nodetail"]);
+            return;
+        }
+        const place = CountryData.places.find(
+            (place) => place.country_id === selectedLocation
+        );
         console.log({
             trip_name: tripName,
             start_date: DatetoArray(selectedStart),
             end_date: DatetoArray(selectedEnd),
-            location: selectedLocation,
+            location_id: selectedLocation,
+            location: [place.latitude, place.longitude],
             exchange: selectedExchange,
             standard: selectedStandard,
         });
@@ -155,7 +165,8 @@ function InitialPage({ setStage, language }) {
             trip_name: tripName,
             start_date: DatetoArray(selectedStart),
             end_date: DatetoArray(selectedEnd),
-            location: selectedLocation,
+            location_id: selectedLocation,
+            location: [place.latitude, place.longitude],
             exchange: selectedExchange,
             standard: selectedStandard,
         })
@@ -239,13 +250,13 @@ function InitialPage({ setStage, language }) {
                             options={CountryData.places.map((c) => {
                                 return {
                                     value: c.country[language],
-                                    id: c.id,
+                                    id: c.country_id,
                                 };
                             })}
                             onSelect={(value) => {
                                 setSelectedLocation(value.id);
                                 const place = CountryData.places.find(
-                                    (place) => place.id === value.id
+                                    (place) => place.country_id === value.id
                                 );
                                 const money = place ? place.money["en"] : "";
                                 setSelectedExchange(money);
@@ -530,7 +541,7 @@ function EditPage({ tripinfo, language, refreshTrip }) {
                 }`}
             >
                 <Explore
-                    location={"Taiwan"}
+                    location={tripinfo.location}
                     refreshTrip={refreshTrip}
                     close={() => setOpenExplore(false)}
                 />
@@ -553,7 +564,12 @@ const Explore = ({ refreshTrip, location, close }) => {
     const [spots, setSpots] = useState([]);
 
     useEffect(() => {
-        fetchWithJwt(`/api/v1/place/search?language=${language}&search=`, "GET")
+        fetchWithJwt(
+            `/api/v1/place/search?language=${language}&location_lat=${
+                location[0] ? location[0] : null
+            }&location_lng=${location[1] ? location[1] : null}&search=`,
+            "GET"
+        )
             .then(function (response) {
                 return response.json();
             })
@@ -566,13 +582,17 @@ const Explore = ({ refreshTrip, location, close }) => {
             });
 
         return () => {};
-    }, [language]);
+    }, [language, location]);
 
     const handleSearch = async (query) => {
         console.log("Searching for:", query);
         setIsLoading(true);
         fetchWithJwt(
-            `/api/v1/place/search?search=${query}&language=${language}`,
+            `/api/v1/place/search?search=${query}&location_lat=${
+                location[0] ? location[0] : null
+            }&location_lng=${
+                location[1] ? location[1] : null
+            }&language=${language}`,
             "GET"
         )
             .then(function (response) {

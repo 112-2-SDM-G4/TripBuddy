@@ -12,7 +12,10 @@ const Explore = () => {
     const [spots, setSpots] = useState([]);
 
     useEffect(() => {
-        fetchWithJwt(`/api/v1/place/search?language=${language}&search=`, "GET")
+        fetchWithJwt(
+            `/api/v1/place/search?language=${language}&location_lat=39.7036194&location_lng=141.1526839&search=`,
+            "GET"
+        )
             .then(function (response) {
                 return response.json();
             })
@@ -31,7 +34,7 @@ const Explore = () => {
         console.log("Searching for:", query);
         setIsLoading(true);
         fetchWithJwt(
-            `/api/v1/place/search?search=${query}&language=${language}`,
+            `/api/v1/place/search?search=${query}&location_lat=39.7036194&location_lng=141.1526839&language=${language}`,
             "GET"
         )
             .then(function (response) {
