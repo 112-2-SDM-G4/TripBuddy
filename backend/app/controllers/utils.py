@@ -41,3 +41,5 @@ def user_owns_schedule(user_id, schedule_id):
         return False
     return True
 
+def query_row_to_dict(row):
+    return {column.name: str(getattr(row, column.name)) for column in row.__table__.columns}

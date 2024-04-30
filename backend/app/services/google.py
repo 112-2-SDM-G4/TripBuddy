@@ -1,6 +1,6 @@
 import requests
 import json
-from typing import List, Tuple, Dict
+from typing import List, Tuple, Dict, Optional
 
 class GoogleMapApi():
     """
@@ -40,7 +40,6 @@ class GoogleMapApi():
             'regularOpeningHours', 
             'rating', 'userRatingCount',
             # preferred
-            'editorialSummary'
         ]
         self.detail_params = {
             "key": self.api_key,
@@ -52,21 +51,23 @@ class GoogleMapApi():
             self,
             search_text: str,
             language_code: str,
-            location_lat: float,
-            location_lng: float,
+            location_lat: Optional[float],
+            location_lng: Optional[float],
     ) -> Tuple[requests.models.Response, List[Dict]]:
         """Google Maps Places API - Text Search"""
         place_api_url = f"https://places.googleapis.com/v1/places:searchText?fields={('%2C').join(self.place_field_mask)}"
         data = dict()
-        data['locationBias'] = {
-            "circle": {
-                "center": {
-                    "latitude": location_lat,
-                    "longitude": location_lng,
-                },
-                "radius": 10000
+        # if lat, lng are both specified
+        if location_lat and location_lng:
+            data['locationBias'] = {
+                "circle": {
+                    "center": {
+                        "latitude": location_lat,
+                        "longitude": location_lng,
+                    },
+                    "radius": 10000
+                }
             }
-        }
         if language_code == "zh":
             data['languageCode'] = "zh-TW"
         else:
@@ -98,8 +99,8 @@ class GoogleMapApi():
         self,
         search_text: str,
         language_code: str,
-        location_lat: float,
-        location_lng: float,
+        location_lat: Optional[float],
+        location_lng: Optional[float],
     ) -> Tuple[requests.models.Response, List[dict]]:
         """Google Maps Places API - Text Search + Photos"""
         res, places = self.get_places(search_text, language_code, location_lat, location_lng)
@@ -181,7 +182,6 @@ class GoogleMapApi():
             res_json['rating'] = place['rating'] if 'rating' in place.keys() else None
             res_json['user_rating_count'] = place['userRatingCount'] if 'userRatingCount' in place.keys() else None
             res_json['regular_opening_hours'] = place['regularOpeningHours']['weekdayDescriptions'] if 'regularOpeningHours' in place.keys() else None
-            res_json['summary'] = place['editorialSummary']['text'] if 'editorialSummary' in place.keys() else None
 
         else: # searching failed
             res_json = {}

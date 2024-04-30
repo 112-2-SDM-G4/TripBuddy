@@ -18,11 +18,27 @@ class PlaceSearch(Resource):
     # @jwt_required()
     def get(self) -> Dict:
         search_text = request.args.get('search')
-        language = request.args.get('language')
-        location_lat = float(request.args.get('location_lat'))
-        location_lng = float(request.args.get('location_lng'))
         if str(search_text).strip(' ') == '':
-            search_text = random.choice(['台北 夜市美食', '台北 觀光景點', '東京 景點'])
+            default_places = Place.query[1:16]
+            search_places = []
+            for p in default_places:
+                place = query_row_to_dict(p)
+                place_json = {
+                    'place_id': place['place_id'],
+                    'name': place['name'],
+                    'address': place['formatted_address'],
+                    'google_map_uri': place['google_map_uri'],
+                    'image': place['image'],
+                }
+                search_places.append(place_json)
+            return make_response({'result': search_places, 'language': None, 'location_lat': None, 'location_lng': None,}, 200)
+
+        language = request.args.get('language')
+        location_lat = request.args.get('location_lat')
+        location_lng = request.args.get('location_lng')
+        location_lat = float(location_lat) if location_lat else None
+        location_lng = float(location_lng) if location_lng else None
+
         google_maps = GoogleMapApi(GOOGLE_MAPS_API_KEY)
         search_res, search_places = google_maps.get_search_info(search_text, language, location_lat, location_lng)
         responses = make_response({
@@ -47,16 +63,13 @@ class PlaceDetail(Resource):
             place_id=place_id,
             language=language
         ).first()
-        def to_dict(row):
-            return {column.name: str(getattr(row, column.name)) for column in row.__table__.columns}
 
         if place_info:
-            place_detail = to_dict(place_info)
+            place_detail = query_row_to_dict(place_info)
             place_detail['address'] = place_detail['formatted_address']
-            place_detail['summary'] = place_detail['place_summary']
             place_detail.pop('id')
-            place_detail.pop('formatted_address')
             place_detail.pop('place_summary')
+            place_detail.pop('formatted_address')
             return make_response({'result': place_detail, 'language': language}, 200)
         else:
             google_maps = GoogleMapApi(GOOGLE_MAPS_API_KEY)
@@ -68,10 +81,9 @@ class PlaceDetail(Resource):
             )
             # save to database
             place_detail['formatted_address'] = place_detail['address']
-            place_detail['place_summary'] = place_detail['summary']
+            place_detail['place_summary'] = None
             place_detail['language'] = language
             place_detail.pop('address')
-            place_detail.pop('summary')
             if 'regular_opening_hours' in place_detail:
                 place_detail['regular_opening_hours'] = array_to_str(place_detail['regular_opening_hours'])
             Place.create(place_detail)
