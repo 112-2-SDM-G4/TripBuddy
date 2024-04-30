@@ -19,9 +19,28 @@
     opacity: 0.9;
     transform: scale(1.05);
 }
+
+.upcomingcard {
+    display: flex;
+    width: 28rem;
+    height: 4rem;
+    background-color: var(--backgroundcolor);
+    margin: 1rem;
+    margin-top: 0rem;
+    border-radius: 0.5rem;
+    box-shadow: 0rem 0.5rem 1rem
+        color-mix(in srgb, var(--secondarycolor) 15%, transparent);
+    transition: all 1s ease;
+}
+
+.upcomingcard:hover {
+    cursor: pointer;
+    opacity: 0.9;
+}
+
 .img {
     object-fit: cover;
-    width: 10rem;
+    width: 18rem;
     height: 100%;
     overflow: hidden;
     border-radius: 0.5rem 0 0 0.5rem;
@@ -30,48 +49,59 @@
 .info {
     display: flex;
     flex-direction: column;
-    width: auto;
-    padding: 0.7rem;
+    width: calc(30rem - 18rem);
+    padding-top: 0.2rem;
+    padding-left: 0.5rem;
+    justify-content: center;
+}
+
+.infopadding {
+    padding: 0.7rem; 
 }
 
 .title {
-    margin-top: 1.5rem;
     height: 2.5rem;
     width: 100%;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    padding: 0.5rem;
-    font-size: 1rem;
+    padding-left: 0.5rem;
+    font-size: 0.8rem;
     font-weight: bold;
     align-items: center;
+}
+
+.titlemargin {
+    /* margin-top: 1.5rem; */
 }
 
 .tags {
     display: flex;
     flex-direction: row;
-    padding: 0.5rem;
+    /* padding: 0.5rem; */
     font-size: 0.8rem;
     height: 2.3rem;
-
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
 }
 
 .tag {
     display: inline-block;
-    height: auto;
+    height: 1.2rem;
     line-height: 1.3rem;
     width: fit-content;
     font-weight: bold;
     font-size: 0.7rem;
     border-radius: 0.35rem;
-    background-color: color-mix(in srgb, var(--secondarycolor) 75%, transparent);
-    color: var(--backgroundcolor);
+    background-color: color-mix(in srgb, var(--fontcolor) 15%, transparent);
+    color: color-mix(in srgb, var(--fontcolor) 75%, transparent);
     opacity: 0.9;
     padding: 0 0.7rem 0 0.7rem;
     align-items: center;
     margin-right: 0.3rem;
-    box-shadow: 0 0.1rem 0.2rem color-mix(in srgb, var(--fontcolor) 75%, transparent);
-    
+    /* box-shadow: 0 0.1rem 0.2rem color-mix(in srgb, var(--fontcolor) 75%, transparent); */
+    box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 8px;
+    /* box-shadow: var(--fontcolor) 0px 2px 5px -1px, var(--fontcolor) 0px 1px 3px -1px; */
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -99,11 +129,29 @@
         width: 90%;
     }
 
-    .img {
-        width: 15rem;
+    .upcomingcard {
+        width: 100%;
     }
 
     .info {
-        width: 14rem;
+        width: 8rem;
+    }
+
+    /* .img {
+        width: 20rem;
+    } */
+}
+
+@media (max-width: 420px) {
+    .card {
+        width: 20rem;
+    }
+
+    .upcomingcard {
+        width: 100%;
+    }
+
+    .img {
+        width: 15rem;
     }
 }

@@ -10,9 +10,10 @@
 
 .buttoncontainer {
     position: sticky;
-    width: 31rem;
-    display: flex;
-    justify-content: center;
+    width: 30rem;
+    bottom: 1.5rem;
+    /* margin-left: 1rem; */
+    padding-left: 0;
 }
 
 .button {
@@ -21,9 +22,14 @@
 
 @media (max-width: 735px) {
     .buttoncontainer {
+        position: sticky;
         width: 90%;
         bottom: 3.5rem;
         margin-left: 1rem;
         padding-left: 0;
+        padding-right: 1rem;
     }
+    .buttoncontainer {
+    }
+    
 }

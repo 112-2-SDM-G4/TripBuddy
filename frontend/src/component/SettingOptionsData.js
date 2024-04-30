@@ -5,7 +5,7 @@ import { LuUser2 } from "react-icons/lu";
 export const SettingOptionsData = [
     {
         en: "Set language to Chinese",
-        zh: "中 -> 英",
+        zh: "中英切換",
         icon: <IoLanguage size={20}/>
     },
     {
