@@ -544,13 +544,14 @@ function EditPage({ tripinfo, language, refreshTrip }) {
                     location={tripinfo.location}
                     refreshTrip={refreshTrip}
                     close={() => setOpenExplore(false)}
+                    startSearch={openExplore}
                 />
             </div>
         </div>
     );
 }
 
-const Explore = ({ refreshTrip, location, close }) => {
+const Explore = ({ refreshTrip, location, close, startSearch }) => {
     const words = {
         zh: {
             search: "景點搜尋",
@@ -564,10 +565,13 @@ const Explore = ({ refreshTrip, location, close }) => {
     const [spots, setSpots] = useState([]);
 
     useEffect(() => {
+        if (!startSearch) {
+            return;
+        }
         fetchWithJwt(
             `/api/v1/place/search?language=${language}&location_lat=${
-                location[0] ? location[0] : null
-            }&location_lng=${location[1] ? location[1] : null}&search=`,
+                location ? location[0] : null
+            }&location_lng=${location ? location[1] : null}&search=`,
             "GET"
         )
             .then(function (response) {
@@ -582,16 +586,16 @@ const Explore = ({ refreshTrip, location, close }) => {
             });
 
         return () => {};
-    }, [language, location]);
+    }, [language, location, startSearch]);
 
     const handleSearch = async (query) => {
         console.log("Searching for:", query);
         setIsLoading(true);
         fetchWithJwt(
             `/api/v1/place/search?search=${query}&location_lat=${
-                location[0] ? location[0] : null
+                location ? location[0] : null
             }&location_lng=${
-                location[1] ? location[1] : null
+                location ? location[1] : null
             }&language=${language}`,
             "GET"
         )
