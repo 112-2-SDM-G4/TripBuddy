@@ -2,6 +2,10 @@ from datetime import datetime, date, timedelta
 
 from app.models.user import User
 from app.models.relation_user_sch import RelationUserSch
+from app.models.place import Place
+from app.models.relation_spot_sch import RelationSpotSch
+from app.models.tags import Tags
+from app.models.relation_sch_tag import RelationSchTag
 
 def array_to_date(array):
     return date(array[0], array[1], array[2])
@@ -43,3 +47,18 @@ def user_owns_schedule(user_id, schedule_id):
 
 def query_row_to_dict(row):
     return {column.name: str(getattr(row, column.name)) for column in row.__table__.columns}
+
+def get_trip_photo(trip):
+        places_in_trip = RelationSpotSch.get_by_schedule(trip.schedule_id)
+        for relation_spot_sch in places_in_trip:
+            place = Place.get_by_google_place_id(relation_spot_sch.place_id).first()
+            if place and place.image != None:
+                return place.image
+        return None
+
+def get_trip_tags_id(trip):
+    tags = []
+    for tag_relation in RelationSchTag.get_by_schedule_id(trip.schedule_id):
+        tag = Tags.get_by_id(tag_relation.tag_id)
+        tags.append(tag.tag_id)
+    return tags

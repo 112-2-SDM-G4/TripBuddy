@@ -39,9 +39,6 @@ class TripManager(Resource):
             if not Schedule.get_by_id(trip_id):
                 return make_response({'message': 'Trip not found.'}, 400)
             
-            if not user_owns_schedule(user_id, trip_id):
-                return make_response({'message': 'User does not have access to this trip.'}, 403)
-            
             schedule = Schedule.get_by_id(trip_id)
 
             places_in_trip = RelationSpotSch.get_by_schedule(trip_id)

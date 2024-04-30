@@ -32,9 +32,17 @@ class Schedule(db.Model):
         return Schedule.query.all()
     
     @staticmethod
+    def get_all_public():
+        return Schedule.query.filter_by(public=True).all()
+    
+    @staticmethod
     def get_by_id(id):
         return Schedule.query.get(id)
     
+    @staticmethod
+    def search_by_name(name):
+        return Schedule.query.filter(Schedule.schedule_name.like('%'+name+'%'), Schedule.public==True).all()
+        
     @staticmethod
     def create(data):
         schedule = Schedule(

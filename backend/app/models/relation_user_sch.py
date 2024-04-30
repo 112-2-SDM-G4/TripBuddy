@@ -37,6 +37,19 @@ class RelationUserSch(db.Model):
         return RelationUserSch.query.filter_by(user_id=user_id, schedule_id=schedule_id).first()
     
     @staticmethod
+    def update(rus_id, data):
+        relation = RelationUserSch.query.get(rus_id)
+        if 'access' in data:
+            relation.access = data['access']
+        if 'heart' in data:
+            relation.heart = data['heart']
+        if 'rate' in data:
+            relation.rate = data['rate']
+        db.session.commit()
+        return relation
+    
+    
+    @staticmethod
     def delete(user_id, schedule_id):
         relation = RelationUserSch.query.filter_by(user_id=user_id, schedule_id=schedule_id).first()
         db.session.delete(relation)

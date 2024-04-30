@@ -27,3 +27,10 @@ class RelationSchTag(db.Model):
             db.session.delete(i)
         db.session.commit()
         return relation_sch_tag
+    
+    @staticmethod
+    def delete(id):
+        relation_sch_tag = RelationSchTag.query.get(id)
+        db.session.delete(relation_sch_tag)
+        db.session.commit()
+        return relation_sch_tag

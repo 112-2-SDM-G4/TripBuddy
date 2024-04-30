@@ -31,7 +31,6 @@ class Post(db.Model):
     def update(id, data):
         post = Post.query.get(id)
         post.content = data['content']
-        post.like_count = data['like_count']
         db.session.commit()
         return post
     

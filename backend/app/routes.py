@@ -5,6 +5,7 @@ from app.controllers.Base import ExampleController, GetTags
 from app.controllers.PlaceManager import PlaceSearch, PlaceDetail, PlaceInTrip
 from app.controllers.UserManager import SendVerifyEmail, UserVerification, SetUserInfo, LoginCheckUser, LoginCheckPassword, ForgetPassword, ResetPassword
 from app.controllers.LedgerManager import Currency
+from app.controllers.PostManager import PostManager, HeartManager
 from flask_restful import Api
 
 BASE_ROUTE = '/api/v1'
@@ -30,3 +31,6 @@ def initialize_routes(api: Api):
     api.add_resource(ResetPassword, f'{BASE_ROUTE}/user/reset_password')
     api.add_resource(Currency, f'{BASE_ROUTE}/ledger/change_currency')
     api.add_resource(GetTags, f'{BASE_ROUTE}/tag/get_tags')
+    api.add_resource(PostManager, f'{BASE_ROUTE}/post/<string:trip_id>',
+                     f'{BASE_ROUTE}/post')
+    api.add_resource(HeartManager, f'{BASE_ROUTE}/heart/<string:trip_id>')
