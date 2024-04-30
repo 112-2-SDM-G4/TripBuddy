@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { AiOutlinePlusCircle } from "react-icons/ai";
 import { IoMdHeartEmpty } from "react-icons/io";
 
-function TripCard({ name, src, tripId, openSpotModal }) {
+function TripCard({ name, src, tripId }) {
     const navigate = useNavigate();
 
     return (
@@ -30,7 +30,6 @@ function TripCard({ name, src, tripId, openSpotModal }) {
                                 className={style.icon}
                                 onClick={(event) => {
                                     event.stopPropagation();
-                                    openSpotModal();
                                 }}
                             >
                                 <AiOutlinePlusCircle size={20} />

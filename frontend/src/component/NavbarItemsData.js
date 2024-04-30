@@ -24,12 +24,5 @@ export const NavbarItemsData = [
         zhtitle: "我的旅程",
         path: "/mytrips",
         icon: <MdModeOfTravel />,
-    },
-    {
-        tabname: "others",
-        entitle: "Others",
-        zhtitle: "其他",
-        path: "/others",
-        icon: <HiDotsHorizontal />,
     }
 ];

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { IoLanguage } from 'react-icons/io5';
 
 import * as constants from '../constants';
@@ -11,21 +11,27 @@ import { useWindowSize } from '../hooks/useWindowSize';
 import { ColorButton } from "./ColorButton";
 
 import NavbarItems from './NavbarItems';
+import Avatar from './Avatar';
+import Dropdown from './Dropdown';
+import { useAuth } from '../hooks/useAuth';
 
 function Header() {
   const { isDarkMode, setIsDarkMode } = useTheme();
   const { toggleLanguage } = useLanguage();
+  const { isLoggedIn } = useAuth();
   const windowSize = useWindowSize();
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
 
   return (
     <div className={style.main}>
-          <div>TripBuddy</div>
-          {windowSize.width > constants.MOBILE_SCREEN_WIDTH && <NavbarItems />}
+        <div className={style.title}>TripBuddy</div>
+        {windowSize.width > constants.MOBILE_SCREEN_WIDTH && <NavbarItems />}
 
         <div className={style.switchcontainer}>
-            <div className={style.switch} onClick={toggleLanguage}>
+            {/* <div className={style.switch} onClick={toggleLanguage}>
             <IoLanguage size={20}/>
-            </div>
+            </div> */}
 
             <div className={style.switch}>
               <ColorButton
@@ -34,9 +40,14 @@ function Header() {
               ></ColorButton>
             </div> 
 
-            <div className={style.avatar}>
-
-            </div>
+            {windowSize.width > constants.MOBILE_SCREEN_WIDTH && isLoggedIn
+              &&
+              <>
+                <Avatar src={"https://picsum.photos/200"} alt="test" 
+                        onClick={() => setIsDropdownOpen(!isDropdownOpen)}/>
+                {isDropdownOpen && <Dropdown setIsDropdownOpen={setIsDropdownOpen} />}
+              </>}
+            
         </div> 
     </div>
   );
