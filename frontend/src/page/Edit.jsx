@@ -36,6 +36,7 @@ export default function Edit() {
                     return response.json();
                 })
                 .then(function (result) {
+                    console.log(result);
                     if (result["trip"]) {
                         setTrip(result);
                     } else {
@@ -59,6 +60,7 @@ export default function Edit() {
             })
             .then(function (result) {
                 if (result["trip"]) {
+                    console.log(result);
                     setTrip(result);
                 } else {
                     navigate("/login");
@@ -561,7 +563,7 @@ const Explore = ({ refreshTrip, location, close, startSearch }) => {
         },
     };
     const { language } = useLanguage();
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
     const [spots, setSpots] = useState([]);
 
     useEffect(() => {
