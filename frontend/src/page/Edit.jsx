@@ -51,7 +51,7 @@ export default function Edit() {
             setStage(1);
         }
         return () => {};
-    }, [id, navigate]);
+    }, [id, navigate, language]);
 
     const refreshTrip = () => {
         fetchWithJwt("/api/v1/trip/" + id + "/" + language, "GET")
