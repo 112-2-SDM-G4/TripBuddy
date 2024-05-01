@@ -20,8 +20,8 @@ class Currency(Resource):
 class ManageTransaction(Resource):
     # @jwt_required()
     def post(self) -> Dict:
+        """Add new transaction record"""
         transaction = request.get_json()
-        print('yayaya')
 
         # save to Transaction table
         Transaction.create(transaction)
@@ -38,7 +38,7 @@ class ManageTransaction(Resource):
         receivables = 0
         for payment in payment_details:
             receivables += payment['amount']
-            user_id = query_row_to_dict(User.get_by_email(payment['payee']))['user_id']
+            user_id = User.get_by_email(payment['payee']).user_id
             RelationUserTransaction.create({
                     'user_id': user_id,
                     'transaction_id': transaction_id,
@@ -48,10 +48,24 @@ class ManageTransaction(Resource):
             )
         # for payer
         RelationUserTransaction.create({
-                'user_id': query_row_to_dict(User.get_by_email(transaction['payer']))['user_id'],
+                'user_id': User.get_by_email(transaction['payer']).user_id,
                 'transaction_id': transaction_id,
                 'pay': True,
                 'balance': receivables,
             }
         )
+        return make_response({'message': "success!"}, 200)
+    
+    # @jwt_required()
+    def delete(self):
+        """Delete transaction records"""
+        transaction_id = request.get_json()['transaction_id']
+        # delete from Relation_User_Transaction
+        records = RelationUserTransaction.query.filter_by(transaction_id=transaction_id).all()
+        for record in records:
+            RelationUserTransaction.delete(record.rut_id)
+        
+        # delete from Transaction
+        Transaction.delete(transaction_id)
+
         return make_response({'message': "success!"}, 200)
