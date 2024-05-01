@@ -2,7 +2,7 @@ from app.models.create_db import db
 
 class Transaction(db.Model):
     __tablename__ = 'Transaction'
-    transaction_id = db.Column(db.Integer, primary_key=True)
+    transaction_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     schedule_id = db.Column(db.Integer, db.ForeignKey('Schedule.schedule_id'), nullable=False)
     item_name = db.Column(db.String(255), nullable=False)
     amount = db.Column(db.Float, nullable=False)

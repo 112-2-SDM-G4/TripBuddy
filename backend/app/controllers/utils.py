@@ -51,7 +51,10 @@ def user_owns_schedule(user_id, schedule_id):
     return True
 
 def query_row_to_dict(row):
-    return {column.name: str(getattr(row, column.name)) for column in row.__table__.columns}
+    if row:
+        return {column.name: str(getattr(row, column.name)) for column in row.__table__.columns}
+    else:
+        return None
 
 def get_trip_photo(trip):
         places_in_trip = RelationSpotSch.get_by_schedule(trip.schedule_id)
@@ -81,7 +84,6 @@ def fetch_and_save_place(place_id: str, language: str) -> Tuple[int, Dict] :
         place_detail.pop('formatted_address')
         res_code = 200
     else:
-        print("new")
         google_maps = GoogleMapApi(GOOGLE_MAPS_API_KEY)
         res_code, place_detail = google_maps.get_place_detail(place_id, language)
 
