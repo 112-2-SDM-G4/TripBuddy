@@ -82,7 +82,8 @@ class UserVerification(Resource):
                         hashed_password=hashed_password,
                         salt=salt,
                         language="zh",
-                        questionnaire=False
+                        questionnaire=False,
+                        user_icon = 1
                     )
                     db.session.add(new_user)
                     db.session.commit()

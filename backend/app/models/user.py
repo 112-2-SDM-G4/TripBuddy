@@ -12,7 +12,7 @@ class User(db.Model):
     salt = db.Column(db.String(50), nullable=False)
     language = db.Column(db.String(50), nullable=False)
     questionnaire = db.Column(db.Boolean, nullable=False, default=False)
-    user_icon = db.Column(db.Integer, nullable=True)
+    user_icon = db.Column(db.Integer, nullable=False)
 
     def __init__(self, user_name, email, hashed_password, salt, language, questionnaire, user_icon):
         self.user_name = user_name
