@@ -7,6 +7,7 @@ from flask_mail import Message
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 
 from app.models.user import User, UserVerify
+from app.models.relation_user_tag import RelationUserTag
 # import app
 from app.models.create_db import db
 from app.services.mail import get_mail
@@ -111,14 +112,20 @@ class SetUserInfo(Resource):
         user_name = data.get('user_name', None)
         language = data.get('language', None)
         tags = data.get('tags', None)
+        user_icon = data.get('avatar', None)
         
         if user_name:
             user.user_name = user_name
-        
-        if language:
             user.language = language
+            user.user_icon = user_icon
 
-        ### tags 跟 relation_user_tag 的部分尚未實作
+        if len(tags) > 0:
+            for t_id in tags:
+                new_relation_user_tag = RelationUserTag(
+                    user_id = user.user_id,
+                    tag_id = t_id
+                )
+                db.session.add(new_relation_user_tag)
 
         db.session.commit()
 

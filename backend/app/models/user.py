@@ -12,14 +12,16 @@ class User(db.Model):
     salt = db.Column(db.String(50), nullable=False)
     language = db.Column(db.String(50), nullable=False)
     questionnaire = db.Column(db.Boolean, nullable=False, default=False)
+    user_icon = db.Column(db.Integer, nullable=False)
 
-    def __init__(self, user_name, email, hashed_password, salt, language, questionnaire):
+    def __init__(self, user_name, email, hashed_password, salt, language, questionnaire, user_icon):
         self.user_name = user_name
         self.email = email
         self.hashed_password = hashed_password
         self.salt = salt
         self.language = language
         self.questionnaire = questionnaire
+        self.user_icon = user_icon
 
     @staticmethod
     def get_all():
@@ -41,6 +43,7 @@ class User(db.Model):
                     salt=data['salt'],
                     language=data['language'],
                     questionnaire=data['questionnaire'],
+                    user_icon=data['user_icon']
                     )
         db.session.add(user)
         db.session.commit()
