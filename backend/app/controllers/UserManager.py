@@ -119,6 +119,7 @@ class SetUserInfo(Resource):
             user.user_name = user_name
             user.language = language
             user.user_icon = user_icon
+            user.questionnaire = True
 
         if tags:
             for t_id in tags:
