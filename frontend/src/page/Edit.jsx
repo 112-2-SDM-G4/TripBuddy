@@ -31,7 +31,7 @@ export default function Edit() {
 
     useEffect(() => {
         if (id !== undefined) {
-            fetchWithJwt("/api/v1/trip/" + id, "GET")
+            fetchWithJwt("/api/v1/trip/" + id + "/" + language, "GET")
                 .then(function (response) {
                     return response.json();
                 })
@@ -54,7 +54,7 @@ export default function Edit() {
     }, [id, navigate]);
 
     const refreshTrip = () => {
-        fetchWithJwt("/api/v1/trip/" + id, "GET")
+        fetchWithJwt("/api/v1/trip/" + id + "/" + language, "GET")
             .then(function (response) {
                 return response.json();
             })
