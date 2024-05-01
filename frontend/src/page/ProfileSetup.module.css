@@ -113,8 +113,7 @@
     padding-bottom: 0.7rem;
 }
 
-.avatar,
-.avatarAddButton {
+.avatar{
     width: 5rem;
     height: 5rem;
     border-radius: 50%;
@@ -129,8 +128,7 @@
     
 }
 
-.avatar:hover,
-.avatarAddButton:hover {
+.avatar:hover{
     border-color: var(--fontcolor);
     /* Example hover effect */
 }
@@ -173,7 +171,7 @@
 }
 
 
-@media (max-width: 735px) {
+@media (max-width: 1000px) {
     .container {
         width: 30rem;
     }

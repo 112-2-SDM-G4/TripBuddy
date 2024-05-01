@@ -25,25 +25,27 @@ export const AuthProvider = ({ children }) => {
             if (loginData.valid) {
                 sessionStorage.setItem("jwtToken", loginData.jwt_token);
                 setIsLoggedIn(true);
+
             } else {
-                return { success: false, error: loginData.message };
+                return { success: false, error: loginData.message, preference: false };
             }
+
 
             const tripResponse = await fetchWithJwt("/api/v1/trip", "GET");
             const tripData = await tripResponse.json();
 
             if (tripResponse.ok) {
-                const userData = { trips: tripData.user_trip };
+                const userData = { user_name: loginData.user_name, trips: tripData.user_trip };
                 setUser(userData);
                 sessionStorage.setItem("user", JSON.stringify(userData)); // Optional: Store user data in sessionStorage
                 console.log(userData);
-                return { success: true, error: null };
+                return { success: true, error: null, preference: loginData.preference };
             } else {
                 throw new Error("Failed to fetch trips");
             }
         } catch (error) {
             console.error(error);
-            return { success: false, error: error.message };
+            return { success: false, error: error.message, preference: false };
         }
     };
 

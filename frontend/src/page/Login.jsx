@@ -83,18 +83,8 @@ const LoginForm = () => {
         if (email) {
             try {
                 const response = await baseFetch(`/api/v1/user/check_user?user_email=${email}`, 'GET');
-                const data = await response.json(); // Get the JSON payload
-                // const data_true = {
-                //     "valid": true,
-                //     "salt": `$2b$10$IHadE3iUTRkVze.OPcKhTe`,
-                //     "message": ""
-                // }
-                // const data_false =
-                // {
-                //     "valid": false,
-                //     "salt": "",
-                //     "message": "該帳號未註冊"
-                // }
+                const data = await response.json();
+
                 if (!data.valid) {
                     throw new Error(data.message);
                 }
@@ -112,10 +102,14 @@ const LoginForm = () => {
             const hashedPassword = SHA256(password + salt).toString();
 
             try {
-                const { success, error } = await login(email, hashedPassword);
+                const { success, error, preference } = await login(email, hashedPassword);
                 if (!success) {
                     throw new Error(error);
-                } else {
+                } 
+                else if (!preference) {
+                    navigate("/profile-setup");
+                }
+                else {
                     navigate("/explore");
                 }
 
@@ -248,11 +242,7 @@ const SignupForm = ({ onSignupSuccess }) => {
 
             const data = await response.json();
 
-            // const data = {
-            //     "valid": true,
-            //     "message": "已寄送驗證信"
-            // }
-            // Assuming a successful response
+        
             if (data.valid) {
                 onSignupSuccess(localEmail, salt, hashedPassword); // Pass the email back up to the parent component
             } else {

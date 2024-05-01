@@ -38,11 +38,7 @@ const EmailVerification = ({ email, hashed_password, salt }) => {
             }
 
             const data = await response.json();
-            // const data = {
-            //     "valid": true,
-            //     "jwt_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMTIzNDU2Nzg5MCIsIm5hbWUiOiLlsI_mmI4ifQ.f2QgkBxI2j09ks4XBnzDNOVBo-WKlbRp6f8FxfqgtKg",
-            //     "message": "Register Successfully!!!"
-            // }
+            
 
             if (data.valid) {
                 const { success, error } = await login(email, hashed_password);

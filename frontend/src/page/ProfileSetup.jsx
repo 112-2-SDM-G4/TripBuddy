@@ -16,7 +16,9 @@ const ProgressBar = ({ progress, currentStep }) => {
   );
 };
 
-const AvatarSelector = ({ onSelect, avatars, onUpload, selectedAvatar }) => {
+const avatars = ['../../1.png', '../../2.png', '../../3.png', '../../4.png', '../../5.png'];
+
+const AvatarSelector = ({ onSelect, avatars, selectedAvatar }) => {
   return (
     <div className={style.avatarSelector}>
       {avatars.map((avatar, index) => (
@@ -24,16 +26,11 @@ const AvatarSelector = ({ onSelect, avatars, onUpload, selectedAvatar }) => {
           key={index}
           src={avatar}
           alt={`Avatar ${index + 1}`}
-          onClick={() => onSelect(avatar)}
-          className={avatar === selectedAvatar ? style.selectedAvatar : style.avatar}
+          onClick={() => onSelect(index)}
+          className={index === selectedAvatar ? style.selectedAvatar : style.avatar}
         />
       ))}
-      <button
-        className={style.avatarAddButton}
-        onClick={onUpload}
-      >
-        +
-      </button>
+
     </div>
   );
 };
@@ -45,19 +42,25 @@ const ProfileSetup = () => {
   const navigate = useNavigate();
 
   const totalSteps = 3;
-  
+
   const [userInfo, setUserInfo] = useState({
     user_name: '',
     language: '',
-    // photo: null,
+    avatar: null,
     tags: []
   });
   const [tags, setTags] = useState([]);
 
   const nextStep = () => {
-    if (currentStep === 1 && (!userInfo.user_name || !userInfo.language)) {
-      setError("Please enter a username and select a language.");
-      return;
+    if (currentStep === 1) {
+      if (!userInfo.avatar) {
+        setError("Please choose an avatar.");
+        return;
+      }
+      if (!userInfo.user_name || !userInfo.language) {
+        setError("Please enter a username and select a language.");
+        return;
+      }
     }
     setError(''); // Clear errors if all validations are passed
     setCurrentStep(Math.min(currentStep + 1, totalSteps));
@@ -69,9 +72,9 @@ const ProfileSetup = () => {
   };
 
   // useEffect(() => {
-  //   const fetchPreferences = async () => {
+  //   const fetchTags = async () => {
   //     try {
-  //       const response = await fetchWithJwt('/api/v1/user/getPreference', 'GET');
+  //       const response = await fetchWithJwt('/api/v1/tag/get_tags', 'GET', { source: "UserProfile" });
   //       if (!response.ok) {
   //         throw new Error(`HTTP error! Status: ${response.status}`);
   //       }
@@ -83,21 +86,26 @@ const ProfileSetup = () => {
   //     }
   //   };
 
-  //   fetchPreferences();
-  // }, [fetchWithJwt]); 
+  //   fetchTags();
+  // }, [fetchWithJwt]);
 
   const handleSubmit = async () => {
 
     try {
       const response = await fetchWithJwt('/api/v1/user/set_info', 'POST', { userInfo });
       const data = await response.json();
-      console.log(data.message);
+      console.log(data);
       if (!data.valid) {
         throw new Error(data.message || "Submission failed, please try again.");
       }
-      sessionStorage.setItem('user_name', data.user_name);
-      sessionStorage.setItem('language', data.language);
-      // Redirect or show success message
+      const currentSessionData = JSON.parse(sessionStorage.getItem("user") || '{}');
+      const updatedUserData = {
+        ...currentSessionData,
+        user_name: data.user_name,  
+      };
+      sessionStorage.setItem('user', JSON.stringify(updatedUserData));
+      localStorage.setItem('language', data.language);
+
       navigate('/explore');
     } catch (error) {
       console.error("Profile setup failed:", error);
@@ -116,8 +124,8 @@ const ProfileSetup = () => {
       setUserInfo(prev => ({
         ...prev,
         [name]: checked
-          ? [...(prev[name] || []), value] // Use prev[name] if it exists, otherwise use an empty array
-          : prev[name].filter(pref => pref !== value)
+          ? [...(prev[name] || []), parseInt(value)]
+          : prev[name].filter(tagId => tagId !== parseInt(value))
       }));
     } else {
       setUserInfo(prev => ({ ...prev, [name]: value }));
@@ -125,15 +133,11 @@ const ProfileSetup = () => {
     }
   };
 
-  const handleAvatarSelect = (avatar) => {
-    setSelectedAvatar(avatar);
-    setUserInfo(prev => ({ ...prev, photo: avatar }));
+  const handleAvatarSelect = (index) => {
+    setSelectedAvatar(index);
+    setUserInfo(prev => ({ ...prev, avatar: index + 1 }));
   };
 
-  // Function to handle avatar upload
-  const handleAvatarUpload = () => {
-    // Trigger file input to upload an avatar
-  };
 
   let content;
   switch (currentStep) {
@@ -154,14 +158,13 @@ const ProfileSetup = () => {
               <div className={style.questionnaire}>
                 <AvatarSelector
                   onSelect={handleAvatarSelect}
-                  avatars={['../../boy.png', '../../panda.png', '../../gamer.png', '../../woman.png']}
-                  onUpload={handleAvatarUpload}
+                  avatars={avatars}
                   selectedAvatar={selectedAvatar}
                 />
                 <InputText
                   propmt={"Username"}
                   name={"username"}
-                  setting={{ require: true, type: 'text', defaultValue: userInfo.user_name ? userInfo.user_name : ''  }}
+                  setting={{ require: true, type: 'text', defaultValue: userInfo.user_name ? userInfo.user_name : '' }}
                   onChange={handleUserInfoChange}
                 />
               </div>
@@ -199,7 +202,23 @@ const ProfileSetup = () => {
         <>
           <div>
             <h2>Travel Preferences</h2>
-
+            {/* {tags.map((tagType) => (
+              <div key={tagType.type_name_en}>
+                <h3>{userInfo.language === 'zh' ? tagType.type_name_zh : tagType.type_name_en}</h3>
+                {tagType.option.map((option) => (
+                  <label key={option.tag_id}>
+                    <input
+                      type="checkbox"
+                      name="tags"
+                      value={option.tag_id}
+                      checked={userInfo.tags.includes(option.tag_id)}
+                      onChange={handleChange}
+                    />
+                    {userInfo.language === 'zh' ? option.tag_name_zh : option.tag_name_en}
+                  </label>
+                ))}
+              </div>
+            ))} */}
             <div className={style.pageButtons}>
               <Button
                 txt="Back"
@@ -222,7 +241,7 @@ const ProfileSetup = () => {
             <h2>Welcome to TripBuddy!</h2>
             <p className={style.introText}>Your profile is all set up. Start exploring now!</p>
             <div className={style.logoContainer}>
-                <img className={style.logo} src="../../logo.svg" alt="TourBuddy" />
+              <img className={style.logo} src="../../logo.svg" alt="TourBuddy" />
             </div>
             <div className={style.pageButtons}>
               <Button
