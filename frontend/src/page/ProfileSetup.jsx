@@ -38,26 +38,22 @@ const AvatarSelector = ({ onSelect, avatars, selectedAvatar }) => {
 const ProfileSetup = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedAvatar, setSelectedAvatar] = useState(null);
+  const [userName, setUserName] = useState('');
+  const [language, setLanguage] = useState('');
+  const [avatar, setAvatar] = useState(0);
+  const [tags, setTags] = useState([]);
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
   const totalSteps = 3;
 
-  const [userInfo, setUserInfo] = useState({
-    user_name: '',
-    language: '',
-    avatar: null,
-    tags: []
-  });
-  const [tags, setTags] = useState([]);
-
   const nextStep = () => {
     if (currentStep === 1) {
-      if (!userInfo.avatar) {
+      if (!avatar) {
         setError("Please choose an avatar.");
         return;
       }
-      if (!userInfo.user_name || !userInfo.language) {
+      if (!userName || !language) {
         setError("Please enter a username and select a language.");
         return;
       }
@@ -92,7 +88,18 @@ const ProfileSetup = () => {
   const handleSubmit = async () => {
 
     try {
-      const response = await fetchWithJwt('/api/v1/user/set_info', 'POST', { userInfo });
+      console.log({
+        user_name: userName,
+        tags: tags,
+        avatar: avatar,
+        language: language
+      });
+      const response = await fetchWithJwt('/api/v1/user/set_info', 'POST', {
+        user_name: userName,
+        tags: tags,
+        avatar: avatar,
+        language: language
+      });
       const data = await response.json();
       console.log(data);
       if (!data.valid) {
@@ -101,7 +108,7 @@ const ProfileSetup = () => {
       const currentSessionData = JSON.parse(sessionStorage.getItem("user") || '{}');
       const updatedUserData = {
         ...currentSessionData,
-        user_name: data.user_name,  
+        user_name: data.user_name,
       };
       sessionStorage.setItem('user', JSON.stringify(updatedUserData));
       localStorage.setItem('language', data.language);
@@ -113,31 +120,22 @@ const ProfileSetup = () => {
     }
   };
 
-  const handleUserInfoChange = (value) => {
-    setUserInfo(prev => ({ ...prev, user_name: value }));
-    console.log(userInfo);
-  };
 
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    if (type === 'checkbox') {
-      setUserInfo(prev => ({
-        ...prev,
-        [name]: checked
-          ? [...(prev[name] || []), parseInt(value)]
-          : prev[name].filter(tagId => tagId !== parseInt(value))
-      }));
-    } else {
-      setUserInfo(prev => ({ ...prev, [name]: value }));
-      console.log(userInfo);
-    }
-  };
+  // const handleChange = (e) => {
+  //   const { name, value, type, checked } = e.target;
+  //   if (type === 'checkbox') {
+  //     setTags();
+  //   }
+  // };
 
   const handleAvatarSelect = (index) => {
     setSelectedAvatar(index);
-    setUserInfo(prev => ({ ...prev, avatar: index + 1 }));
+    setAvatar(index + 1);
   };
 
+  const handleLanguageChange = (e) => {
+    setLanguage(e.target.value);
+  };
 
   let content;
   switch (currentStep) {
@@ -164,8 +162,8 @@ const ProfileSetup = () => {
                 <InputText
                   propmt={"Username"}
                   name={"username"}
-                  setting={{ require: true, type: 'text', defaultValue: userInfo.user_name ? userInfo.user_name : '' }}
-                  onChange={handleUserInfoChange}
+                  setting={{ require: true, type: 'text', defaultValue: userName ? userName : '' }}
+                  onChange={setUserName}
                 />
               </div>
 
@@ -175,15 +173,15 @@ const ProfileSetup = () => {
                   <button
                     name='language'
                     value='zh'
-                    onClick={handleChange}
-                    className={`${style.btn} ${userInfo.language === 'zh' ? style.activeButton : ""}`}>
+                    onClick={handleLanguageChange}
+                    className={`${style.btn} ${language === 'zh' ? style.activeButton : ""}`}>
                     繁體中文
                   </button>
                   <button
                     name='language'
                     value='en'
-                    onClick={handleChange}
-                    className={`${style.btn} ${userInfo.language === 'en' ? style.activeButton : ""}`}>
+                    onClick={handleLanguageChange}
+                    className={`${style.btn} ${language === 'en' ? style.activeButton : ""}`}>
                     English
                   </button>
                 </div>
