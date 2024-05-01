@@ -120,7 +120,7 @@ class SetUserInfo(Resource):
             user.language = language
             user.user_icon = user_icon
 
-        if len(tags) > 0:
+        if tags:
             for t_id in tags:
                 new_relation_user_tag = RelationUserTag(
                     user_id = user.user_id,
