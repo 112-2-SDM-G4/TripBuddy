@@ -14,12 +14,15 @@ import { useWindowSize } from "../hooks/useWindowSize";
 
 const Explore = () => {
     const navigate = useNavigate();
+    const windowSize = useWindowSize();
+
     const { language } = useLanguage();
     const [isLoading, setIsLoading] = useState(false);
     const [haveUpcomingTrip, setHaveUpcomingTrip] = useState(false);
     const [upcomingTrip, setUpcomingTrip] = useState({});
     const [allTrips, setAllTrips] = useState([]);
-    const windowSize = useWindowSize();
+
+    const [isSearchDropdownOpen, setIsSearchDropdownOpen] = useState(false);
 
     const tagMapping = {
         1: "文藝",
@@ -76,37 +79,40 @@ const Explore = () => {
             }
         };
 
+        setIsLoading(true);
         getMyTrips();
         getAllTrips();
 
         return () => {};
     }, []);
 
-    // const handleSearch = async (query) => {
-    //     console.log("Searching for:", query);
-    //     setIsLoading(true);
-    //     fetchWithJwt(
-    //         `/api/v1/place/search?search=${query}&location_lat=39.7036194&location_lng=141.1526839&language=${language}`,
-    //         "GET"
-    //     )
-    //         .then(function (response) {
-    //             return response.json();
-    //         })
-    //         .then(function (result) {
-    //             if (result["result"]) {
-    //                 setSpots(result["result"]);
-    //                 setIsLoading(false);
-    //             }
-    //         });
-    // };
+    const handleSearch = async (query) => {
+        console.log("Searching for:", query);
+        setIsLoading(true);
+
+        await fetchWithJwt('/api/v1/post', 'POST', {
+            tags_id: [1, 2],
+            keyword: query
+        })
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (result) {
+                if (result["search_result"]) {
+                    setAllTrips(result["search_result"]);
+                    setIsLoading(false);
+                }
+            });
+    };
 
 
     const  isSmallScreen = windowSize.width < constants.MOBILE_SCREEN_WIDTH
     return (
-        <div className={style.main}>
+        <div className={style.main} onClick={() => setIsSearchDropdownOpen(false)}>
             <div className={style.container}>
                 <Loader isLoading={isLoading} />
 
+                {haveUpcomingTrip &&
                 <div 
                     className={`${style.upcomingtrip} ${isSmallScreen && style.upcomingtripcol}`}
                     onClick={() => navigate(`/edit/${upcomingTrip["id"]}`)}
@@ -114,23 +120,22 @@ const Explore = () => {
                     <div className={`${style.upcomingtriptitle} ${isSmallScreen && style.upcomingtriptitlecol}`}>
                         {language === "en" ? "Upcoming Trip" : "即將到來的旅程"}
                     </div>
-                    {haveUpcomingTrip &&
                         <div className={style.tripcard}>
                             <TripCard
                                 key={upcomingTrip["id"]}
                                 name={upcomingTrip["name"]}
-                                src={upcomingTrip["image"]}
-                                // src="https://picsum.photos/200"
+                                // src={upcomingTrip["image"]}
+                                src="https://picsum.photos/200"
                                 tripId={upcomingTrip["id"]}
                                 isPublic={false}
                                 isUpcoming={true}
+                                tripStartDate={[upcomingTrip["start_date"][1], upcomingTrip["start_date"][1]]}
                             />
                         </div>
-                    }
-                </div>
+                </div>}
 
                 <div className={style.searchboxcontainer}>
-                    <TripSearchBox onSearch={() => {}} />
+                    heree
                 </div>
 
                 <div className={style.alltrips}>
@@ -142,8 +147,8 @@ const Explore = () => {
                                 <TripCard
                                     key={trip["id"]}
                                     name={trip["name"]}
-                                    src={trip["image"]}
-                                    // src="https://picsum.photos/200"
+                                    // src={trip["image"]}
+                                    src="https://picsum.photos/200"
                                     tripId={trip["id"]}
                                     tagNames={trip["tags_id"].map(tagId => tagMapping[tagId])}
                                     isPublic={true}

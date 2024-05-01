@@ -22,7 +22,7 @@
 
 .upcomingcard {
     display: flex;
-    width: 28rem;
+    width: 27rem;
     height: 4rem;
     background-color: var(--backgroundcolor);
     margin: 1rem;
@@ -73,6 +73,25 @@
 
 .titlemargin {
     /* margin-top: 1.5rem; */
+}
+
+.rows {
+    display: flex;
+    flex-direction: column;
+}
+
+.icondepart {
+    display: flex;
+    margin-right: 0.3rem;
+}
+
+.rowdepart {
+    font-size: 0.6rem;
+    color: var(--secondarycolor);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-top: 0.3rem;
 }
 
 .tags {
@@ -133,16 +152,16 @@
         width: 100%;
     }
 
-    .info {
-        width: 8rem;
+    .img {
+        width: 12rem;
     }
 
-    /* .img {
-        width: 20rem;
-    } */
+    .info {
+        width: calc(100% - 12rem);
+    }
 }
 
-@media (max-width: 420px) {
+@media (max-width: 580px) {
     .card {
         width: 20rem;
     }
@@ -152,6 +171,10 @@
     }
 
     .img {
-        width: 15rem;
+        width: 10rem;
+    }
+
+    .info {
+        width: calc(100% - 10rem);
     }
 }
