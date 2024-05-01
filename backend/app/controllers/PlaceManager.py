@@ -58,36 +58,15 @@ class PlaceDetail(Resource):
         place_id = request.args.get('place_id')
         language = request.args.get('language')
 
-        # check database
-        place_info = Place.query.filter_by(
-            place_id=place_id,
-            language=language
-        ).first()
+        # check database, fetch it from google if not exists
+        res_code, place_detail = fetch_and_save_place(place_id, language)
 
-        if place_info:
-            place_detail = query_row_to_dict(place_info)
-            place_detail['address'] = place_detail['formatted_address']
-            place_detail.pop('id')
-            place_detail.pop('place_summary')
-            place_detail.pop('formatted_address')
-            return make_response({'result': place_detail, 'language': language}, 200)
-        else:
-            google_maps = GoogleMapApi(GOOGLE_MAPS_API_KEY)
-            detail_res, place_detail = google_maps.get_place_detail(place_id, language)
-            responses = make_response({
-                'result': place_detail.copy(),
-                'language': language,
-            }, detail_res.status_code
-            )
-            # save to database
-            place_detail['formatted_address'] = place_detail['address']
-            place_detail['place_summary'] = None
-            place_detail['language'] = language
-            place_detail.pop('address')
-            if 'regular_opening_hours' in place_detail:
-                place_detail['regular_opening_hours'] = array_to_str(place_detail['regular_opening_hours'])
-            Place.create(place_detail)
-            return responses
+        responses = make_response({
+            'result': place_detail,
+            'language': language,
+        }, res_code
+        )
+        return responses
     
 class PlaceInTrip(Resource):
     @jwt_required()

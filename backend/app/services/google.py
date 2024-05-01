@@ -145,7 +145,7 @@ class GoogleMapApi():
             self,
             place_id: str,
             language_code: str,
-    ) -> Tuple[requests.models.Response, List[dict]]:
+    ) -> Tuple[int, List[dict]]:
         """Google Maps Places API - Place Detail + Photos"""
         detail_api_url = f"https://places.googleapis.com/v1/places/{place_id}?fields={('%2C').join(self.detail_field_mask)}"
         params = self.detail_params.copy()
@@ -186,4 +186,4 @@ class GoogleMapApi():
         else: # searching failed
             res_json = {}
 
-        return res, res_json
+        return res.status_code, res_json

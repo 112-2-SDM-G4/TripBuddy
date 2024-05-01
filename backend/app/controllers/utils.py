@@ -1,3 +1,5 @@
+import os
+from typing import Tuple, Dict
 from datetime import datetime, date, timedelta
 
 from app.models.user import User
@@ -6,6 +8,9 @@ from app.models.place import Place
 from app.models.relation_spot_sch import RelationSpotSch
 from app.models.tags import Tags
 from app.models.relation_sch_tag import RelationSchTag
+from app.services.google import GoogleMapApi
+
+GOOGLE_MAPS_API_KEY = os.getenv('GOOGLE_MAPS_API_KEY')
 
 def array_to_date(array):
     return date(array[0], array[1], array[2])
@@ -62,3 +67,32 @@ def get_trip_tags_id(trip):
         tag = Tags.get_by_id(tag_relation.tag_id)
         tags.append(tag.tag_id)
     return tags
+
+def fetch_and_save_place(place_id: str, language: str) -> Tuple[int, Dict] :
+    """Check place database, fetch it from google if not exists"""
+    place = Place.get_by_google_place_id_and_language(place_id, language)
+    if place:
+        place_detail = query_row_to_dict(place)
+        place_detail['address'] = place_detail['formatted_address']
+        place_detail['regular_opening_hours'] = str_to_array(place_detail['regular_opening_hours'])
+        place_detail.pop('id')
+        place_detail.pop('language')
+        place_detail.pop('place_summary')
+        place_detail.pop('formatted_address')
+        res_code = 200
+    else:
+        print("new")
+        google_maps = GoogleMapApi(GOOGLE_MAPS_API_KEY)
+        res_code, place_detail = google_maps.get_place_detail(place_id, language)
+
+        # save to database
+        new_place = place_detail.copy()
+        new_place['formatted_address'] = new_place['address']
+        new_place['place_summary'] = None
+        new_place['language'] = language
+        new_place.pop('address')
+        if 'regular_opening_hours' in new_place:
+            new_place['regular_opening_hours'] = array_to_str(new_place['regular_opening_hours'])
+        Place.create(new_place)
+
+    return res_code, place_detail
