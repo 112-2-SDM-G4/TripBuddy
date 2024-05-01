@@ -1,0 +1,12 @@
+.main {
+    top: 3.53rem;
+    width: 13rem;
+    height: auto;
+    position: absolute;
+    background-color: color-mix(in srgb, var(--fontcolor) 10%, var(--backgroundcolor));;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    border-radius: 1rem;
+    z-index: 1;
+    padding-top: 0.3rem;
+    padding-bottom: 0.3rem;
+}

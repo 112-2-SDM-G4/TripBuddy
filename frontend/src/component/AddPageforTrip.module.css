@@ -24,7 +24,7 @@
     max-width: 780px;
     padding: 1rem;
     height: 90vh;
-    max-height: 90vh;
+    max-height: calc(100dvh - 8.5rem);
     position: relative;
 }
 .title {
@@ -37,7 +37,7 @@
     flex-direction: column;
     gap: 1rem;
     overflow-y: scroll;
-    max-height: 80vh;
+    max-height: calc(100dvh - 13rem);
     padding-bottom: 2rem;
 }
 .tripblock {
@@ -107,8 +107,8 @@
 @media (max-width: 500px) {
     .container {
         width: 95vw;
-        height: 90vh;
+        height: 80vh;
         max-width: 100dvw;
-        max-height: 90dvh;
+        max-height: calc(100dvh - 8.5rem);
     }
 }

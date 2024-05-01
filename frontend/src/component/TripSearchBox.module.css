@@ -3,13 +3,13 @@
 .container {
     display: flex;
     align-items: center;
-    width: 100%;
+    width: 40rem;
     border: 1px solid var(--secondarycolor);
     border-radius: 2rem;
     overflow: hidden;
     box-shadow: 0 0.1rem 0.1rem var(--secondarycolor);
     position: relative;
-    z-index: 2;
+    z-index: 1;
 }
 
 .input {
@@ -65,4 +65,10 @@ input::placeholder {
 }
 .button:hover::after {
     width: 4rem;
+}
+
+@media (max-width: 735px) {
+    .container {
+        width: 100%;
+    }
 }

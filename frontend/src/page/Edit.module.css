@@ -177,18 +177,21 @@ input[type="date"]::-webkit-calendar-picker-indicator {
         max-width: 100vw;
         width: 100vw;
         left: 0rem;
-        top: 3.5;
+        top: 0;
         display: flex;
         justify-content: center;
+    }
+    .editpage {
+        padding-top: 5rem;
     }
     .explorepage {
         position: absolute;
         max-width: 100vw;
+        padding-top: 3.5rem;
         width: 100vw;
         left: 0rem;
         top: 0rem;
         background-color: var(--backgroundcolor);
-
         transform: translateX(0%);
     }
     .hidden {
@@ -196,5 +199,8 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     }
     .container {
         padding-top: 1rem;
+        position: relative;
+        overflow-y: scroll;
+        max-height: calc(100vh - 6rem);
     }
 }

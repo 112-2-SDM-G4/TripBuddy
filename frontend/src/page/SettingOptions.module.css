@@ -1,0 +1,38 @@
+.main {
+    padding-top: 4rem;
+}
+
+.row {
+    cursor: pointer;
+    height: 3.5rem;
+    font-size: 1rem;
+    font-weight: bold;
+    padding: 0.5rem;
+    padding-left: 1.5rem;
+    display: flex;
+    align-items: center;
+}
+
+.rowlogout {
+    cursor: pointer;
+    height: 3.5rem;
+    font-size: 1rem;
+    font-weight: bold;
+    padding: 0.5rem;
+    padding-left: 1.5rem;
+    display: flex;
+    align-items: center;
+}
+
+.row:hover {
+    background-color: color-mix(in srgb, var(--fontcolor) 20%, var(--backgroundcolor));
+}
+
+.rowlogout:hover {
+    background-color: color-mix(in srgb, var(--fontcolor) 20%, #FF5151);
+}
+
+.icon {
+    margin-right: 0.7rem;
+    height: 1.2rem;
+}

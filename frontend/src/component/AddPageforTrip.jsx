@@ -56,6 +56,7 @@ export default function AddPageforTrip({ close, spot, refreshTrip, spotData }) {
             money: Budget,
             stay_time: selectTime,
             date: selectDay,
+            language: language,
             order: 0,
         })
             .then(function (response) {

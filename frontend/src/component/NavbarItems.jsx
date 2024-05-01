@@ -1,14 +1,22 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+
 import style from "./NavbarItems.module.css";
+
 import { useLanguage } from "../hooks/useLanguage";
+import { useWindowSize } from "../hooks/useWindowSize";
 
 import { NavbarItemsData } from "./NavbarItemsData";
+import * as constants from "../constants";
+
+import Avatar from "./Avatar";
 
 function NavbarItem() {
     const navigate = useNavigate();
-    const [activeTab, setActiveTab] = useState("explore");
+    const windowSize = useWindowSize();
     const { language } = useLanguage();
+    const [activeTab, setActiveTab] = useState("explore");
+
 
     return (
         <div className={style.tabcontainer}>
@@ -40,6 +48,14 @@ function NavbarItem() {
                     </div>
                 );
             })}
+
+        {windowSize.width < constants.MOBILE_SCREEN_WIDTH 
+            && 
+            <Avatar 
+                src={"https://picsum.photos/200"}
+                alt="test"
+                onClick={() => navigate("setting-options")}
+            />}
         </div>
     );
 }

@@ -31,11 +31,12 @@ export default function Edit() {
 
     useEffect(() => {
         if (id !== undefined) {
-            fetchWithJwt("/api/v1/trip/" + id, "GET")
+            fetchWithJwt("/api/v1/trip/" + id + "/" + language, "GET")
                 .then(function (response) {
                     return response.json();
                 })
                 .then(function (result) {
+                    console.log(result);
                     if (result["trip"]) {
                         setTrip(result);
                     } else {
@@ -50,15 +51,16 @@ export default function Edit() {
             setStage(1);
         }
         return () => {};
-    }, [id, navigate]);
+    }, [id, navigate, language]);
 
     const refreshTrip = () => {
-        fetchWithJwt("/api/v1/trip/" + id, "GET")
+        fetchWithJwt("/api/v1/trip/" + id + "/" + language, "GET")
             .then(function (response) {
                 return response.json();
             })
             .then(function (result) {
                 if (result["trip"]) {
+                    console.log(result);
                     setTrip(result);
                 } else {
                     navigate("/login");
@@ -561,7 +563,7 @@ const Explore = ({ refreshTrip, location, close, startSearch }) => {
         },
     };
     const { language } = useLanguage();
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
     const [spots, setSpots] = useState([]);
 
     useEffect(() => {
@@ -570,8 +572,8 @@ const Explore = ({ refreshTrip, location, close, startSearch }) => {
         }
         fetchWithJwt(
             `/api/v1/place/search?language=${language}&location_lat=${
-                location ? location[0] : "39.7036194"
-            }&location_lng=${location ? location[1] : "141.1526839"}&search=`,
+                location ? location[0] : null
+            }&location_lng=${location ? location[1] : null}&search=`,
             "GET"
         )
             .then(function (response) {
@@ -593,9 +595,9 @@ const Explore = ({ refreshTrip, location, close, startSearch }) => {
         setIsLoading(true);
         fetchWithJwt(
             `/api/v1/place/search?search=${query}&location_lat=${
-                location ? location[0] : "39.7036194"
+                location ? location[0] : null
             }&location_lng=${
-                location ? location[1] : "141.1526839"
+                location ? location[1] : null
             }&language=${language}`,
             "GET"
         )

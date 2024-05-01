@@ -15,7 +15,9 @@ import MyTrips from "./page/MyTrips";
 import ForgotPassword from "./page/Forgot-password";
 import ResetPassword from "./page/Reset-password";
 import ProfileSetup from "./page/ProfileSetup";
+import Profile from "./page/Profile";
 import NotFound from "./page/NotFound";
+import SettingOptions from "./page/SettingOptions";
 
 function App() {
     const { isDarkMode } = useTheme();
@@ -49,6 +51,8 @@ function App() {
                 <Route path="edit/:id" element={<Edit />} />
                 <Route path="explore" element={<Explore />} />
                 <Route path="mytrips" element={<MyTrips />} />
+                <Route path="profile" element={<Profile />} />
+                <Route path="setting-options" element={<SettingOptions />} />
                 <Route path="*" element={<NotFound />} />
                 {/* </Route> */}
             </Routes>
