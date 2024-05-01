@@ -26,7 +26,9 @@ const SettingOptions = () => {
 
             <div 
               className={style.row} 
-              onClick={() => navigate("/profile")}>
+              // onClick={() => navigate("/profile")}>
+              onClick={() => navigate("/profile-setup")}>
+
                 <div className={style.icon}>
                     {setprofile["icon"]}
                 </div>
