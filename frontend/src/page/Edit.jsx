@@ -572,8 +572,8 @@ const Explore = ({ refreshTrip, location, close, startSearch }) => {
         }
         fetchWithJwt(
             `/api/v1/place/search?language=${language}&location_lat=${
-                location ? location[0] : "39.7036194"
-            }&location_lng=${location ? location[1] : "141.1526839"}&search=`,
+                location ? location[0] : null
+            }&location_lng=${location ? location[1] : null}&search=`,
             "GET"
         )
             .then(function (response) {
@@ -595,9 +595,9 @@ const Explore = ({ refreshTrip, location, close, startSearch }) => {
         setIsLoading(true);
         fetchWithJwt(
             `/api/v1/place/search?search=${query}&location_lat=${
-                location ? location[0] : "39.7036194"
+                location ? location[0] : null
             }&location_lng=${
-                location ? location[1] : "141.1526839"
+                location ? location[1] : null
             }&language=${language}`,
             "GET"
         )
