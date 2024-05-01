@@ -188,6 +188,7 @@ class LoginCheckPassword(Resource):
                 'preference': None
             }
             return make_response(res_json, 401)
+        
 class ForgetPassword(Resource):
     def post(self):
         mail = get_mail()
