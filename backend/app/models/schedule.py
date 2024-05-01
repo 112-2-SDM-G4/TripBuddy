@@ -16,11 +16,12 @@ class Schedule(db.Model):
     standard = db.Column(db.String(50), nullable=False)
     exchange = db.Column(db.String(50), nullable=True)
 
-    def __init__(self, post_id, schedule_name, start_date, end_date, location, location_lng, location_lat, standard, exchange=None):
+    def __init__(self, post_id, schedule_name, start_date, end_date, public, location, location_lng, location_lat, standard, exchange=None):
         self.post_id = post_id
         self.schedule_name = schedule_name
         self.start_date = start_date
         self.end_date = end_date
+        self.public = public
         self.location = location
         self.location_lng = location_lng
         self.location_lat = location_lat

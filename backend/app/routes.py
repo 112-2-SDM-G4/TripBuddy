@@ -6,6 +6,7 @@ from app.controllers.PlaceManager import PlaceSearch, PlaceDetail, PlaceInTrip
 from app.controllers.UserManager import SendVerifyEmail, UserVerification, SetUserInfo, LoginCheckUser, LoginCheckPassword, ForgetPassword, ResetPassword
 from app.controllers.LedgerManager import Currency
 from app.controllers.PostManager import PostManager, HeartManager
+from app.controllers.GroupManager import SetGroupMember
 from flask_restful import Api
 
 BASE_ROUTE = '/api/v1'
@@ -34,3 +35,4 @@ def initialize_routes(api: Api):
     api.add_resource(PostManager, f'{BASE_ROUTE}/post/<string:trip_id>',
                      f'{BASE_ROUTE}/post')
     api.add_resource(HeartManager, f'{BASE_ROUTE}/heart/<string:trip_id>')
+    api.add_resource(SetGroupMember, f'{BASE_ROUTE}/schdule/set_goup_member')
