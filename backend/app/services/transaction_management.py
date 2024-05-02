@@ -4,7 +4,8 @@ from app.models.relation_user_transaction import RelationUserTransaction
 from app.controllers.utils import *
 
 
-def get_all_transactions_of_schedule(schedule_id: str) -> List[Dict]:
+def get_all_transactions_of_schedule(schedule_id: int) -> List[Dict]:
+    """Get all transaction records from a schedule"""
     records = []
     transactions = Transaction.get_by_schedule(schedule_id)
     if transactions is None:
@@ -16,8 +17,6 @@ def get_all_transactions_of_schedule(schedule_id: str) -> List[Dict]:
         balances = RelationUserTransaction.get_by_transaction(transaction_id)
         for b in balances:
             b_record = query_row_to_dict(b)
-            print(type(b_record['pay']))
-            print(b_record['pay'])
             if b_record['pay'] == 'True':
                 record['payer'] = User.get_by_id(b_record['user_id']).email
             else:

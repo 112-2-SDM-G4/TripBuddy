@@ -73,13 +73,12 @@ class ManageTransaction(Resource):
 
     # @jwt_required()
     def get(self):
+        """Get transaction records and details"""
         schedule_id = request.args.get('schedule_id')
 
-        if schedule_id:
-            records = get_all_transactions_of_schedule(schedule_id)
-            response = {
-                'schedule_id': int(schedule_id),
-                'records': records
-            }
-
+        records = get_all_transactions_of_schedule(int(schedule_id))
+        response = {
+            'schedule_id': int(schedule_id),
+            'records': records
+        }
         return make_response(response, 200)
