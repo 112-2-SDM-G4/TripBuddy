@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import style from "./Edit.module.css";
+
 import Button from "../component/Button";
 import Calendar from "../component/Calendar";
 import InputText from "../component/InputText";
@@ -8,9 +10,11 @@ import DragBox from "../component/DragBox";
 import Loader from "../component/Loader";
 import TripSearchBox from "../component/TripSearchBox";
 import SpotCard from "../component/SpotCard";
+
 import { useLanguage } from "../hooks/useLanguage";
+import { useAuth } from "../hooks/useAuth";
 import { fetchWithJwt } from "../hooks/fetchWithJwt";
-import { useNavigate, useParams } from "react-router-dom";
+
 import CountryData from "../assets/Country.json";
 import {
     IoSunny,
@@ -19,8 +23,11 @@ import {
     IoAddCircleOutline,
     IoChevronBack,
     IoEllipsisHorizontalSharp,
+    IoRemoveCircle,
+    IoPersonAdd,
 } from "react-icons/io5";
-import { useAuth } from "../hooks/useAuth";
+import { FaEdit } from "react-icons/fa";
+import { IoMdShareAlt } from "react-icons/io";
 
 export default function Edit() {
     const { id } = useParams();
@@ -376,6 +383,7 @@ function EditPage({ tripinfo, language, refreshTrip }) {
         tripinfo["trip"] ? tripinfo["trip"][0] : []
     );
     const [openExplore, setOpenExplore] = useState(false);
+    const [openDropDown, setOpenDropDown] = useState(false);
 
     useEffect(() => {
         function formatDateAndWeekday(start, end, language) {
@@ -503,7 +511,16 @@ function EditPage({ tripinfo, language, refreshTrip }) {
             <div className={style.editpage}>
                 <div className={`${style.editpageTitle}`}>
                     {tripinfo["name"]}
-                    <IoEllipsisHorizontalSharp className={`${style.backbt}`} />
+                    <div className={style.morebtcontianer}>
+                        <IoEllipsisHorizontalSharp
+                            className={`${style.backbt}`}
+                            onClick={() => setOpenDropDown((prev) => !prev)}
+                        />
+                        <Dropdown
+                            open={openDropDown}
+                            setOpen={setOpenDropDown}
+                        />
+                    </div>
                 </div>
                 <div className={style.selectdate}>
                     {dates.map((d, i) => (
@@ -638,6 +655,148 @@ const Explore = ({ refreshTrip, location, close, startSearch }) => {
                     />
                 ))}
             </div>
+        </div>
+    );
+};
+
+const Dropdown = ({ open, setOpen }) => {
+    const words = {
+        zh: {
+            share: "分享",
+            add: "添加旅伴",
+            delete: "退出行程",
+            edit: "編輯行程資料",
+        },
+        en: {
+            share: "Share",
+            add: "Add Companion",
+            delete: "Leave Trip",
+            edit: "Edit Trip Details",
+        },
+    };
+    const { language } = useLanguage();
+    let { updateUserData } = useAuth();
+    const navigate = useNavigate();
+
+    const addNewUser = (tripid, userid) => {
+        fetchWithJwt("/api/v1/schdule/set_goup_member", "POST", {
+            trip_id: tripid,
+            invited_id: userid,
+        })
+            .then((response) => {
+                return response.json();
+            })
+            .then((data) => {
+                console.log(data);
+            })
+            .catch((error) => {
+                console.log(
+                    "There was a problem with the fetch operation:",
+                    error
+                );
+                if (error.response) {
+                    error.response.json().then((errorMessage) => {
+                        alert(errorMessage.message);
+                        console.log("Error message:", errorMessage.message);
+                    });
+                } else {
+                    console.log("Network error:", error.message);
+                }
+            });
+    };
+    const delUser = (tripid) => {
+        fetchWithJwt("/api/v1/schdule/set_goup_member", "DELETE", {
+            trip_id: tripid,
+        })
+            .then((response) => {
+                return response.json();
+            })
+            .then((data) => {
+                console.log(data);
+                updateUserData();
+                navigate("/mytrips");
+            })
+            .catch((error) => {
+                console.log(
+                    "There was a problem with the fetch operation:",
+                    error
+                );
+                if (error.response) {
+                    error.response.json().then((errorMessage) => {
+                        alert(errorMessage.message);
+                        console.log("Error message:", errorMessage.message);
+                    });
+                } else {
+                    console.log("Network error:", error.message);
+                }
+            });
+    };
+    const shareTrip = () => {
+        fetchWithJwt("/api/v1/schdule/set_goup_member", "DELETE", {})
+            .then((response) => {
+                return response.json();
+            })
+            .then((data) => {
+                console.log(data);
+                updateUserData();
+                navigate("/mytrips");
+            })
+            .catch((error) => {
+                console.log(
+                    "There was a problem with the fetch operation:",
+                    error
+                );
+                if (error.response) {
+                    error.response.json().then((errorMessage) => {
+                        alert(errorMessage.message);
+                        console.log("Error message:", errorMessage.message);
+                    });
+                } else {
+                    console.log("Network error:", error.message);
+                }
+            });
+    };
+
+    return (
+        <div
+            className={`${style.dropdowncontainer} ${
+                open ? null : style.close
+            }`}
+        >
+            <DropdownItem
+                text={words[language]["add"]}
+                icon={<IoPersonAdd />}
+                onClick={() => {}}
+            />
+            <DropdownItem
+                text={words[language]["edit"]}
+                icon={<FaEdit />}
+                onClick={() => {}}
+            />
+            <DropdownItem
+                text={words[language]["share"]}
+                icon={<IoMdShareAlt />}
+                onClick={() => {}}
+            />
+            <DropdownItem
+                text={words[language]["delete"]}
+                icon={<IoRemoveCircle />}
+                onClick={() => {}}
+            />
+        </div>
+    );
+};
+
+const DropdownItem = ({ text, icon, onClick }) => {
+    return (
+        <div
+            className={style.dropdownitem}
+            onClick={() => {
+                onClick();
+            }}
+        >
+            <div className={style.item}>{icon}</div>
+            <div className={style.item}>{text}</div>
         </div>
     );
 };
