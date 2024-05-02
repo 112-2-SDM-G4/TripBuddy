@@ -39,15 +39,7 @@ const Reset = () => {
                 { email: email }
             );
             const data = await response.json(); // Get the JSON payload
-            // const data = {
-            //     "valid": true, // 若帳號存在且已發送重設 mail
-            //     "message": "已發送密碼重置郵件"
-            // }
-
-            // const sample_data2 = {
-            //     "valid": false, // 若帳號不存在
-            //     "message": "該帳號未註冊"
-            // }
+            
             if (!data.valid) {
                 throw new Error(data.message);
             }

@@ -1,0 +1,79 @@
+.transactionItem {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem;
+    margin-bottom: 0;
+    border-bottom: 0.05rem solid color-mix(in srgb, var(--fontcolor) 20%, transparent);
+}
+
+.date {
+    white-space: nowrap;
+    font-size: 0.8rem;
+    color: color-mix(in srgb, var(--fontcolor) 50%, transparent);
+    text-align: left;
+    width: 3rem;
+}
+
+.details {
+    flex-grow: 1;
+    padding-left: 0.7rem;
+    padding-right: 0.7rem;
+    display: flex;
+    justify-content: space-between; /* Space out content between start and end */
+    align-items: center;
+}
+
+.title {
+    font-weight: bold;
+    margin-bottom: 0.26rem;
+}
+
+.paidBy {
+    font-size: 0.8rem;
+    color: color-mix(in srgb, var(--fontcolor) 60%, transparent);
+}
+
+.cashIcon {
+    width: 1.8rem; /* Icon size */
+    height: 1.8rem;
+    margin: 0.8rem;
+    fill: var(--fontcolor);
+}
+
+.textContent {
+    display: flex;
+    flex-direction: column;
+}
+
+.amount {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    margin-left: 4rem;
+}
+
+.amountDescription {
+    font-size: 0.8rem;
+}
+
+.amountValue {
+    font-size: 1.2rem;
+    font-weight: bold; /* Larger and bolder text for the amount */
+}
+
+.amountRed .amountValue,
+.amountRed .amountDescription {
+    color: red; /* Red color for money borrowed */
+}
+
+.amountGreen .amountValue,
+.amountGreen .amountDescription{
+    color: green; /* Green color for money lent */
+}
+
+.amountGray .amountValue,
+.amountGray .amountDescription {
+    color: color-mix(in srgb, var(--fontcolor) 50%, transparent);; /* Gray color for not involved */
+}
+

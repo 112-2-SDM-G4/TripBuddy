@@ -1,0 +1,35 @@
+
+.form {
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+    margin: auto;
+}
+
+.backButton {
+    padding-left: 0rem;
+    transition: transform 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.backButton:active {
+    transform: scale(0.9);
+}
+
+.backButton FaArrowLeft {
+    size: 3rem;
+}
+
+.inputGroup {
+    padding-bottom: 1rem;
+}
+
+.errorMessage {
+    color: red;
+    /* Style it as needed, for example: */
+    font-size: 0.6rem;
+    margin-top: 0.6rem;
+}

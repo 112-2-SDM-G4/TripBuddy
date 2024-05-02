@@ -8,6 +8,7 @@ import InputText from "../component/InputText";
 import SearchableSelect from "../component/SearchableSelect";
 import DragBox from "../component/DragBox";
 import Loader from "../component/Loader";
+import Ledger from "../component/Ledger";
 import TripSearchBox from "../component/TripSearchBox";
 import SpotCard from "../component/SpotCard";
 
@@ -16,6 +17,7 @@ import { useAuth } from "../hooks/useAuth";
 import { fetchWithJwt } from "../hooks/fetchWithJwt";
 
 import CountryData from "../assets/Country.json";
+import { RiMoneyDollarBoxLine } from "react-icons/ri";
 import {
     IoSunny,
     IoRainy,
@@ -383,7 +385,7 @@ function EditPage({ tripinfo, language, refreshTrip }) {
         tripinfo["trip"] ? tripinfo["trip"][0] : []
     );
     const [openExplore, setOpenExplore] = useState(false);
-    const [openDropDown, setOpenDropDown] = useState(false);
+    const [openWallet, setOpenWallet] = useState(false);
 
     useEffect(() => {
         function formatDateAndWeekday(start, end, language) {
@@ -503,7 +505,13 @@ function EditPage({ tripinfo, language, refreshTrip }) {
         }
     };
     const openAddSpot = () => {
+        setOpenWallet(false);
         setOpenExplore((prev) => !prev);
+    };
+
+    const openLedger = () => {
+        setOpenExplore(false);
+        setOpenWallet((prev) => !prev);
     };
 
     return (
@@ -522,18 +530,24 @@ function EditPage({ tripinfo, language, refreshTrip }) {
                         />
                     </div>
                 </div>
-                <div className={style.selectdate}>
-                    {dates.map((d, i) => (
-                        <div
-                            className={`${style.date} ${
-                                i === selectedDate ? style.selected : null
-                            }`}
-                            key={"dates" + i}
-                            onClick={() => {
-                                setSelectedDate(i);
-                            }}
-                        >{`第${i + 1}天`}</div>
-                    ))}
+                <div className={style.secondRow}>
+                    <div className={style.selectdate}>
+                        {dates.map((d, i) => (
+                            <div
+                                className={`${style.date} ${
+                                    i === selectedDate ? style.selected : null
+                                }`}
+                                key={"dates" + i}
+                                onClick={() => {
+                                    setSelectedDate(i);
+                                }}
+                            >{`第${i + 1}天`}</div>
+                        ))}
+                    </div>
+                    <RiMoneyDollarBoxLine
+                        className={style.ledger}
+                        onClick={openLedger}
+                    />
                 </div>
                 <div className={style.datedetail}>
                     <div className={style.dateinfos}>
@@ -565,6 +579,13 @@ function EditPage({ tripinfo, language, refreshTrip }) {
                     close={() => setOpenExplore(false)}
                     startSearch={openExplore}
                 />
+            </div>
+            <div
+                className={`${style.ledgerPage} ${
+                    openWallet ? null : style.hidden
+                }`}
+            >
+                <Ledger close={() => setOpenWallet(false)} />
             </div>
         </div>
     );
