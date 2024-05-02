@@ -63,7 +63,7 @@ class TripManager(Resource):
                 "start_date": date_to_array(schedule.start_date),
                 "end_date": date_to_array(schedule.end_date),
                 "location_id": self.get_trip_location_id(schedule),
-                "location": [schedule.location_lng, schedule.location_lat],
+                "location": [schedule.location_lat, schedule.location_lng],
                 "trip": trip_detail,
                 "public": schedule.public,
                 "standard": schedule.standard,
