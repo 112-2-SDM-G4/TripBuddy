@@ -116,8 +116,8 @@ class TripManager(Resource):
         schedule_params = {
             'post_id': trip_post.post_id,
             'location_name_zh': Tags.get_by_id(data['location_id']).name_zh,
-            'location_lng': data['location'][0],
-            'location_lat': data['location'][1],
+            'location_lng': data['location'][1],
+            'location_lat': data['location'][0],
             'standard': data['standard'],
             'exchange': data['exchange'] if 'exchange' in data else None,
         }
