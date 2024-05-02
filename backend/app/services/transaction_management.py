@@ -19,9 +19,11 @@ def get_all_transactions_of_schedule(schedule_id: int) -> List[Dict]:
             b_record = query_row_to_dict(b)
             if b_record['pay'] == 'True':
                 record['payer'] = User.get_by_id(b_record['user_id']).email
+                record['payer_name'] = User.get_by_id(b_record['user_id']).user_name
             else:
                 payee = {
                     'payee': User.get_by_id(b_record['user_id']).email,
+                    'payee_name': User.get_by_id(b_record['user_id']).user_name,
                     'borrowed_amount': float(b_record['balance'])
                 }
                 payees.append(payee)
