@@ -4,10 +4,11 @@ from typing import Dict
 from datetime import datetime
 from app.controllers.utils import *
 from app.services.currency import change_currency
-from app.services.transaction_management import get_all_transactions_of_schedule
+from app.services.transaction_management import get_all_transactions_of_schedule, sum_expenses_of_trip, group_balances
 from app.models.transaction import Transaction
 from app.models.relation_user_transaction import RelationUserTransaction
 from app.models.user import User
+from app.models.schedule import Schedule
 
 class Currency(Resource):
     def get(self) -> Dict:
@@ -80,5 +81,19 @@ class ManageTransaction(Resource):
         response = {
             'schedule_id': int(schedule_id),
             'records': records
+        }
+        return make_response(response, 200)
+
+class CheckBalance(Resource):
+    # @jwt_required()
+    def get(self):
+        schedule_id = request.args.get('schedule_id')
+        results = group_balances(schedule_id)
+        total_cost = sum_expenses_of_trip(schedule_id)
+        standard = Schedule.get_by_id(schedule_id).standard
+        response = {
+            'standard': standard,
+            'total_cost': total_cost,
+            'result': results,
         }
         return make_response(response, 200)

@@ -7,7 +7,7 @@ from app.controllers.UserManager import SendVerifyEmail, UserVerification, SetUs
 from app.controllers.LedgerManager import Currency
 from app.controllers.PostManager import PostManager, HeartManager
 from app.controllers.GroupManager import SetGroupMember
-from app.controllers.LedgerManager import ManageTransaction
+from app.controllers.LedgerManager import ManageTransaction, CheckBalance
 from flask_restful import Api
 
 BASE_ROUTE = '/api/v1'
@@ -38,4 +38,5 @@ def initialize_routes(api: Api):
     api.add_resource(HeartManager, f'{BASE_ROUTE}/heart/<string:trip_id>')
     api.add_resource(SetGroupMember, f'{BASE_ROUTE}/schdule/set_goup_member')
     api.add_resource(ManageTransaction, f'{BASE_ROUTE}/ledger/manage_transaction')
+    api.add_resource(CheckBalance, f'{BASE_ROUTE}/ledger/check_balance')
     api.add_resource(GetUserInfo, f'{BASE_ROUTE}/user/get_info')
