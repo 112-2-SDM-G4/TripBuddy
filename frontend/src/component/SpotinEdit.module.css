@@ -31,7 +31,7 @@
     color: var(--accentcolor);
 }
 .title {
-    max-width: 14rem;
+    max-width: clamp(5rem, 45vw, 14rem);
     overflow: hidden;
     font-size: 1.25rem;
     white-space: nowrap;

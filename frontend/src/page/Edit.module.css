@@ -205,6 +205,13 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     gap: 0.5rem;
     cursor: pointer;
 }
+.addusermodal {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    font-size: 1rem;
+    width: 16rem;
+}
 
 @media (min-width: 1200px) {
     .spotscontainer {
@@ -245,7 +252,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
         max-height: calc(100vh - 6rem);
     }
 }
-
 
 /* Ledger頁面 */
 .ledgerPage {
