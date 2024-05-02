@@ -12,26 +12,24 @@ const Dropdown = ({ setIsDropdownOpen }) => {
     const { logout } = useAuth();
     const { language, toggleLanguage } = useLanguage();
 
-    const [setlang, setprofile, setlogout] = SettingOptionsData;
-
     return (
         <div className={style.main}>
             <DropdownItem 
-                text={setlang[language]}
-                icon={setlang["icon"]}
+                text={SettingOptionsData[0][language]}
+                icon={SettingOptionsData[0]["icon"]}
                 onClick={toggleLanguage}
                 setIsDropdownOpen={setIsDropdownOpen}
             />
             <DropdownItem 
-                text={setprofile[language]}
-                icon={setprofile["icon"]}
+                text={SettingOptionsData[1][language]}
+                icon={SettingOptionsData[1]["icon"]}
                 // onClick={() => navigate("/profile")}
                 onClick={() => navigate("/profile-setup")}
                 setIsDropdownOpen={setIsDropdownOpen}
             />
             <DropdownItem 
-                text={setlogout[language]}
-                icon={setlogout["icon"]}
+                text={SettingOptionsData[2][language]}
+                icon={SettingOptionsData[2]["icon"]}
                 onClick={() => {
                     logout();
                     navigate("/");

@@ -20,8 +20,9 @@ const Avatar = ({ src, alt, onClick }) => {
             <div className={style.circle} onClick={onClick}>
                 <img src={src} alt={alt} />
             </div>
-            {windowSize.width < constants.MOBILE_SCREEN_WIDTH && 
-                <div className={style.username}>{username}</div>}
+            {/* {windowSize.width < constants.MOBILE_SCREEN_WIDTH &&  */}
+                <div className={style.username}>{username}</div>
+                {/* } */}
         </div>
     );
 };

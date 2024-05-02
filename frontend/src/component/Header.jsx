@@ -17,7 +17,6 @@ import { useAuth } from '../hooks/useAuth';
 
 function Header() {
   const { isDarkMode, setIsDarkMode } = useTheme();
-  const { toggleLanguage } = useLanguage();
   const { isLoggedIn } = useAuth();
   const windowSize = useWindowSize();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
