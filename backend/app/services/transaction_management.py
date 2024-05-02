@@ -12,6 +12,8 @@ def get_all_transactions_of_schedule(schedule_id: int) -> List[Dict]:
         return [{}]
     for t in transactions:
         record = query_row_to_dict(t)
+        d = datetime.strptime(record['date'], "%Y-%m-%d")
+        record['date'] = d.strftime("%b %d")
         transaction_id = record['transaction_id']
         payees = []
         balances = RelationUserTransaction.get_by_transaction(transaction_id)
