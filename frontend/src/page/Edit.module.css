@@ -97,6 +97,16 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     justify-content: space-between;
     align-items: center;
 }
+.secondRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.ledger {
+    font-size: 1.5rem;
+    margin-right: 0.75rem;
+    margin-bottom: -1.2rem;
+}
 .selectdate {
     padding-top: 1rem;
     display: flex;
@@ -203,4 +213,17 @@ input[type="date"]::-webkit-calendar-picker-indicator {
         overflow-y: scroll;
         max-height: calc(100vh - 6rem);
     }
+}
+
+
+/* Ledger頁面 */
+.ledgerPage {
+    transition: all 1s ease;
+    max-width: 45vw;
+    overflow: hidden;
+    position: relative;
+}
+
+.hidden {
+    max-width: 0vw;
 }
