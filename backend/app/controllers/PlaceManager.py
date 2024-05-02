@@ -83,12 +83,7 @@ class PlaceInTrip(Resource):
             return make_response({'message': 'User does not have access to this trip.'}, 403)
 
         place_info = request.get_json()
-        place = Place.get_by_google_place_id_and_language(place_info['place_id'], place_info['language'])
-        if not place:
-            if 'regular_opening_hours' in place_info:
-                place_info['regular_opening_hours'] = array_to_str(place_info['regular_opening_hours'])
-            place_info['formatted_address'] = place_info['address']
-            place = Place.create(place_info) 
+        res_code, place_detail = fetch_and_save_place(place_info['place_id'], 'zh')
 
         # move the corresponding places than the inserted place
         # if order = 0 then insert at the end
@@ -97,7 +92,7 @@ class PlaceInTrip(Resource):
 
         RelationSpotSch.update_order(trip_id, place_info['date'], place_info['order'], increase=True)
         place_info['schedule_id'] = trip_id
-        place_info['place_id'] = place.place_id
+        place_info['place_id'] = place_info['place_id']
         place_info['category'] = "common"
         place_info['period_hours'] = place_info['stay_time'][0]
         place_info['period_minutes'] = place_info['stay_time'][1]

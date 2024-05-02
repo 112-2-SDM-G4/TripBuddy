@@ -46,24 +46,14 @@ class TripManager(Resource):
             trip_detail = [[] for _ in range(self.get_trip_length(schedule))]
             places_in_trip.sort(key=lambda x: (x.date, x.order))
             for relation_spot_sch in places_in_trip:
-                place = Place.get_by_google_place_id_and_language(relation_spot_sch.place_id, lang)
-                if place == None:
+                res_code, place_info = fetch_and_save_place(relation_spot_sch.place_id, lang)
+                if res_code != 200:
                     continue
-                place_info = {
-                    'relation_id': relation_spot_sch.rss_id,
-                    'place_id': place.place_id,
-                    'name': place.name,
-                    'formatted_address': place.formatted_address,
-                    "google_maps_uri": place.google_map_uri,
-                    "image": place.image,
-                    "rating": place.rating,
-                    "user_rating_count": place.user_rating_count,
-                    "regular_opening_hours": str_to_array(place.regular_opening_hours),
-                    "place_summary": place.place_summary,
-                    "comment": relation_spot_sch.comment,
-                    "money": relation_spot_sch.money,
-                    "stay_time": [relation_spot_sch.period_hours, relation_spot_sch.period_minutes],
-                }
+                place_info['relation_id'] = relation_spot_sch.rss_id
+                place_info['comment'] = relation_spot_sch.comment
+                place_info['money'] = relation_spot_sch.money
+                place_info['stay_time'] = [relation_spot_sch.period_hours, relation_spot_sch.period_minutes]
+                
                 trip_detail[relation_spot_sch.date-1].append(place_info)
 
             responce = {
@@ -192,16 +182,10 @@ class TripManager(Resource):
         for day_count, day_list in enumerate(data['trip'], start=1):
             for order_count, place_info in enumerate(day_list, start=1):
                 # if spot is not in Place, create new Place
-                place = Place.get_by_google_place_id_and_language(place_info['place_id'], place_info['language'])
-                if not place:
-                    if 'regular_opening_hours' in place_info:
-                        place_info['regular_opening_hours'] = array_to_str(place_info['regular_opening_hours'])
-                    place_info['formatted_address'] = place_info['address']
-                    place = Place.create(place_info)
+                res_code, place_detail = fetch_and_save_place(place_info['place_id'], 'zh')
 
                 # create new relation if not exist, update if exist
                 place_info['schedule_id'] = trip_id
-                place_info['place_id'] = place.place_id
                 place_info['category'] = 'common'
                 place_info['date'] = day_count
                 place_info['order'] = order_count

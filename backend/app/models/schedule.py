@@ -46,11 +46,14 @@ class Schedule(db.Model):
         
     @staticmethod
     def create(data):
+        if 'public' not in data:
+            data['public'] = False
         schedule = Schedule(
                             post_id=data['post_id'],
                             schedule_name=data['schedule_name'],
                             start_date=data['start_date'],
                             end_date=data['end_date'],
+                            public=data['public'],
                             location=data['location_name_zh'],
                             location_lng=data['location_lng'],
                             location_lat=data['location_lat'],
