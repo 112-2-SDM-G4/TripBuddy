@@ -3,7 +3,7 @@ from app.controllers.TripManager import TripManager
 from tests.test import Test
 from app.controllers.Base import ExampleController, GetTags
 from app.controllers.PlaceManager import PlaceSearch, PlaceDetail, PlaceInTrip
-from app.controllers.UserManager import SendVerifyEmail, UserVerification, SetUserInfo, LoginCheckUser, LoginCheckPassword, ForgetPassword, ResetPassword
+from app.controllers.UserManager import SendVerifyEmail, UserVerification, SetUserInfo, LoginCheckUser, LoginCheckPassword, ForgetPassword, ResetPassword, GetUserInfo
 from app.controllers.LedgerManager import Currency
 from app.controllers.PostManager import PostManager, HeartManager
 from app.controllers.GroupManager import SetGroupMember
@@ -38,3 +38,4 @@ def initialize_routes(api: Api):
     api.add_resource(HeartManager, f'{BASE_ROUTE}/heart/<string:trip_id>')
     api.add_resource(SetGroupMember, f'{BASE_ROUTE}/schdule/set_goup_member')
     api.add_resource(ManageTransaction, f'{BASE_ROUTE}/ledger/manage_transaction')
+    api.add_resource(GetUserInfo, f'{BASE_ROUTE}/user/get_info')

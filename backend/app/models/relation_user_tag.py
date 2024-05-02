@@ -2,7 +2,7 @@ from app.models.create_db import db
 
 class RelationUserTag(db.Model):
     __tablename__ = 'Relation_User_Tag'
-    rus_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    rut_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id = db.Column(db.Integer, db.ForeignKey('User.user_id'), nullable=False)
     tag_id = db.Column(db.Integer, db.ForeignKey('Tags.tag_id'), nullable=False)
 

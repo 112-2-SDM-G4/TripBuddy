@@ -8,6 +8,7 @@ from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identi
 
 from app.models.user import User, UserVerify
 from app.models.relation_user_tag import RelationUserTag
+from app.models.tags import Tags
 # import app
 from app.models.create_db import db
 from app.services.mail import get_mail
@@ -83,7 +84,7 @@ class UserVerification(Resource):
                         salt=salt,
                         language="zh",
                         questionnaire=False,
-                        user_icon = 1
+                        user_icon = 0
                     )
                     db.session.add(new_user)
                     db.session.commit()
@@ -248,3 +249,49 @@ class ResetPassword(Resource):
         res_json['valid'] = True
         res_json['message'] = "Password reset successful!"
         return make_response(res_json, 200)         
+    
+
+class GetUserInfo(Resource):
+    @jwt_required()
+    def get(self):
+        user_email = get_jwt_identity()
+        # user_email = 'r12725049@ntu.edu.tw'
+        user = User.get_by_email(user_email)
+        user_tags = RelationUserTag.get_by_user_id(user.user_id)
+        tag_ids = [user_tag.tag_id for user_tag in user_tags]
+
+        tags = Tags.query.filter(Tags.tag_id.in_(tag_ids)).all()
+
+        response_tags = []
+        for tag in tags:
+            tag_detail = {
+                "type_name_zh": tag.type_zh,
+                "type_name_en": tag.type_en,
+                "tag_name_zh": tag.name_zh,  # 假設這些資訊在 Tag 模型中
+                "tag_name_en": tag.name_en,
+                "tag_id": tag.tag_id
+            }
+            response_tags.append(tag_detail)
+
+
+        InfoResponse = {
+	        "user_name": user.user_name,
+	        "user_email": user_email,
+	        "language": user.language,
+	        "avatar": user.user_icon,
+            "tags": response_tags
+        }
+
+        err_msg = {
+            'valid': False,
+            'message': "User not found."
+        }
+
+        if user:
+            return make_response(InfoResponse, 200)
+        
+        if not user:
+            return make_response(err_msg, 401)
+
+            
+        
