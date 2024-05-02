@@ -15,8 +15,8 @@ class RelationUserTransaction(db.Model):
         self.balance = balance
 
     @staticmethod
-    def get_by_schedule(schedule_id):
-        return RelationUserTransaction.query.filter_by(schedule_id=schedule_id).all()
+    def get_by_transaction(transaction_id):
+        return RelationUserTransaction.query.filter_by(transaction_id=transaction_id).all()
     
     @staticmethod
     def create(data):

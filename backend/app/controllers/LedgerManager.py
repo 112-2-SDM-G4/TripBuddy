@@ -4,6 +4,7 @@ from typing import Dict
 from datetime import datetime
 from app.controllers.utils import *
 from app.services.currency import change_currency
+from app.services.transaction_management import get_all_transactions_of_schedule
 from app.models.transaction import Transaction
 from app.models.relation_user_transaction import RelationUserTransaction
 from app.models.user import User
@@ -69,3 +70,16 @@ class ManageTransaction(Resource):
         Transaction.delete(transaction_id)
 
         return make_response({'message': "success!"}, 200)
+
+    # @jwt_required()
+    def get(self):
+        schedule_id = request.args.get('schedule_id')
+
+        if schedule_id:
+            records = get_all_transactions_of_schedule(schedule_id)
+            response = {
+                'schedule_id': int(schedule_id),
+                'records': records
+            }
+
+        return make_response(response, 200)
