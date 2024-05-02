@@ -1,6 +1,7 @@
 from flask_restful import Resource
 from flask import request, make_response
 from typing import Dict
+from datetime import datetime
 from app.controllers.utils import *
 from app.services.currency import change_currency
 from app.models.transaction import Transaction
@@ -22,15 +23,14 @@ class ManageTransaction(Resource):
     def post(self) -> Dict:
         """Add new transaction record"""
         transaction = request.get_json()
+        transaction['date'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
         # save to Transaction table
         Transaction.create(transaction)
-        transaction_id = query_row_to_dict(
-            Transaction.query.filter_by(
+        transaction_id = Transaction.query.filter_by(
                 schedule_id=transaction['schedule_id'],
                 item_name=transaction['item_name'],
-            ).all()[-1]
-        )['transaction_id']
+            ).all()[-1].transaction_id
 
         # save to Relation_User_Transaction
         # for payees

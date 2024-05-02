@@ -37,4 +37,4 @@ def initialize_routes(api: Api):
                      f'{BASE_ROUTE}/post')
     api.add_resource(HeartManager, f'{BASE_ROUTE}/heart/<string:trip_id>')
     api.add_resource(SetGroupMember, f'{BASE_ROUTE}/schdule/set_goup_member')
-    api.add_resource(ManageTransaction, f'{BASE_ROUTE}/ledger/add_transaction')
+    api.add_resource(ManageTransaction, f'{BASE_ROUTE}/ledger/manage_transaction')

@@ -7,6 +7,7 @@ class Transaction(db.Model):
     item_name = db.Column(db.String(255), nullable=False)
     amount = db.Column(db.Float, nullable=False)
     currency = db.Column(db.String(50), nullable=False)
+    date = db.Column(db.DateTime, nullable=False)
 
     # def __init__(self, name, time, total_price):
         # self.name = name
@@ -23,7 +24,8 @@ class Transaction(db.Model):
             schedule_id = data['schedule_id'],
             item_name = data['item_name'],
             amount = data['amount'],
-            currency = data['currency']
+            currency = data['currency'],
+            date = data['date']
         )
         db.session.add(transaction)
         db.session.commit()
@@ -36,6 +38,7 @@ class Transaction(db.Model):
         transaction.item_name = data['item_name']
         transaction.amount = data['amount']
         transaction.currency = data['currency']
+        transaction.date = data['date']
         db.session.commit()
         return transaction
     
