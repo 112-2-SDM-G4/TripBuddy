@@ -77,7 +77,7 @@ export const AuthProvider = ({ children }) => {
         } else {
             navigate("/login");
         }
-        return () => {};
+        return () => { };
     }, [navigate, pathname]);
 
     const updateUserData = async () => {
@@ -85,7 +85,11 @@ export const AuthProvider = ({ children }) => {
             const tripResponse = await fetchWithJwt("/api/v1/trip", "GET");
             const tripData = await tripResponse.json();
             if (tripResponse.ok) {
-                const userData = { trips: tripData.user_trip };
+                const storedUserData = JSON.parse(sessionStorage.getItem("user"));
+                const userData = {
+                    user_name: storedUserData.user_name,
+                    trips: tripData.user_trip
+                };
                 setUser(userData);
                 sessionStorage.setItem("user", JSON.stringify(userData)); // Optional: Store user data in sessionStorage
                 console.log(userData);
