@@ -27,28 +27,61 @@
     font-size: 1.25rem;
     border-bottom: 1px solid var(--secondarycolor);
 }
+
 .row {
     display: flex;
     padding-top: 1rem;
 }
+
 .rowname {
     width: 6rem;
     min-width: 6rem;
 }
+
+.rating {
+    display: flex;
+    flex-direction: row;
+    font-size: 0.8rem;
+    align-items: center;
+}
+
+.ratingtext {
+    display: flex;
+    padding-right: 0.2rem;
+    color: var(--secondarycolor);
+}
+
+.item {
+    display: flex;
+    padding-right: 0.2rem;
+}
+
+
 .info {
     padding-top: 0.5rem;
     font-size: 0.8rem;
     line-height: 1.5rem;
+    width: 100%;
 }
+
 .openhrblock {
     width: 10rem;
     display: flex;
     flex-direction: column;
+    flex-grow: 1;
 }
+
+.openhrrow {
+    width: 12rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
 .submit {
     position: absolute;
     right: 1rem;
-    bottom: 1rem;
+    /* bottom: 1rem; */
     width: 8rem;
 }
 @media (max-width: 735px) {

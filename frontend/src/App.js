@@ -12,6 +12,7 @@ import Login from "./page/Login";
 import Edit from "./page/Edit";
 import Explore from "./page/Explore";
 import MyTrips from "./page/MyTrips";
+import ViewSpot from "./page/ViewSpot";
 import ForgotPassword from "./page/Forgot-password";
 import ResetPassword from "./page/Reset-password";
 import ProfileSetup from "./page/ProfileSetup";
@@ -51,6 +52,7 @@ function App() {
                 <Route path="edit/:id" element={<Edit />} />
                 <Route path="explore" element={<Explore />} />
                 <Route path="mytrips" element={<MyTrips />} />
+                <Route path="spot/:id" element={<ViewSpot />} />
                 <Route path="profile" element={<Profile />} />
                 <Route path="setting-options" element={<SettingOptions />} />
                 <Route path="*" element={<NotFound />} />

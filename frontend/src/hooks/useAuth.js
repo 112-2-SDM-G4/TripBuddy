@@ -7,6 +7,7 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [user, setUser] = useState({});
+    const [userInfo, setUserInfo] = useState({});
     const navigate = useNavigate();
     const location = useLocation();
     const { pathname } = location;
@@ -30,6 +31,10 @@ export const AuthProvider = ({ children }) => {
                 return { success: false, error: loginData.message, preference: false };
             }
 
+            // const userInfoResponse = await fetchWithJwt(`/api/v1/user/get_info?user_email=${email}`, "GET");
+            // const userInfoData = await userInfoResponse.json();
+            // setUserInfo(userInfoData)
+            // console.log("user info", userInfoData)
 
             const tripResponse = await fetchWithJwt("/api/v1/trip", "GET");
             const tripData = await tripResponse.json();
@@ -43,6 +48,7 @@ export const AuthProvider = ({ children }) => {
             } else {
                 throw new Error("Failed to fetch trips");
             }
+
         } catch (error) {
             console.error(error);
             return { success: false, error: error.message, preference: false };
@@ -95,7 +101,7 @@ export const AuthProvider = ({ children }) => {
 
     return (
         <AuthContext.Provider
-            value={{ isLoggedIn, login, logout, user, updateUserData }}
+            value={{ isLoggedIn, login, logout, user, updateUserData, userInfo }}
         >
             {children}
         </AuthContext.Provider>
