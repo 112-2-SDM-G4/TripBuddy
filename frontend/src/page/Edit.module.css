@@ -222,8 +222,29 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     max-width: 45vw;
     overflow: hidden;
     position: relative;
+    height: 100vh;
 }
 
 .hidden {
     max-width: 0vw;
+}
+
+@media (max-width: 1070px) {
+    .ledgerPage {
+        position: absolute;
+        max-width: 100vw;
+        padding-top: 3.5rem;
+        overflow: scroll;
+        width: 100vw;
+        left: 0rem;
+        top: 0rem;
+        background-color: var(--backgroundcolor);
+        transform: translateX(0%);
+        
+    }
+    .hidden {
+        transform: translateX(100%);
+        max-width: 0vw;
+    }
+    
 }

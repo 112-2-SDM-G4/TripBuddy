@@ -13,6 +13,12 @@ const InputText = ({ propmt, name, setting = {}, onChange, onBlur }) => {
     const [inputValue, setInputValue] = useState(defaultValue);
     const handleChange = (event) => {
         const newValue = event.target.value;
+        if (type === 'number' && newValue.includes('.')) {
+            const parts = newValue.split('.');
+            if (parts[1].length > 2) {
+                return; // Stop the update if more than two decimals
+            }
+        }
         setInputValue(newValue);
         if (onChange) {
             onChange(newValue);

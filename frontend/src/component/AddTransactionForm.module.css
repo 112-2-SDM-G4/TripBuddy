@@ -1,35 +1,91 @@
-
 .form {
     display: flex;
     flex-direction: column;
-    width: 300px;
-    margin: auto;
+    gap: 1.5rem;
+    margin-top: 2rem;
+    width: 20rem;
 }
 
-.backButton {
-    padding-left: 0rem;
-    transition: transform 0.2s ease;
-    display: inline-flex;
+.centerBlock {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    min-width: 45vw;
     align-items: center;
-    justify-content: center;
-    cursor: pointer;
-}
-
-.backButton:active {
-    transform: scale(0.9);
-}
-
-.backButton FaArrowLeft {
-    size: 3rem;
 }
 
 .inputGroup {
-    padding-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.currencyInput {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.currencyButton {
+    border-radius: 10%;
+    background-color: color-mix(in srgb, var(--accentcolor) 45%, transparent);
+    color: var(--fontcolor);
+    padding: 0.7rem;
+    margin-right: 0.45rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.currencyButton:hover {
+    background-color: color-mix(in srgb, var(--accentcolor) 70%, transparent);;
+}
+
+.currencySelect {
+    position: inherit;
+    left: 0;
+    right: 0;
+    border: 0.05rem solid color-mix(in srgb, var(--fontcolor) 45%, transparent);;
+    z-index: 10;
+    background-color: var(--fieldcolor);
+    box-shadow: 0rem 0.5rem 1rem
+        color-mix(in srgb, var(--fontcolor) 15%, transparent);
+}
+
+.amountWrapper {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+}
+
+.backButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    position: absolute;
+   
 }
 
 .errorMessage {
     color: red;
-    /* Style it as needed, for example: */
-    font-size: 0.6rem;
-    margin-top: 0.6rem;
+    font-size: 0.9rem;
+}
+
+.saveButton{
+    margin: 1rem 0rem;
+}
+
+.dropButton, .select {
+    padding: 0.5rem;
+    margin: 0 0.1rem;
+    border-radius: 0.3rem;
+    cursor: pointer;
+    background-color: color-mix(in srgb, var(--fieldcolor) 45%, transparent);
+    border: 0.05rem solid color-mix(in srgb, var(--fontcolor) 45%, transparent);;
+}
+
+.flexRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.8rem;
 }

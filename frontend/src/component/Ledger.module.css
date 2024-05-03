@@ -4,6 +4,18 @@
     position: relative;
     padding-top: 2rem;
     min-width: 45vw;
+    
+}
+
+.centerBlock {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    margin: auto;
+}
+
+.button {
+    margin: 1rem;
 }
 
 .title {
@@ -29,7 +41,9 @@
 .container ul {
     list-style: none;
     padding: 0;
-    margin-bottom: 1.5rem; /* Removes default margin to keep custom settings consistent */
+    margin-bottom: 1.5rem;
+    margin-left: 4rem;
+    /* Removes default margin to keep custom settings consistent */
 }
 
 .container li {
@@ -40,16 +54,16 @@
     font-size: 1rem;
     font-weight: bolder;
     margin-bottom: 1rem;
-    display: block; 
-    padding-left: 4rem;
-    padding-right: 1rem;
+    display: block;
+    margin-left: 4rem;
+    
+    
 }
 
 .detailItem {
     margin-bottom: 1rem;
-    text-align: left; 
-    padding-left: 4rem;
-    padding-right: 1rem;
+    
+    
 }
 
 .owe {
@@ -60,31 +74,14 @@
     color: green;
 }
 
-.fab {
-    position: absolute;
-    bottom: 10px; /* Position from the bottom of the transactionHistory container */
-    right: 10px; /* Position from the right of the transactionHistory container */
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
-    background-color: rgba(98, 0, 238, 0.7); /* Semi-transparent purple */
-    color: white;
-    border: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: transform 0.3s ease-in-out, background-color 0.2s;
-    z-index: 1000; /* Ensure it's above other elements */
-}
 
-.fab:hover {
-    background-color: rgba(55, 0, 179, 0.9); /* Slightly less transparent on hover */
-    transform: scale(1.1); /* Scales up the button */
-}
 
-.addIcon {
-    width: 24px;
-    height: 24px;
+@media (max-width: 1070px) {
+    .container {
+        padding-top: 1rem;
+        position: relative;
+        overflow-y: scroll;
+        max-height: calc(100vh - 6rem);
+        min-height: auto;
+    }
 }
-
