@@ -37,6 +37,12 @@ class RelationUserSch(db.Model):
         return RelationUserSch.query.filter_by(user_id=user_id, schedule_id=schedule_id).first()
     
     @staticmethod
+    def get_by_schedule(schedule_id):
+        return RelationUserSch.query.filter_by(schedule_id=schedule_id, access = 1).all()
+
+
+
+    @staticmethod
     def update(rus_id, data):
         relation = RelationUserSch.query.get(rus_id)
         if 'access' in data:
