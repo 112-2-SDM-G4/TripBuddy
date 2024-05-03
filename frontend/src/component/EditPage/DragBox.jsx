@@ -33,7 +33,7 @@ function SortableItem(props) {
     );
 }
 
-function DragBox({ spots, onItemsReordered }) {
+function DragBox({ spots, onItemsReordered, updateSpotData }) {
     const [items, setItems] = useState(spots.map((s) => s.relation_id));
     const sensors = useSensors(
         useSensor(PointerSensor, {
@@ -83,6 +83,7 @@ function DragBox({ spots, onItemsReordered }) {
                             delSpot={() => {
                                 delSpot(item);
                             }}
+                            updateSpotData={updateSpotData}
                         />
                     </SortableItem>
                 ))}

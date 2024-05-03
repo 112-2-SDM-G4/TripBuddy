@@ -21,7 +21,7 @@
     background-color: var(--backgroundcolor);
     border: 1px solid var(--primarycolor);
     border-radius: 0.2rem;
-    max-width: clamp(500px, 80vw, 780px);
+    max-width: 80vw;
     max-height: 90vh;
     position: relative;
 }
@@ -34,7 +34,9 @@
     flex-direction: column;
     overflow-y: scroll;
     max-height: 80vh;
+    max-width: 100%;
     padding-bottom: 2rem;
+    overflow-x: hidden;
 }
 
 .closebt {
@@ -45,7 +47,7 @@
 
 @media (max-width: 500px) {
     .modal {
-        max-width: 100dvw;
+        max-width: 90dvw;
         max-height: 90dvh;
     }
 }

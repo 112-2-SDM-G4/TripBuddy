@@ -1,18 +1,21 @@
-import React from "react";
+import React, { useState } from "react";
 import style from "./SpotinEdit.module.css";
 import { IoMdClose } from "react-icons/io";
+import EditViewSpot from "./EditViewSpot";
 
-export default function SpotinEdit({ spot, delSpot }) {
+export default function SpotinEdit({ spot, delSpot, updateSpotData }) {
+    const [openEdit, setOpenEdit] = useState(false);
+
     const tryvalid = (obj) => {
         if (obj) return obj;
         return "";
     };
     const formatNumber = (num) => {
-        return num < 10 ? ` 0${num} ` : ` ${num} `;
+        return num.toString().length < 2 ? ` 0${num} ` : ` ${num} `;
     };
 
     return (
-        <div className={style.block}>
+        <div className={style.block} onClick={() => setOpenEdit(true)}>
             {spot && (
                 <>
                     <img
@@ -42,6 +45,13 @@ export default function SpotinEdit({ spot, delSpot }) {
                         <IoMdClose className={style.closebt} />
                     </button>
                 </>
+            )}
+            {openEdit && (
+                <EditViewSpot
+                    spot={spot}
+                    onClose={() => setOpenEdit(false)}
+                    updateSpotData={updateSpotData}
+                />
             )}
         </div>
     );

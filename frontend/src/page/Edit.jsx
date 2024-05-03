@@ -6,14 +6,12 @@ import Button from "../component/Button";
 import Calendar from "../component/Calendar";
 import InputText from "../component/InputText";
 import SearchableSelect from "../component/SearchableSelect";
-import DragBox from "../component/DragBox";
+import DragBox from "../component/EditPage/DragBox";
 import Loader from "../component/Loader";
 import SpotSearchBox from "../component/SpotSearchBox";
 import Ledger from "../component/Ledger";
 import SpotCard from "../component/SpotCard";
-import Modal from "../component/Modal";
-import Tag from "../component/Tag";
-import TripSearchDropdown from "../component/TripSearchDropdown";
+import Dropdown from "../component/EditPage/DropDown";
 
 import { useLanguage } from "../hooks/useLanguage";
 import { useAuth } from "../hooks/useAuth";
@@ -28,11 +26,7 @@ import {
     IoAddCircleOutline,
     IoChevronBack,
     IoEllipsisHorizontalSharp,
-    IoRemoveCircle,
-    IoPersonAdd,
 } from "react-icons/io5";
-import { FaEdit } from "react-icons/fa";
-import { IoMdShareAlt } from "react-icons/io";
 
 export default function Edit() {
     const { id } = useParams();
@@ -497,6 +491,51 @@ function EditPage({ tripinfo, language, refreshTrip }) {
 
         setSpots(newSpots);
     };
+    const updateSpotData = (newSpot) => {
+        const newSpots = spots.map((spot) => {
+            if (spot.relation_id === newSpot.relation_id) {
+                return newSpot;
+            }
+            return spot;
+        });
+        const chkempty = (obj) => {
+            if (obj && obj.length > 0) {
+                return obj;
+            } else {
+                return [];
+            }
+        };
+        const newTrip = chkempty(trip).map((item, index) =>
+            index === selectedDate ? newSpots : item
+        );
+        setTrip(newTrip);
+
+        fetchWithJwt("/api/v1/trip/" + tripinfo["id"], "PUT", {
+            trip: newTrip,
+        })
+            .then((response) => {
+                return response.json();
+            })
+            .then((data) => {
+                console.log(data);
+            })
+            .catch((error) => {
+                console.log(
+                    "There was a problem with the fetch operation:",
+                    error
+                );
+                if (error.response) {
+                    error.response.json().then((errorMessage) => {
+                        alert(errorMessage.message);
+                        console.log("Error message:", errorMessage.message);
+                    });
+                } else {
+                    console.log("Network error:", error.message);
+                }
+            });
+
+        setSpots(newSpots);
+    };
     const getWeather = () => {
         let weather = "晴";
         switch (weather) {
@@ -569,7 +608,11 @@ function EditPage({ tripinfo, language, refreshTrip }) {
                             onClick={openAddSpot}
                         />
                     </div>
-                    <DragBox spots={spots} onItemsReordered={reorderSpots} />
+                    <DragBox
+                        spots={spots}
+                        onItemsReordered={reorderSpots}
+                        updateSpotData={updateSpotData}
+                    />
                 </div>
             </div>
             <div
@@ -684,360 +727,5 @@ const Explore = ({ refreshTrip, location, close, startSearch }) => {
                 ))}
             </div>
         </div>
-    );
-};
-
-const Dropdown = ({ open, setOpen }) => {
-    const words = {
-        zh: {
-            share: "分享",
-            add: "添加旅伴",
-            delete: "退出行程",
-            edit: "編輯行程資料",
-            confirmtxt: "是否確認退出行程?",
-        },
-        en: {
-            share: "Share",
-            add: "Add Companion",
-            delete: "Leave Trip",
-            edit: "Edit Trip Details",
-            confirmtxt: "Are you sure to quit this trip?",
-        },
-    };
-    const { language } = useLanguage();
-    const { id } = useParams();
-    let { updateUserData } = useAuth();
-    const navigate = useNavigate();
-    const [openAdd, setOpenAdd] = useState(false);
-    const [openShare, setOpenShare] = useState(false);
-
-    const delUser = (tripid) => {
-        fetchWithJwt("/api/v1/group/set_group_member", "DELETE", {
-            trip_id: tripid,
-        })
-            .then((response) => {
-                return response.json();
-            })
-            .then((data) => {
-                console.log(data);
-                updateUserData();
-                navigate("/mytrips");
-            })
-            .catch((error) => {
-                console.log(
-                    "There was a problem with the fetch operation:",
-                    error
-                );
-                if (error.response) {
-                    error.response.json().then((errorMessage) => {
-                        alert(errorMessage.message);
-                        console.log("Error message:", errorMessage.message);
-                    });
-                } else {
-                    console.log("Network error:", error.message);
-                }
-            });
-    };
-
-    return (
-        <div
-            className={`${style.dropdowncontainer} ${
-                open ? null : style.close
-            }`}
-        >
-            <DropdownItem
-                text={words[language]["add"]}
-                icon={<IoPersonAdd />}
-                onClick={() => {
-                    setOpenAdd(true);
-                }}
-            />
-            <DropdownItem
-                text={words[language]["edit"]}
-                icon={<FaEdit />}
-                onClick={() => {}}
-            />
-            <DropdownItem
-                text={words[language]["share"]}
-                icon={<IoMdShareAlt />}
-                onClick={() => {
-                    setOpenShare(true);
-                }}
-            />
-            <DropdownItem
-                text={words[language]["delete"]}
-                icon={<IoRemoveCircle />}
-                onClick={() => {
-                    if (window.confirm(words[language]["confirmtxt"])) {
-                        delUser(id);
-                    }
-                }}
-            />
-            {openAdd && (
-                <AddUserModal
-                    close={() => {
-                        setOpenAdd(false);
-                        setOpen(false);
-                    }}
-                />
-            )}
-            {openShare && (
-                <ShareModal
-                    close={() => {
-                        setOpenShare(false);
-                        setOpen(false);
-                    }}
-                />
-            )}
-        </div>
-    );
-};
-
-const DropdownItem = ({ text, icon, onClick }) => {
-    return (
-        <div
-            className={style.dropdownitem}
-            onClick={() => {
-                onClick();
-            }}
-        >
-            <div className={style.item}>{icon}</div>
-            <div className={style.item}>{text}</div>
-        </div>
-    );
-};
-
-const AddUserModal = ({ close }) => {
-    const words = {
-        zh: {
-            title: "添加旅伴",
-            email: "信箱",
-            send: "發出邀請",
-            success: "邀請成功，快與你的新夥伴建立全新的旅程吧",
-        },
-        en: {
-            title: "Add Companion",
-            email: "Email",
-            send: "Invite to join",
-            success:
-                "The invitation is successful, start a new journey with your new partner",
-        },
-    };
-    const { id } = useParams();
-    const { language } = useLanguage();
-    const [email, setEmail] = useState("");
-
-    const addNewUser = (tripid, userid) => {
-        fetchWithJwt("/api/v1/group/set_group_member", "POST", {
-            trip_id: tripid,
-            invited_id: userid,
-        })
-            .then((response) => {
-                return response.json();
-            })
-            .then((data) => {
-                console.log(data);
-                if (data.valid) {
-                    alert(words[language]["success"]);
-                    close();
-                } else {
-                    alert(data.message);
-                }
-            })
-            .catch((error) => {
-                console.log(
-                    "There was a problem with the fetch operation:",
-                    error
-                );
-                if (error.response) {
-                    error.response.json().then((errorMessage) => {
-                        alert(errorMessage.message);
-                        console.log("Error message:", errorMessage.message);
-                    });
-                } else {
-                    console.log("Network error:", error.message);
-                }
-            });
-    };
-
-    return (
-        <Modal onClose={close}>
-            <div className={style.addusermodal}>
-                {words[language]["title"]}
-                <InputText
-                    propmt={words[language]["email"]}
-                    name={"email"}
-                    setting={{ require: true, width: "100%" }}
-                    onChange={setEmail}
-                />
-                <Button
-                    txt={words[language]["send"]}
-                    func={() => {
-                        addNewUser(id, email);
-                    }}
-                    setting={{ width: "100%" }}
-                />
-            </div>
-        </Modal>
-    );
-};
-
-const ShareModal = ({ close }) => {
-    const words = {
-        zh: {
-            title: "公開行程",
-            intro: "簡單介紹你的行程",
-            send: "分享",
-            tag: "標籤選擇",
-            success:
-                "成功分享！你的行程現已公開，任何人都可以查看。快來探索吧！",
-        },
-        en: {
-            title: "Share Trip",
-            intro: "Briefly introduce your trip",
-            send: "Share",
-            tag: "Tag selection",
-            success:
-                "Shared successfully! Your itinerary is now public for everyone to see. Start exploring!",
-        },
-    };
-    const { id } = useParams();
-    const { language } = useLanguage();
-    let { updateUserData } = useAuth();
-    const [content, setContent] = useState("");
-    const [tags, setTags] = useState([]);
-    const [allTags, setAllTags] = useState([]);
-    const [selectedTag, setSelectedTag] = useState([]);
-
-    useEffect(() => {
-        getTag();
-        return () => {};
-    }, []);
-
-    const getTag = () => {
-        fetchWithJwt(`/api/v1/tag/get_tags?source=SharePost`, "GET")
-            .then((response) => {
-                return response.json();
-            })
-            .then((data) => {
-                console.log(data);
-                if (Array.isArray(data)) {
-                    setTags(data);
-                    setAllTags(
-                        data
-                            .map((cat) => {
-                                return cat["options"];
-                            })
-                            .flat()
-                    );
-                }
-            })
-            .catch((error) => {
-                console.log(
-                    "There was a problem with the fetch operation:",
-                    error
-                );
-                if (error.response) {
-                    error.response.json().then((errorMessage) => {
-                        alert(errorMessage.message);
-                        console.log("Error message:", errorMessage.message);
-                    });
-                } else {
-                    console.log("Network error:", error.message);
-                }
-            });
-    };
-    const shareTrip = (tags_id, content, share) => {
-        fetchWithJwt(`/api/v1/post/${id}`, "PUT", {
-            tags_id: tags_id,
-            content: content,
-            public: share,
-        })
-            .then((response) => {
-                return response.json();
-            })
-            .then((data) => {
-                console.log(data);
-                alert(words[language]["success"]);
-                close();
-                updateUserData();
-            })
-            .catch((error) => {
-                console.log(
-                    "There was a problem with the fetch operation:",
-                    error
-                );
-                if (error.response) {
-                    error.response.json().then((errorMessage) => {
-                        alert(errorMessage.message);
-                        console.log("Error message:", errorMessage.message);
-                    });
-                } else {
-                    console.log("Network error:", error.message);
-                }
-            });
-    };
-
-    return (
-        <Modal onClose={close}>
-            <div className={style.addusermodal}>
-                {words[language]["title"]}
-                <InputText
-                    propmt={words[language]["intro"]}
-                    name={"intro"}
-                    setting={{ require: true, width: "100%" }}
-                    onChange={setContent}
-                />
-                <div className={style.sharedropdown}>
-                    <div className={style.sharedropdowntitle}>
-                        {words[language]["tag"]}
-                    </div>
-                    <div style={{ marginTop: "1rem" }}>
-                        {Array.isArray(selectedTag) &&
-                            selectedTag.map((tagId) => (
-                                <Tag
-                                    key={tagId}
-                                    tagId={tagId}
-                                    text={
-                                        allTags.find(
-                                            (tag) => tag["tag_id"] === tagId
-                                        )[`tag_name_${language}`]
-                                    }
-                                    inSearchbox={true}
-                                    removeFromSearch={() =>
-                                        setSelectedTag((prev) =>
-                                            prev.filter((t) => t !== tagId)
-                                        )
-                                    }
-                                />
-                            ))}
-                    </div>
-                    <TripSearchDropdown
-                        allTags={tags ? tags : []}
-                        addSelectedTagsId={(value) => {
-                            setSelectedTag((prev) => {
-                                if (prev.includes(value)) {
-                                    return [...prev];
-                                }
-                                return [...prev, value];
-                            });
-                        }}
-                        stylesetting={{
-                            height: "10rem",
-                            marginTop: "1rem",
-                            position: "relative",
-                        }}
-                    />
-                </div>
-
-                <Button
-                    txt={words[language]["send"]}
-                    func={() => {
-                        shareTrip(selectedTag, content, true);
-                    }}
-                    setting={{ width: "100%" }}
-                />
-            </div>
-        </Modal>
     );
 };

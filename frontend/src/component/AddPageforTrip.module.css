@@ -13,6 +13,7 @@
 }
 .tripblock {
     border-radius: 0.5rem;
+    width: clamp(5rem, 60vw, 30rem);
     box-shadow: 0rem 0.5rem 1rem
         color-mix(in srgb, var(--secondarycolor) 15%, transparent);
     background-color: var(--fieldcolor);

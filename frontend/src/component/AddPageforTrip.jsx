@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import style from "./AddPageforTrip.module.css";
 import { useLanguage } from "../hooks/useLanguage";
-import { IoMdClose } from "react-icons/io";
 import TimePicker from "./TimePicker";
 import InputText from "../component/InputText";
 import Button from "../component/Button";
@@ -88,7 +87,7 @@ export default function AddPageforTrip({ close, spot, refreshTrip, spotData }) {
     };
 
     return (
-        <Modal>
+        <Modal onClose={close}>
             {stage === 1 && (
                 <>
                     <div className={style.title}>{words[language]["add"]}</div>

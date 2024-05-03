@@ -2,17 +2,19 @@ import React, { useEffect, useState } from "react";
 import style from "./TimePicker.module.css";
 import { useLanguage } from "../hooks/useLanguage";
 
-export default function TimePicker({ changeTime }) {
+export default function TimePicker({ changeTime, setTime = ["00", "00"] }) {
     const words = {
         en: { hr: "hour", min: "minute" },
         zh: { hr: "時", min: "分" },
     };
-
+    const totwo = (str) => {
+        return str < 10 ? "0" + str : str.toString();
+    };
     const { language } = useLanguage();
-    const [hour, setHour] = useState("00");
-    const [minute, setMinute] = useState("00");
+    const [hour, setHour] = useState(totwo(setTime[0]));
+    const [minute, setMinute] = useState(totwo(setTime[1]));
 
-    const hours = Array.from({ length: 24 }, (_, i) =>
+    const hours = Array.from({ length: 12 }, (_, i) =>
         i < 10 ? "0" + i : i.toString()
     );
     const minutes = ["00", "15", "30", "45"];
