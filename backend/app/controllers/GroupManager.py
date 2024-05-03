@@ -16,20 +16,22 @@ class SetGroupMember(Resource):
 
         now_schdule = Schedule.get_by_id(trip_id)
         new_member = User.get_by_email(invited_id)
-        access = RelationUserSch.get_by_user_schedule(new_member.user_id, trip_id)
+
+        if new_member:
+            access = RelationUserSch.get_by_user_schedule(new_member.user_id, trip_id)
 
         sch_err_msg = {
-	        "message": "schedule is public",
+	        "message": "Schedule is public",
 	        "valid": False
         }
 
         user_err_msg = {
-            "message": "user not exist",
+            "message": "User not exist",
 	        "valid": False
         }
 
         access_err_msg = {
-            "message": "user has been group member",
+            "message": "User has been group member",
 	        "valid": False
         }
 
