@@ -22,7 +22,7 @@ const AddTransactionForm = ({ toggleForm, trip_id }) => {
     useEffect(() => {
         const fetchGroupMembers = async () => {
             try {
-                const response = await fetchWithJwt(`/api/v1/schedule/set_group_member?trip_id=${trip_id}`, 'GET');
+                const response = await fetchWithJwt(`/api/v1/group/set_group_member?trip_id=${trip_id}`, 'GET');
                 const data = await response.json();
                 setGroupMembers(data.trip_member_info);
                 if (data.trip_member_info.length > 0) {
