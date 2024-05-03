@@ -12,6 +12,7 @@ import SpotSearchBox from "../component/SpotSearchBox";
 import Ledger from "../component/Ledger";
 import SpotCard from "../component/SpotCard";
 import Modal from "../component/Modal";
+import TripSearchDropdown from "../component/TripSearchDropdown";
 
 import { useLanguage } from "../hooks/useLanguage";
 import { useAuth } from "../hooks/useAuth";
@@ -755,7 +756,9 @@ const Dropdown = ({ open, setOpen }) => {
             <DropdownItem
                 text={words[language]["share"]}
                 icon={<IoMdShareAlt />}
-                onClick={() => {}}
+                onClick={() => {
+                    setOpenShare(true);
+                }}
             />
             <DropdownItem
                 text={words[language]["delete"]}
@@ -895,7 +898,39 @@ const ShareModal = ({ close }) => {
     const { language } = useLanguage();
     let { updateUserData } = useAuth();
     const [content, setContent] = useState("");
+    const [tags, setTags] = useState([]);
 
+    useEffect(() => {
+        getTag();
+        return () => {};
+    }, []);
+
+    const getTag = () => {
+        fetchWithJwt(`/api/v1/tag/get_tags?source=SharePost`, "GET")
+            .then((response) => {
+                return response.json();
+            })
+            .then((data) => {
+                console.log(data);
+                if (Array.isArray(data)) {
+                    setTags(data);
+                }
+            })
+            .catch((error) => {
+                console.log(
+                    "There was a problem with the fetch operation:",
+                    error
+                );
+                if (error.response) {
+                    error.response.json().then((errorMessage) => {
+                        alert(errorMessage.message);
+                        console.log("Error message:", errorMessage.message);
+                    });
+                } else {
+                    console.log("Network error:", error.message);
+                }
+            });
+    };
     const shareTrip = (tags_id, content, share) => {
         fetchWithJwt(`/api/v1/post/${id}`, "PUT", {
             tags_id: tags_id,
@@ -935,6 +970,13 @@ const ShareModal = ({ close }) => {
                     setting={{ require: true, width: "100%" }}
                     onChange={setContent}
                 />
+                <div className={style.sharedropdown}>
+                    <TripSearchDropdown
+                        allTags={tags ? tags : []}
+                        addSelectedTagsId
+                    />
+                </div>
+
                 <Button
                     txt={words[language]["send"]}
                     func={() => {
