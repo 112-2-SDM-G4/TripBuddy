@@ -5,6 +5,7 @@ import { IoMdClose } from "react-icons/io";
 import TimePicker from "./TimePicker";
 import InputText from "../component/InputText";
 import Button from "../component/Button";
+import Modal from "./Modal";
 import { fetchWithJwt } from "../hooks/fetchWithJwt";
 import { useAuth } from "../hooks/useAuth";
 import { useParams } from "react-router-dom";
@@ -87,76 +88,62 @@ export default function AddPageforTrip({ close, spot, refreshTrip, spotData }) {
     };
 
     return (
-        <div className={style.background} onClick={close}>
-            <div
-                className={style.container}
-                onClick={(event) => {
-                    event.stopPropagation();
-                }}
-            >
-                {stage === 1 && (
-                    <>
-                        <div className={style.title}>
-                            {words[language]["add"]}
-                        </div>
-                        <div className={style.trips}>
-                            {user["trips"].map((trip) => (
-                                <TripBlock
-                                    key={trip.id}
-                                    trip={trip}
-                                    selectAddTarget={selectAddTarget}
-                                />
-                            ))}
-                        </div>
-                    </>
-                )}
-                {stage === 2 && (
-                    <>
-                        <div className={style.title}>
-                            {words[language]["edit"]}
-                        </div>
-                        <div className={style.trips}>
-                            <img
-                                src={src}
-                                alt="spot loading"
-                                className={style.img}
+        <Modal>
+            {stage === 1 && (
+                <>
+                    <div className={style.title}>{words[language]["add"]}</div>
+                    <div className={style.trips}>
+                        {user["trips"].map((trip) => (
+                            <TripBlock
+                                key={trip.id}
+                                trip={trip}
+                                selectAddTarget={selectAddTarget}
                             />
-                            <div className={style.tripname}>{name}</div>
-                            <div
-                                className={style.subtripname}
-                            >{`${selectTrip["name"]}第${selectDay}天`}</div>
-                            <div className={style.editblock}>
-                                <InputText
-                                    propmt={words[language]["comment"]}
-                                    onChange={setComment}
-                                />
-                                <InputText
-                                    propmt={words[language]["budget"]}
-                                    onChange={setBudget}
-                                    setting={{
-                                        type: "number",
-                                        defaultValue: "0",
-                                    }}
-                                />
-                                <div className={style.inputcontainer}>
-                                    <label>{words[language]["staytime"]}</label>
-                                    <TimePicker changeTime={setSelectTime} />
-                                </div>
-                            </div>
-                            <div className={style.submit}>
-                                <Button
-                                    txt={words[language]["submit"]}
-                                    func={handleSubmit}
-                                />
+                        ))}
+                    </div>
+                </>
+            )}
+            {stage === 2 && (
+                <>
+                    <div className={style.title}>{words[language]["edit"]}</div>
+                    <div className={style.trips}>
+                        <img
+                            src={src}
+                            alt="spot loading"
+                            className={style.img}
+                        />
+                        <div className={style.tripname}>{name}</div>
+                        <div
+                            className={style.subtripname}
+                        >{`${selectTrip["name"]}第${selectDay}天`}</div>
+                        <div className={style.editblock}>
+                            <InputText
+                                propmt={words[language]["comment"]}
+                                onChange={setComment}
+                            />
+                            <InputText
+                                propmt={words[language]["budget"]}
+                                onChange={setBudget}
+                                setting={{
+                                    type: "number",
+                                    defaultValue: "0",
+                                }}
+                            />
+                            <div className={style.inputcontainer}>
+                                <label>{words[language]["staytime"]}</label>
+                                <TimePicker changeTime={setSelectTime} />
                             </div>
                         </div>
-                    </>
-                )}
-                <button className={style.closebt} onClick={close}>
-                    <IoMdClose className={style.closebt} />
-                </button>
-            </div>
-        </div>
+                        <div className={style.submit}>
+                            <Button
+                                txt={words[language]["submit"]}
+                                func={handleSubmit}
+                            />
+                        </div>
+                    </div>
+                </>
+            )}
+        </Modal>
     );
 }
 

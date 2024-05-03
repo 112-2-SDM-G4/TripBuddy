@@ -56,7 +56,6 @@
     padding-right: 0.2rem;
 }
 
-
 .info {
     padding-top: 0.5rem;
     font-size: 0.8rem;
@@ -81,7 +80,7 @@
 .submit {
     position: absolute;
     right: 1rem;
-    /* bottom: 1rem; */
+    bottom: 1rem;
     width: 8rem;
 }
 @media (max-width: 735px) {
