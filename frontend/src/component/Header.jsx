@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
-import { IoLanguage } from 'react-icons/io5';
 
 import * as constants from '../constants';
 
 import style from "./Header.module.css";
 import { useTheme } from "../hooks/useTheme";
-import { useLanguage } from "../hooks/useLanguage";
 import { useWindowSize } from '../hooks/useWindowSize';
 
 import { ColorButton } from "./ColorButton";
@@ -17,7 +15,7 @@ import { useAuth } from '../hooks/useAuth';
 
 function Header() {
   const { isDarkMode, setIsDarkMode } = useTheme();
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, userInfo } = useAuth();
   const windowSize = useWindowSize();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
@@ -42,8 +40,15 @@ function Header() {
             {windowSize.width > constants.MOBILE_SCREEN_WIDTH && isLoggedIn
               &&
               <>
-                <Avatar src={"https://picsum.photos/200"} alt="test" 
-                        onClick={() => setIsDropdownOpen(!isDropdownOpen)}/>
+                <Avatar 
+                    src={userInfo.avatar} 
+                    alt={userInfo.user_name}
+                    username={userInfo.user_name}
+                    onClick={() => {
+                      console.log("userinfo", userInfo);
+                      setIsDropdownOpen(!isDropdownOpen);
+                    }}
+                />
                 {isDropdownOpen && <Dropdown setIsDropdownOpen={setIsDropdownOpen} />}
               </>}
             
