@@ -21,20 +21,20 @@ const AddTransactionForm = ({ toggleForm, trip_id, refetchData }) => {
 
     useEffect(() => {
         const fetchGroupMembers = async () => {
-            try {
-                const response = await fetchWithJwt(`/api/v1/group/set_group_member?trip_id=${trip_id}`, 'GET');
-                if(!response.OK) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-                const data = await response.json();
-                setGroupMembers(data.trip_member_info);
-                if (data.trip_member_info.length > 0) {
-                    setPayer(data.trip_member_info[0].user_name); // Set default payer
-                }
-            } catch (error) {
-                console.error('Failed to fetch group members:', error);
-                setError('Failed to load group members');
-            }
+            // try {
+            //     const response = await fetchWithJwt(`/api/v1/group/set_group_member?trip_id=${trip_id}`, 'GET');
+            //     if(!response.OK) {
+            //         throw new Error(`HTTP error! Status: ${response.status}`);
+            //     }
+            //     const data = await response.json();
+            //     setGroupMembers(data.trip_member_info);
+            //     if (data.trip_member_info.length > 0) {
+            //         setPayer(data.trip_member_info[0].user_name); // Set default payer
+            //     }
+            // } catch (error) {
+            //     console.error('Failed to fetch group members:', error);
+            //     setError('Failed to load group members');
+            // }
         };
 
         fetchGroupMembers();
@@ -47,21 +47,21 @@ const AddTransactionForm = ({ toggleForm, trip_id, refetchData }) => {
         console.log('Currency:', currency);
         
         try {
-            const response = await fetchWithJwt("/api/v1/ledger/manage_transaction", "POST", {
-                schedule_id: trip_id,
-                item_name: description,
-                amount: parseFloat(amount),
-                currency: currency,
-                payer: payer,
-                payees: []
-            });
-            if(!response.OK) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-            const data = await response.json();
-            console.log('Transaction saved:', data);
-            toggleForm(); 
-            refetchData();
+            // const response = await fetchWithJwt("/api/v1/ledger/manage_transaction", "POST", {
+            //     schedule_id: trip_id,
+            //     item_name: description,
+            //     amount: parseFloat(amount),
+            //     currency: currency,
+            //     payer: payer,
+            //     payees: []
+            // });
+            // if(!response.OK) {
+            //     throw new Error(`HTTP error! Status: ${response.status}`);
+            // }
+            // const data = await response.json();
+            // console.log('Transaction saved:', data);
+            // toggleForm(); 
+            // refetchData();
 
         }
         catch(error) {

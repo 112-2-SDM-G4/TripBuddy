@@ -23,26 +23,26 @@ const Ledger = ({ close, schedule_id }) => {
 
     // Refetching function that can be called on demand
     const refetchData = useCallback(async () => {
-        const fetchDetailCost = async () => {
-            const response = await fetchWithJwt(`/api/v1/ledger/manage_transaction?schedule_id=${schedule_id}`, 'GET');
-            if (response.ok) {
-                const data = await response.json();
-                setTransactions(data.records);
-            }
-        };
+        // const fetchDetailCost = async () => {
+        //     const response = await fetchWithJwt(`/api/v1/ledger/manage_transaction?schedule_id=${schedule_id}`, 'GET');
+        //     if (response.ok) {
+        //         const data = await response.json();
+        //         setTransactions(data.records);
+        //     }
+        // };
 
-        const fetchTotalCost = async () => {
-            const response = await fetchWithJwt(`/api/v1/ledger/check_balance?schedule_id=${schedule_id}`, 'GET');
-            if (response.ok) {
-                const data = await response.json();
-                setTotalCost(data.total_cost);
-                setCurrency(data.standard);
-                setCheckBalance(data);
-            }
-        };
+        // const fetchTotalCost = async () => {
+        //     const response = await fetchWithJwt(`/api/v1/ledger/check_balance?schedule_id=${schedule_id}`, 'GET');
+        //     if (response.ok) {
+        //         const data = await response.json();
+        //         setTotalCost(data.total_cost);
+        //         setCurrency(data.standard);
+        //         setCheckBalance(data);
+        //     }
+        // };
 
-        await fetchDetailCost();
-        await fetchTotalCost();
+        // await fetchDetailCost();
+        // await fetchTotalCost();
     }, [schedule_id]);
 
     useEffect(() => {
