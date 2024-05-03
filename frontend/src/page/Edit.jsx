@@ -704,39 +704,11 @@ const Dropdown = ({ open, setOpen }) => {
     let { updateUserData } = useAuth();
     const navigate = useNavigate();
     const [openAdd, setOpenAdd] = useState(false);
+    const [openShare, setOpenShare] = useState(false);
 
     const delUser = (tripid) => {
         fetchWithJwt("/api/v1/schdule/set_goup_member", "DELETE", {
             trip_id: tripid,
-        })
-            .then((response) => {
-                return response.json();
-            })
-            .then((data) => {
-                console.log(data);
-                updateUserData();
-                navigate("/mytrips");
-            })
-            .catch((error) => {
-                console.log(
-                    "There was a problem with the fetch operation:",
-                    error
-                );
-                if (error.response) {
-                    error.response.json().then((errorMessage) => {
-                        alert(errorMessage.message);
-                        console.log("Error message:", errorMessage.message);
-                    });
-                } else {
-                    console.log("Network error:", error.message);
-                }
-            });
-    };
-    const shareTrip = (tags_id, content, share) => {
-        fetchWithJwt("/api/v1/schdule/set_goup_member", "PUT", {
-            tags_id: tags_id,
-            content: content,
-            public: share,
         })
             .then((response) => {
                 return response.json();
@@ -798,6 +770,14 @@ const Dropdown = ({ open, setOpen }) => {
                 <AddUserModal
                     close={() => {
                         setOpenAdd(false);
+                        setOpen(false);
+                    }}
+                />
+            )}
+            {openShare && (
+                <ShareModal
+                    close={() => {
+                        setOpenShare(false);
                         setOpen(false);
                     }}
                 />
@@ -887,6 +867,78 @@ const AddUserModal = ({ close }) => {
                     txt={words[language]["send"]}
                     func={() => {
                         addNewUser(id, email);
+                    }}
+                    setting={{ width: "100%" }}
+                />
+            </div>
+        </Modal>
+    );
+};
+
+const ShareModal = ({ close }) => {
+    const words = {
+        zh: {
+            title: "公開行程",
+            intro: "簡單介紹你的行程",
+            send: "分享",
+            success: "邀請成功，快與你的新夥伴建立全新的旅程吧",
+        },
+        en: {
+            title: "Share Trip",
+            intro: "Briefly introduce your trip",
+            send: "Share",
+            success:
+                "The invitation is successful, start a new journey with your new partner",
+        },
+    };
+    const { id } = useParams();
+    const { language } = useLanguage();
+    let { updateUserData } = useAuth();
+    const [content, setContent] = useState("");
+
+    const shareTrip = (tags_id, content, share) => {
+        fetchWithJwt(`/api/v1/post/${id}`, "PUT", {
+            tags_id: tags_id,
+            content: content,
+            public: share,
+        })
+            .then((response) => {
+                return response.json();
+            })
+            .then((data) => {
+                console.log(data);
+                updateUserData();
+            })
+            .catch((error) => {
+                console.log(
+                    "There was a problem with the fetch operation:",
+                    error
+                );
+                if (error.response) {
+                    error.response.json().then((errorMessage) => {
+                        alert(errorMessage.message);
+                        console.log("Error message:", errorMessage.message);
+                    });
+                } else {
+                    console.log("Network error:", error.message);
+                }
+            });
+    };
+
+    return (
+        <Modal onClose={close}>
+            <div className={style.addusermodal}>
+                {words[language]["title"]}
+                <InputText
+                    propmt={words[language]["intro"]}
+                    name={"intro"}
+                    setting={{ require: true, width: "100%" }}
+                    onChange={setContent}
+                />
+                <Button
+                    txt={words[language]["send"]}
+                    func={() => {
+                        shareTrip("", content, true);
                     }}
                     setting={{ width: "100%" }}
                 />
