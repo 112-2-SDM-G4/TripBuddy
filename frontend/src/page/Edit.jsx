@@ -12,6 +12,7 @@ import SpotSearchBox from "../component/SpotSearchBox";
 import Ledger from "../component/Ledger";
 import SpotCard from "../component/SpotCard";
 import Modal from "../component/Modal";
+import Tag from "../component/Tag";
 import TripSearchDropdown from "../component/TripSearchDropdown";
 
 import { useLanguage } from "../hooks/useLanguage";
@@ -884,14 +885,17 @@ const ShareModal = ({ close }) => {
             title: "公開行程",
             intro: "簡單介紹你的行程",
             send: "分享",
-            success: "邀請成功，快與你的新夥伴建立全新的旅程吧",
+            tag: "標籤選擇",
+            success:
+                "成功分享！你的行程現已公開，任何人都可以查看。快來探索吧！",
         },
         en: {
             title: "Share Trip",
             intro: "Briefly introduce your trip",
             send: "Share",
+            tag: "Tag selection",
             success:
-                "The invitation is successful, start a new journey with your new partner",
+                "Shared successfully! Your itinerary is now public for everyone to see. Start exploring!",
         },
     };
     const { id } = useParams();
@@ -899,6 +903,8 @@ const ShareModal = ({ close }) => {
     let { updateUserData } = useAuth();
     const [content, setContent] = useState("");
     const [tags, setTags] = useState([]);
+    const [allTags, setAllTags] = useState([]);
+    const [selectedTag, setSelectedTag] = useState([]);
 
     useEffect(() => {
         getTag();
@@ -914,6 +920,13 @@ const ShareModal = ({ close }) => {
                 console.log(data);
                 if (Array.isArray(data)) {
                     setTags(data);
+                    setAllTags(
+                        data
+                            .map((cat) => {
+                                return cat["options"];
+                            })
+                            .flat()
+                    );
                 }
             })
             .catch((error) => {
@@ -942,6 +955,8 @@ const ShareModal = ({ close }) => {
             })
             .then((data) => {
                 console.log(data);
+                alert(words[language]["success"]);
+                close();
                 updateUserData();
             })
             .catch((error) => {
@@ -971,16 +986,51 @@ const ShareModal = ({ close }) => {
                     onChange={setContent}
                 />
                 <div className={style.sharedropdown}>
+                    <div className={style.sharedropdowntitle}>
+                        {words[language]["tag"]}
+                    </div>
+                    <div style={{ marginTop: "1rem" }}>
+                        {Array.isArray(selectedTag) &&
+                            selectedTag.map((tagId) => (
+                                <Tag
+                                    key={tagId}
+                                    tagId={tagId}
+                                    text={
+                                        allTags.find(
+                                            (tag) => tag["tag_id"] === tagId
+                                        )[`tag_name_${language}`]
+                                    }
+                                    inSearchbox={true}
+                                    removeFromSearch={() =>
+                                        setSelectedTag((prev) =>
+                                            prev.filter((t) => t !== tagId)
+                                        )
+                                    }
+                                />
+                            ))}
+                    </div>
                     <TripSearchDropdown
                         allTags={tags ? tags : []}
-                        addSelectedTagsId
+                        addSelectedTagsId={(value) => {
+                            setSelectedTag((prev) => {
+                                if (prev.includes(value)) {
+                                    return [...prev];
+                                }
+                                return [...prev, value];
+                            });
+                        }}
+                        stylesetting={{
+                            height: "10rem",
+                            marginTop: "1rem",
+                            position: "relative",
+                        }}
                     />
                 </div>
 
                 <Button
                     txt={words[language]["send"]}
                     func={() => {
-                        shareTrip("", content, true);
+                        shareTrip(selectedTag, content, true);
                     }}
                     setting={{ width: "100%" }}
                 />
