@@ -589,7 +589,10 @@ function EditPage({ tripinfo, language, refreshTrip }) {
                     openWallet ? null : style.hidden
                 }`}
             >
-                <Ledger close={() => setOpenWallet(false)} />
+                <Ledger
+                    close={() => setOpenWallet(false)}
+                    schedule_id={tripinfo["id"]}
+                />
             </div>
         </div>
     );
