@@ -2,34 +2,94 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import style from "./Explore.module.css";
-import * as constants from "../constants";
 
-import TripCard from "../component/TripCard";
 import TripSearchBox from "../component/TripSearchBox";
 import Loader from "../component/Loader";
 
 import { fetchWithJwt } from "../hooks/fetchWithJwt";
 import { useLanguage } from "../hooks/useLanguage";
 import { useWindowSize } from "../hooks/useWindowSize";
+import UpcomingTrip from "../component/UpcomingTrip";
+import PostCard from "../component/PostCard";
 
 const Explore = () => {
     const navigate = useNavigate();
+    const windowSize = useWindowSize();
+
     const { language } = useLanguage();
     const [isLoading, setIsLoading] = useState(false);
     const [haveUpcomingTrip, setHaveUpcomingTrip] = useState(false);
     const [upcomingTrip, setUpcomingTrip] = useState({});
     const [allTrips, setAllTrips] = useState([]);
-    const windowSize = useWindowSize();
 
-    const tagMapping = {
-        1: "文藝",
-        2: "自然景觀",
-        3: "小資",
-        4: "奢華",
-        5: "休閒",
-        6: "古蹟",
-        7: "美食"
+    const [isSearchDropdownOpen, setIsSearchDropdownOpen] = useState(false);
+    const [allTags, setAllTags] = useState([]);
+    const [selectedTagsId, setSelectedTagsId] = useState([]);
+
+    const getTagsMap = (allTags) => {
+        const tagidToName = {};
+    
+        allTags.forEach(category => {
+            category.options.forEach(tag => {
+                tagidToName[tag.tag_id] = {
+                    tag_name_zh: tag.tag_name_zh,
+                    tag_name_en: tag.tag_name_en
+                };
+            });
+        });
+        // console.log(tagidToName)
+        return tagidToName;
     }
+
+    const trips = [
+        {
+            id: 1,
+            name: "Trip to Tokyo",
+            tags_id: [1, 2], // Example tags: [1, 2] for Tokyo
+            image: "https://picsum.photos/70/50"
+        },
+        {
+            id: 2,
+            name: "Trip to Paris",
+            tags_id: [3, 4], // Example tags: [3, 4] for Paris
+            image: "https://picsum.photos/38/30"
+        },
+        {
+            id: 3,
+            name: "Trip to New York City",
+            tags_id: [5, 35], // Example tags: [5, 6] for New York City
+            image: "https://picsum.photos/80"
+        },
+        {
+            id: 4,
+            name: "Trip to Rome",
+            tags_id: [5, 3, 4], // Example tags: [7, 8] for Rome
+            image: "https://picsum.photos/79/90"
+        },
+        {
+            id: 5,
+            name: "Trip to Sydney",
+            tags_id: [34, 24], // Example tags: [9, 10] for Sydney
+            image: "https://picsum.photos/20/38"
+        }
+    ];
+
+    useEffect(() => {
+        const getAllTags = async () => {
+            try {
+                const response = await fetchWithJwt(`/api/v1/tag/get_tags?source=${"SearchTag"}`, 'GET');
+                const data = await response.json();
+                console.log("tagdata", data)
+                setAllTags(data);
+
+            } catch (error) {
+                console.error("Fetching preferences failed:", error);
+            }
+        };
+        setIsLoading(true);
+        getAllTags();
+
+    }, []);
 
     useEffect(() => {
         const getMyTrips = async () => {
@@ -75,84 +135,82 @@ const Explore = () => {
                 return { success: false, error: error.message };
             }
         };
+        setIsLoading(true);
 
         getMyTrips();
         getAllTrips();
-
-        return () => {};
     }, []);
 
-    // const handleSearch = async (query) => {
-    //     console.log("Searching for:", query);
-    //     setIsLoading(true);
-    //     fetchWithJwt(
-    //         `/api/v1/place/search?search=${query}&location_lat=39.7036194&location_lng=141.1526839&language=${language}`,
-    //         "GET"
-    //     )
-    //         .then(function (response) {
-    //             return response.json();
-    //         })
-    //         .then(function (result) {
-    //             if (result["result"]) {
-    //                 setSpots(result["result"]);
-    //                 setIsLoading(false);
-    //             }
-    //         });
-    // };
+    const handleSearch = async (query) => {
+        console.log("Searching for:", query);
+        setIsLoading(true);
 
+        await fetchWithJwt('/api/v1/post', 'POST', {
+            tags_id: selectedTagsId,
+            keyword: query
+        })
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (result) {
+                if (result["search_result"]) {
+                    setAllTrips(result["search_result"]);
+                    setIsLoading(false);
+                }
+            });
+    };
 
-    const  isSmallScreen = windowSize.width < constants.MOBILE_SCREEN_WIDTH
     return (
-        <div className={style.main}>
+        <div className={style.main} onClick={() => setIsSearchDropdownOpen(false)}>
             <div className={style.container}>
                 <Loader isLoading={isLoading} />
 
-                <div 
-                    className={`${style.upcomingtrip} ${isSmallScreen && style.upcomingtripcol}`}
-                    onClick={() => navigate(`/edit/${upcomingTrip["id"]}`)}
-                >
-                    <div className={`${style.upcomingtriptitle} ${isSmallScreen && style.upcomingtriptitlecol}`}>
-                        {language === "en" ? "Upcoming Trip" : "即將到來的旅程"}
-                    </div>
-                    {haveUpcomingTrip &&
-                        <div className={style.tripcard}>
-                            <TripCard
-                                key={upcomingTrip["id"]}
-                                name={upcomingTrip["name"]}
-                                src={upcomingTrip["image"]}
-                                // src="https://picsum.photos/200"
-                                tripId={upcomingTrip["id"]}
-                                isPublic={false}
-                                isUpcoming={true}
-                            />
-                        </div>
-                    }
-                </div>
+                <TripSearchBox 
+                    onSearch={handleSearch}
+                    setIsDropdownOpen={setIsSearchDropdownOpen}
+                    isDropdownOpen={isSearchDropdownOpen}
+                    allTags={allTags}
+                    addSelectedTagsId={tagId => {
+                        setSelectedTagsId([...selectedTagsId, tagId])
+                    }}
+                    removeSelectedTagsId={(tagId) => {
+                        setSelectedTagsId(selectedTagsId.filter(t => t !== tagId))
+                    }}
+                    selectedTagsId={selectedTagsId}
+                />
 
-                <div className={style.searchboxcontainer}>
-                    <TripSearchBox onSearch={() => {}} />
-                </div>
-
-                <div className={style.alltrips}>
-                    {/* <div className={style.alltripstitle}>
-                        {language === "en" ? "You might be interested" : "看看別人的旅程規劃"}
-                    </div> */}
-                    {allTrips
+                <div className={style.postscontainer}>
+                    {(allTrips.length !== 0 && allTags.length !== 0)
                         ? allTrips.map((trip) => (
-                                <TripCard
-                                    key={trip["id"]}
-                                    name={trip["name"]}
-                                    src={trip["image"]}
-                                    // src="https://picsum.photos/200"
-                                    tripId={trip["id"]}
-                                    tagNames={trip["tags_id"].map(tagId => tagMapping[tagId])}
-                                    isPublic={true}
-                                    isPost={true}
-                                />
+                            <PostCard 
+                                key={trip["id"]}
+                                tripId={trip["id"]}
+                                name={trip["name"]}
+                                src="https://picsum.photos/200"
+                                tagNames={trip["tags_id"].map(tagId => getTagsMap(allTags)[tagId][`tag_name_${language}`]).filter(n => n)}
+                            />
                             ))
                     : null}
+
+                    {/* {trips.map((trip) => (
+                        <PostCard 
+                            key={trip["id"]}
+                            name={trip["name"]}
+                            src={trip["image"]}
+                            // tagNames={trip["tags_id"].map(tagId => getTagsMap(allTags)[tagId][`tag_name_${language}`]).filter(n => n)}
+                            tagNames={trip["tags_id"].map(tagId => getTagsMap(allTags)[tagId][`tag_name_zh`])}
+
+                        />
+                    ))} */}
                 </div>
             </div>
+
+            {haveUpcomingTrip &&
+            <div className={style.upcoming}>
+                <UpcomingTrip trip={upcomingTrip} />
+            </div>}
+
+
         </div>
     );
 };

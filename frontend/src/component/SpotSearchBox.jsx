@@ -3,7 +3,7 @@ import { IoSearch } from "react-icons/io5";
 import { useLanguage } from "../hooks/useLanguage";
 import style from "./SpotSearchBox.module.css";
 
-function SpotSearchBox({ onSearch }) {
+const SpotSearchBox = ({ onSearch }) => {
     const words = {
         zh: { search: "搜尋..." },
         en: { search: "Search..." },

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { useAuth } from "../hooks/useAuth";
@@ -11,20 +11,25 @@ import Button from "../component/Button";
 const MyTrips = () => {
     const navigate = useNavigate();
     const { language } = useLanguage();
-    const { user } = useAuth();
+    const { user, updateUserData } = useAuth();
+
+    useEffect(() => {
+        updateUserData();
+        return () => {};
+    }, []);
 
     return (
         <div className={style.container}>
             {user["trips"]
                 ? user["trips"].map((trip) => (
-                        <TripCard
-                            key={trip["id"]}
-                            name={trip["name"]}
-                            src={trip["image"]}
-                            tripId={trip["id"]}
-                            hideAddIcon={true}
-                        />
-                    ))
+                      <TripCard
+                          key={trip["id"]}
+                          name={trip["name"]}
+                          src={trip["image"]}
+                          tripId={trip["id"]}
+                          hideAddIcon={true}
+                      />
+                  ))
                 : null}
 
             <div className={style.buttoncontainer}>

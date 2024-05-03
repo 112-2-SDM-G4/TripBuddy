@@ -1,12 +1,17 @@
 import React, { useEffect, useState } from "react";
+
+import style from "./ViewSpot.module.css";
+import { FaMapMarkedAlt } from "react-icons/fa";
+import { TiStarFullOutline } from "react-icons/ti";
 import { useParams } from "react-router";
+
 import { useLanguage } from "../hooks/useLanguage";
 import { fetchWithJwt } from "../hooks/fetchWithJwt";
-import style from "./ViewSpot.module.css";
+
 import Button from "../component/Button";
 import AddPageforTrip from "../component/AddPageforTrip";
 import Loader from "../component/Loader";
-import { FaMapMarkedAlt } from "react-icons/fa";
+
 
 const ViewSpot = () => {
     const words = {
@@ -27,6 +32,7 @@ const ViewSpot = () => {
             summary: "Summary:",
         },
     };
+    
     const { id } = useParams();
     const { language } = useLanguage();
     const [addPage, showAddPage] = useState(false);
@@ -34,7 +40,7 @@ const ViewSpot = () => {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        fetchWithJwt("/api/v1/place/detail?place_id=" + id, "GET")
+        fetchWithJwt(`/api/v1/place/detail?place_id=${id}&language=${language}`, "GET")
             .then(function (response) {
                 return response.json();
             })
@@ -47,7 +53,8 @@ const ViewSpot = () => {
     }, [id]);
 
     const handleRedirect = () => {
-        window.location.href = spot["google_maps_uri"]; // 替换为目标网页的 URL
+        window.open(spot["google_map_uri"], "_blank", "noreferrer");
+        // window.location.href = spot["google_map_uri"]; // 替换为目标网页的 URL
     };
 
     return (
@@ -82,8 +89,16 @@ const ViewSpot = () => {
                                     {words[language]["rate"]}
                                 </div>
 
-                                {spot["rating"]}
-                                {" (" + spot["user_rating_count"] + ")"}
+                                <div className={style.rating}>
+                                    <div className={style.ratingtext}>{spot["rating"]} </div>
+                                    <div className={style.item}>
+                                        <TiStarFullOutline 
+                                            size={17}
+                                            style={{ fill: "var(--secondarycolor)" }}
+                                        />
+                                    </div>
+                                    <div className={style.item}>{"(" + spot["user_rating_count"] + ")"}</div>
+                                </div>
                             </div>
                             <div className={style.row}>
                                 <div className={style.rowname}>
@@ -102,17 +117,16 @@ const ViewSpot = () => {
                                     {words[language]["open"]}
                                 </div>
                                 <div className={style.openhrblock}>
-                                    {spot["opening_hours_d"]
-                                        ? spot["opening_hours_d"].map(
-                                              (openday, index) => {
-                                                  return (
-                                                      <div key={"zh" + index}>
-                                                          {openday}
-                                                      </div>
-                                                  );
-                                              }
-                                          )
-                                        : null}
+                                    {spot["regular_opening_hours"]?.map (
+                                        (openday, index) => {
+                                            return (
+                                                <div key={"zh" + index} className={style.openhrrow}>
+                                                    <div>{openday.split(":")[0]}</div>
+                                                    <div>{openday.split(/:(.*)/s)[1]}</div>
+                                                </div>
+                                            );
+                                        }
+                                    )}
                                 </div>
                             </div>
                         </div>

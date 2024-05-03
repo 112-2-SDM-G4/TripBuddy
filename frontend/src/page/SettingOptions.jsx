@@ -11,7 +11,6 @@ const SettingOptions = () => {
     const navigate = useNavigate();
     const { logout } = useAuth();
     const { language, toggleLanguage } = useLanguage();
-    const [setlang, setprofile, setlogout] = SettingOptionsData;
 
     return (
         <div className={style.main}>
@@ -19,9 +18,9 @@ const SettingOptions = () => {
               className={style.row} 
               onClick={toggleLanguage}>
                 <div className={style.icon}>
-                    {setlang["icon"]}
+                    {SettingOptionsData[0]["icon"]}
                 </div>
-                {setlang[language]}
+                {SettingOptionsData[0][language]}
             </div>
 
             <div 
@@ -30,9 +29,9 @@ const SettingOptions = () => {
               onClick={() => navigate("/profile-setup")}>
 
                 <div className={style.icon}>
-                    {setprofile["icon"]}
+                    {SettingOptionsData[1]["icon"]}
                 </div>
-                {setprofile[language]}
+                {SettingOptionsData[1][language]}
             </div>
 
             <div 
@@ -43,9 +42,9 @@ const SettingOptions = () => {
               }}
             >
                 <div className={style.icon}>
-                    {setlogout["icon"]}
+                    {SettingOptionsData[2]["icon"]}
                 </div>
-                {setlogout[language]}
+                {SettingOptionsData[2][language]}
             </div>
         </div>
     );

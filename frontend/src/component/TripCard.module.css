@@ -14,28 +14,14 @@
     transition: all 1s ease;
 }
 
+.cardpost {
+    width: auto;
+}
+
 .card:hover {
     cursor: pointer;
     opacity: 0.9;
     transform: scale(1.05);
-}
-
-.upcomingcard {
-    display: flex;
-    width: 28rem;
-    height: 4rem;
-    background-color: var(--backgroundcolor);
-    margin: 1rem;
-    margin-top: 0rem;
-    border-radius: 0.5rem;
-    box-shadow: 0rem 0.5rem 1rem
-        color-mix(in srgb, var(--secondarycolor) 15%, transparent);
-    transition: all 1s ease;
-}
-
-.upcomingcard:hover {
-    cursor: pointer;
-    opacity: 0.9;
 }
 
 .img {
@@ -46,17 +32,19 @@
     border-radius: 0.5rem 0 0 0.5rem;
 }
 
+.imgpost {
+    /* object-fit: none; */
+    width: 100%;
+}
+
+
 .info {
     display: flex;
     flex-direction: column;
-    width: calc(30rem - 18rem);
+    width: 12rem;
     padding-top: 0.2rem;
     padding-left: 0.5rem;
     justify-content: center;
-}
-
-.infopadding {
-    padding: 0.7rem; 
 }
 
 .title {
@@ -71,8 +59,10 @@
     align-items: center;
 }
 
-.titlemargin {
-    /* margin-top: 1.5rem; */
+
+.rows {
+    display: flex;
+    flex-direction: column;
 }
 
 .tags {
@@ -107,19 +97,17 @@
     text-overflow: ellipsis;
 }
 
-.tag {
-    vertical-align: middle;
-}
-
 .icons {
     display: flex;
     flex-direction: row;
+    padding: 0.4rem;
 }
 
 .icon {
     display: flex;
     margin: 0.2rem;
 }
+
 .icon:hover {
     transform: scale(1.1);
 }
@@ -129,29 +117,41 @@
         width: 90%;
     }
 
-    .upcomingcard {
-        width: 100%;
+    .cardpost {
+        width: auto;
+    }
+
+    .img {
+        width: 12rem;
+    }
+
+    .imgpost {
+        width: auto;
     }
 
     .info {
-        width: 8rem;
+        width: 11rem;
     }
-
-    /* .img {
-        width: 20rem;
-    } */
 }
 
-@media (max-width: 420px) {
+@media (max-width: 580px) {
     .card {
         width: 20rem;
     }
 
-    .upcomingcard {
-        width: 100%;
+    .cardpost {
+        height: auto;
     }
 
     .img {
-        width: 15rem;
+        width: 10rem;
+    }
+
+    .imgpost {
+        width: auto;
+    }
+
+    .info {
+        width: 9rem;
     }
 }

@@ -18,7 +18,7 @@ function SpotCard({ name, src, spotId, refreshTrip, spotData, onClick }) {
                     refreshTrip={refreshTrip ? refreshTrip : null}
                 />
             )}
-            <div className={style.card} onClick={onClick}>
+            <div className={style.card} onClick={() => navigate(`/spot/${spotId}`)}>
                 <img src={src} alt="spot loading" className={style.img} />
                 <div className={style.infocontainer}>
                     <div className={style.infotxt}>{name}</div>
