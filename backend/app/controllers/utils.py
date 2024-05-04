@@ -96,7 +96,10 @@ def fetch_and_save_place(place_id: str, language: str) -> Tuple[int, Dict] :
         new_place['language'] = language
         new_place.pop('address')
         if 'regular_opening_hours' in new_place:
-            new_place['regular_opening_hours'] = array_to_str(new_place['regular_opening_hours'])
+            if new_place['regular_opening_hours']:
+                new_place['regular_opening_hours'] = array_to_str(new_place['regular_opening_hours'])
+            else:
+                new_place['regular_opening_hours'] = ''
         Place.create(new_place)
 
     return res_code, place_detail

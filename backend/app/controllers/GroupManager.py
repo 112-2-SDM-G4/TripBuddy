@@ -16,20 +16,22 @@ class SetGroupMember(Resource):
 
         now_schdule = Schedule.get_by_id(trip_id)
         new_member = User.get_by_email(invited_id)
-        access = RelationUserSch.get_by_user_schedule(new_member.user_id, trip_id)
+
+        if new_member:
+            access = RelationUserSch.get_by_user_schedule(new_member.user_id, trip_id)
 
         sch_err_msg = {
-	        "message": "schedule is public",
+	        "message": "Schedule is public",
 	        "valid": False
         }
 
         user_err_msg = {
-            "message": "user not exist",
+            "message": "User not exist",
 	        "valid": False
         }
 
         access_err_msg = {
-            "message": "user has been group member",
+            "message": "User has been group member",
 	        "valid": False
         }
 
@@ -79,3 +81,35 @@ class SetGroupMember(Resource):
         }
 
         return make_response(success_response, 200)
+    
+    @jwt_required()
+    def get(self):
+        trip_id = request.args.get('trip_id')
+        schedule = RelationUserSch.get_by_schedule(trip_id)
+        user_ids = [user_id.user_id for user_id  in schedule]
+
+        users = User.query.filter(User.user_id.in_(user_ids)).all()
+
+        response_user_info = []
+        for user in users:
+            user_detail = {
+		        "user_name": user.user_name,
+		        "user_email": user.email,
+		        "user_avatar": user.user_icon
+            }
+            response_user_info.append(user_detail)
+
+        InfoResponse = {
+            "trip_member_info": response_user_info
+        }
+
+        err_msg = {
+            'valid': False,
+            'message': "Error"
+        }
+
+        if schedule:
+            return make_response(InfoResponse, 200)
+        
+        if not schedule:
+            return make_response(err_msg, 401)
