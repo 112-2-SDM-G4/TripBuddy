@@ -26,7 +26,13 @@ class ExampleController(Resource):
 class GetTags(Resource):
     @jwt_required()
     def get(self):
-        tags = Tags.get_all()
+        source = request.args.get('source')
+        if source == 'UserProfile':
+            filter_types = ['出遊風格', '出遊目的']
+        else:
+            filter_types = None
+
+        tags = Tags.get_all(filter_types=filter_types)
         response_data = []
 
         type_groups = {}
@@ -42,12 +48,11 @@ class GetTags(Resource):
                 "tag_name_zh" : tag.name_zh,
                 "tag_name_en" : tag.name_en
             })
-        
+
         for type_name_zh, type_data in type_groups.items():
             response_data.append({
                 "type_name_zh" : type_name_zh,
                 "type_name_en" : type_data["type_name_en"],
                 "options" : type_data["options"]
             })
-        
         return make_response(jsonify(response_data), 200)

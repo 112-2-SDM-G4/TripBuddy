@@ -17,5 +17,10 @@ class Tags(db.Model):
         return Tags.query.filter_by(name_zh=name_zh).first()
     
     @staticmethod
-    def get_all():
-        return Tags.query.all()
+    def get_all(filter_types=None):
+        if filter_types:            
+            query = Tags.query
+            query = query.filter(Tags.type_zh.in_(filter_types))
+            return query.all()
+        else:
+            return Tags.query.all()
