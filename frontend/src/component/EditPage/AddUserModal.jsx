@@ -30,7 +30,7 @@ export default function AddUserModal({ close }) {
     const [email, setEmail] = useState("");
 
     const addNewUser = (tripid, userid) => {
-        fetchWithJwt("/api/v1/schdule/set_goup_member", "POST", {
+        fetchWithJwt("/api/v1/group/set_group_member", "POST", {
             trip_id: tripid,
             invited_id: userid,
         })

@@ -38,7 +38,7 @@ export default function DropDown({ open, setOpen }) {
     const [openShare, setOpenShare] = useState(false);
 
     const delUser = (tripid) => {
-        fetchWithJwt("/api/v1/schdule/set_goup_member", "DELETE", {
+        fetchWithJwt("/api/v1/group/set_group_member", "DELETE", {
             trip_id: tripid,
         })
             .then((response) => {
