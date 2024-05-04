@@ -1,18 +1,24 @@
-.form {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-    margin-top: 2rem;
-    width: 20rem;
+.main {
+    min-height: 100vh;
 }
 
 .centerBlock {
     display: flex;
     flex-direction: column;
     position: relative;
-    min-width: 45vw;
+    min-width: 30vw;
     align-items: center;
+    margin: 1rem 2.5rem ;
+
 }
+
+.form {
+    gap: 1.5rem;
+    width: 20rem;
+    
+}
+
+
 
 .inputGroup {
     display: flex;
@@ -61,7 +67,7 @@
     background: none;
     border: none;
     cursor: pointer;
-    position: absolute;
+    padding-left: 1rem;
    
 }
 
@@ -88,4 +94,10 @@
     align-items: center;
     justify-content: space-between;
     margin-bottom: 0.8rem;
+}
+
+@media (max-width: 1000px) {
+    .main{
+        width: 100vw;
+    }
 }

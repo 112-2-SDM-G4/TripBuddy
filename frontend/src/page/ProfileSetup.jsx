@@ -2,8 +2,11 @@ import React, { useState, useEffect } from 'react';
 import Button from '../component/Button'; // Assuming you have a Button component
 import { useNavigate } from 'react-router-dom';
 import InputText from "../component/InputText";
+import Tag from "../component/Tag";
+import TripSearchDropdown from "../component/TripSearchDropdown";
 import style from "./ProfileSetup.module.css";
 import { fetchWithJwt } from '../hooks/fetchWithJwt';
+import { useLanguage } from "../hooks/useLanguage";
 
 
 const ProgressBar = ({ progress, currentStep }) => {
@@ -39,11 +42,14 @@ const ProfileSetup = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedAvatar, setSelectedAvatar] = useState(null);
   const [userName, setUserName] = useState('');
-  const [language, setLanguage] = useState('');
+  const { language, toggleLanguage } = useLanguage();
   const [avatar, setAvatar] = useState(0);
   const [tags, setTags] = useState([]);
+  const [allTags, setAllTags] = useState([]);
+  const [selectedTag, setSelectedTag] = useState([]);
   const [error, setError] = useState('');
   const navigate = useNavigate();
+
 
   const totalSteps = 3;
 
@@ -67,36 +73,54 @@ const ProfileSetup = () => {
     setCurrentStep(Math.max(currentStep - 1, 1));
   };
 
-  // useEffect(() => {
-  //   const fetchTags = async () => {
-  //     try {
-  //       const response = await fetchWithJwt('/api/v1/tag/get_tags', 'GET', { source: "UserProfile" });
-  //       if (!response.ok) {
-  //         throw new Error(`HTTP error! Status: ${response.status}`);
-  //       }
-  //       const data = await response.json();
-  //       setTags(data);
-  //     } catch (error) {
-  //       console.error("Fetching preferences failed:", error);
-  //       setError(error.message);
-  //     }
-  //   };
+  useEffect(() => {
+    getTag();
+    return () => { };
+  }, []);
 
-  //   fetchTags();
-  // }, [fetchWithJwt]);
+  const getTag = () => {
+    fetchWithJwt(`/api/v1/tag/get_tags?source=UserProfile`, "GET")
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setTags(data);
+
+          setAllTags(
+            data
+              .map((cat) => {
+                return cat["options"];
+              })
+              .flat()
+          );
+        }
+      })
+      .catch((error) => {
+        setError(error);
+        if (error.response) {
+          error.response.json().then((errorMessage) => {
+            alert(errorMessage.message);
+            console.log("Error message:", errorMessage.message);
+          });
+        } else {
+          console.log("Network error:", error.message);
+        }
+      });
+  };
 
   const handleSubmit = async () => {
 
     try {
       console.log({
         user_name: userName,
-        tags: tags,
+        tags: selectedTag,
         avatar: avatar,
         language: language
       });
       const response = await fetchWithJwt('/api/v1/user/set_info', 'POST', {
         user_name: userName,
-        tags: tags,
+        tags: selectedTag,
         avatar: avatar,
         language: language
       });
@@ -121,20 +145,13 @@ const ProfileSetup = () => {
   };
 
 
-  // const handleChange = (e) => {
-  //   const { name, value, type, checked } = e.target;
-  //   if (type === 'checkbox') {
-  //     setTags();
-  //   }
-  // };
-
   const handleAvatarSelect = (index) => {
     setSelectedAvatar(index);
     setAvatar(index + 1);
   };
 
   const handleLanguageChange = (e) => {
-    setLanguage(e.target.value);
+    toggleLanguage();
   };
 
   let content;
@@ -200,23 +217,49 @@ const ProfileSetup = () => {
         <>
           <div>
             <h2>Travel Preferences</h2>
-            {/* {tags.map((tagType) => (
-              <div key={tagType.type_name_en}>
-                <h3>{userInfo.language === 'zh' ? tagType.type_name_zh : tagType.type_name_en}</h3>
-                {tagType.option.map((option) => (
-                  <label key={option.tag_id}>
-                    <input
-                      type="checkbox"
-                      name="tags"
-                      value={option.tag_id}
-                      checked={userInfo.tags.includes(option.tag_id)}
-                      onChange={handleChange}
+            <div className={style.sharedropdown}>
+              <p className={style.introText}>
+                Please choose some preferences when you decside to travel. 
+              </p>
+              <div style={{ marginTop: "1rem" }}>
+                {Array.isArray(selectedTag) &&
+                  selectedTag.map((tagId) => (
+                    <Tag
+                      key={tagId}
+                      tagId={tagId}
+                      text={
+                        allTags.find(
+                          (tag) => tag["tag_id"] === tagId
+                        )[`tag_name_${language}`]
+                      }
+                      inSearchbox={true}
+                      removeFromSearch={() =>
+                        setSelectedTag((prev) =>
+                          prev.filter((t) => t !== tagId)
+                        )
+                      }
                     />
-                    {userInfo.language === 'zh' ? option.tag_name_zh : option.tag_name_en}
-                  </label>
-                ))}
+                  ))}
               </div>
-            ))} */}
+              <TripSearchDropdown
+                allTags={tags ? tags : []}
+                addSelectedTagsId={(value) => {
+                  setSelectedTag((prev) => {
+                    if (prev.includes(value)) {
+                      return [...prev];
+                    }
+                    return [...prev, value];
+                  });
+                }}
+                stylesetting={{
+                  height: "fit-content",
+                  marginTop: "1rem",
+                  position: "relative",
+                  backgroundColor: 'transparent',
+                  boxShadow: '0 0 0 0'
+                }}
+              />
+            </div>
             <div className={style.pageButtons}>
               <Button
                 txt="Back"

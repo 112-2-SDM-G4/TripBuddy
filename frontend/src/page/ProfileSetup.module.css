@@ -11,7 +11,7 @@
     padding: 1rem 2rem 1.5rem 2rem;
     border-radius: 1rem;
     box-shadow: 0 0.5rem 1rem color-mix(in srgb, var(--fontcolor) 15%, transparent);
-    width: 65rem;
+    width: 90%; 
     margin: 3rem;
     justify-content: center;
     align-items: center;
@@ -35,7 +35,6 @@
 
 
 .LabelStyle {
-    padding: 1rem;
     color: var(--fontcolor);
     font-weight: bold;
 }
@@ -56,10 +55,10 @@
 }
 
 .pageButtons {
-    display: flex; 
-    justify-content: center; 
-    gap: 0.5rem; 
-    margin-top: 1rem; 
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
 }
 
 
@@ -73,8 +72,8 @@
     width: fit-content;
     position: relative;
     overflow: hidden;
-    background-color: transparent; 
-    text-decoration: none; 
+    background-color: transparent;
+    text-decoration: none;
     transition: background-color 0.3s, color 0.3s, letter-spacing 0.3s;
 }
 
@@ -83,18 +82,20 @@
     position: absolute;
     left: 0;
     bottom: 0;
-    width: 0; 
+    width: 0;
     height: 0.1rem;
     background-color: var(--primarycolor);
-    
+
     transition: width 0.28s ease-in-out;
 }
 
-.btn:hover, .btn.activeButton {
+.btn:hover,
+.btn.activeButton {
     color: var(--primarycolor);
 }
 
-.btn:hover::after, .btn.activeButton::after {
+.btn:hover::after,
+.btn.activeButton::after {
     width: 100%;
 }
 
@@ -102,7 +103,7 @@
     margin: auto;
     align-items: center;
     justify-content: center;
-    
+
 }
 
 .avatarSelector {
@@ -113,7 +114,7 @@
     padding-bottom: 0.7rem;
 }
 
-.avatar{
+.avatar {
     width: 5rem;
     height: 5rem;
     border-radius: 50%;
@@ -125,10 +126,10 @@
     cursor: pointer;
     background: color-mix(in srgb, var(--fontcolor) 15%, transparent);
     text-decoration-color: var(--fontcolor);
-    
+
 }
 
-.avatar:hover{
+.avatar:hover {
     border-color: var(--fontcolor);
     /* Example hover effect */
 }
@@ -146,7 +147,7 @@
     display: flex;
 }
 
-.field{
+.field {
     width: fit-content;
     margin: auto;
 }
@@ -170,10 +171,15 @@
     text-align: center;
 }
 
+.sharedropdown {
+    width: 105%;
+    position: relative;
+    height: fit-content;
+}
 
-@media (max-width: 1000px) {
-    .container {
-        width: 30rem;
+@media (max-width: 735px) {
+    
+    .btn {
+        font-size: 1.5rem;
     }
-
 }

@@ -1,0 +1,40 @@
+.splitContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem;
+    background-color: var(--fieldcolor);
+    border-radius: 1rem;
+    box-shadow: 0 0.5rem 1rem color-mix(in srgb, var(--fontcolor) 15%, transparent);
+}
+
+.tabs {
+    display: flex;
+    margin-bottom: 1.2rem;
+}
+
+.active {
+    border-bottom: 0.1rem solid var(--secondarycolor);
+    color: var(--secondarycolor);
+    opacity: 1;
+}
+
+.selectOption {
+    display: flex;
+    /* flex-direction: column; */
+    align-items: center;
+}
+
+
+.input {
+    padding: 0.2rem 0.3rem;
+    border: 0.05rem solid color-mix(in srgb, var(--fontcolor) 15%, transparent);
+    border-radius: 0.2rem;
+    font-size: 0.8rem;
+}
+
+.errorMessage {
+    color: red;
+    font-size: 0.9rem;
+    margin: 0.8rem 0;
+}
