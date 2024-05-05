@@ -3,84 +3,96 @@ import Button from '../component/Button';
 import style from './SplitDetailsForm.module.css';
 import GroupMemberInfo from "./GroupMemberInfo";
 
-const SplitDetailsForm = ({ payeesData, totalAmount, onDetailsSubmit, splitType }) => {
+const SplitDetailsForm = ({ payeesData, totalAmount, onDetailsSubmit, splitType, currencySymbol, onTypeChange }) => {
     const [payees, setPayees] = useState([]);
     const [type, setType] = useState(splitType);
     const [error, setError] = useState('');
 
-
     useEffect(() => {
-        initializePayees();
-    }, [payeesData, type]);
-
-    const initializePayees = () => {
-        const isSelectedDefault = type === 'equally';
+        const isSelected = splitType === 'equally';  // 根据 splitType 判断是否全选
         const initializedPayees = payeesData.map(p => ({
             ...p,
             amount: '',
-            isSelected: isSelectedDefault
+            isSelected: isSelected
         }));
         setPayees(initializedPayees);
-        calculateEqually(initializedPayees);
-    };
+        if (splitType === 'equally') {
+            calculateEqually(initializedPayees);
+        }
+    }, [payeesData, splitType]);  // 当 payeesData 或 splitType 变化时重新初始化
 
     const togglePayeeSelection = (index) => {
         setPayees(prevPayees => {
-            const updatedPayees = prevPayees.map((payee, idx) => {
-                if (idx === index) {
-                    return { ...payee, isSelected: !payee.isSelected };
-                }
-                return payee;
-            });
-            calculateEqually(updatedPayees); // Calculate equally whenever a payee is toggled
+            const updatedPayees = prevPayees.map((payee, idx) => ({
+                ...payee,
+                isSelected: idx === index ? !payee.isSelected : payee.isSelected
+            }));
+
+            if (type === 'equally') {
+                calculateEqually(updatedPayees);
+            }
+
             return updatedPayees;
         });
     };
 
     const handlePayeeChange = (index, field, value) => {
+        if (value.includes('.')) {
+            const parts = value.split('.');
+            if (parts[1].length > 2) {
+                return;
+            }
+        }
         if (type === 'unequally') {
             setPayees(prevPayees => prevPayees.map((payee, idx) =>
-                idx === index ? { ...payee, [field]: value } : payee
+                idx === index ? { ...payee, [field]: parseFloat(value) } : payee
             ));
-            setError(''); // Clear any previous error when changing values
+            setError('');
         }
     };
 
     const calculateEqually = (payees) => {
-        if (type === 'equally') {
-            const selectedPayees = payees.filter(p => p.isSelected);
-            const total = totalAmount;
-            const equalAmount = selectedPayees.length > 0 ? (total / selectedPayees.length).toFixed(2) : '0';
-            setPayees(payees.map(p => ({ ...p, amount: p.isSelected ? equalAmount : '' })));
-        }
+        const total = parseFloat(totalAmount);
+        const selectedPayees = payees.filter(p => p.isSelected);
+        const equalAmount = selectedPayees.length > 0 ? (total / selectedPayees.length).toFixed(2) : '0';
+        const updatedPayees = payees.map(payee => ({
+            ...payee,
+            amount: payee.isSelected ? equalAmount : ''
+        }));
+
+        setPayees(updatedPayees);
     };
 
     const handleTabClick = (newType) => {
+
         setType(newType);
-        const isSelectedDefault = newType === 'equally';
-        const updatedPayees = payeesData.map(p => ({
-            ...p,
-            amount: '',
-            isSelected: isSelectedDefault
-        }));
-        setPayees(updatedPayees);
-        calculateEqually(updatedPayees);
+        onTypeChange(newType);
+        
+        if (newType === 'equally') {
+            calculateEqually(payees);
+        }
+        
+        setError('');
     };
 
-    const onDetailsSubmitModified = () => {
+    useEffect(() => {
+        if (type === 'equally') {
+            calculateEqually(payees);
+        }
+    }, [type, payees]);  // 确保在 payees 或 type 更新后重新计算
 
+    const onDetailsSubmitModified = () => {
         if (type === 'unequally') {
             const totalCalculated = payees.filter(p => p.isSelected).reduce((acc, curr) => acc + parseFloat(curr.amount || 0), 0);
-            if (totalCalculated.toFixed(2) !== totalAmount.toFixed(2)) {
+            if (totalCalculated !== parseFloat(totalAmount)) {
                 setError(`The total amount distributed (${totalCalculated}) does not match the required total (${totalAmount}). Please adjust.`);
                 return;
             }
         }
         const selectedPayees = payees.filter(p => p.isSelected);
-        console.log(selectedPayees);
-        onDetailsSubmit(selectedPayees);
+        console.log(selectedPayees, type);  // Log for debugging
+        onDetailsSubmit(selectedPayees, type);  // Call the passed callback function with selected payees
     };
-
 
     return (
         <div className={style.splitContainer}>
@@ -102,14 +114,17 @@ const SplitDetailsForm = ({ payeesData, totalAmount, onDetailsSubmit, splitType 
                         onSelect={() => togglePayeeSelection(index)}
                     />
                     {payee.isSelected && (
-                        <input
-                            type="number"
-                            name="amount"
-                            value={payee.amount}
-                            readOnly={type === 'equally'}
-                            onChange={e => handlePayeeChange(index, 'amount', e.target.value)}
-                            className={style.input}
-                        />
+                        <div className={style.inputGroup}>
+                            <span className={style.currencySymbol}>{currencySymbol}</span>
+                            <input
+                                type="number"
+                                name="amount"
+                                value={payee.amount}
+                                readOnly={type === 'equally'}
+                                onChange={e => handlePayeeChange(index, 'amount', e.target.value)}
+                                className={style.input}
+                            />
+                        </div>
                     )}
                 </div>
             ))}

@@ -1,10 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import style from "./GroupMemberInfo.module.css";
 
 const GroupMemberInfo = ({ trip_member_info, description, isButton, onSelect, selectedStatus = [] }) => {
 
     const [selected, setSelected] = useState(selectedStatus.length ? selectedStatus : new Array(trip_member_info.length).fill(false));
 
+    useEffect(() => {
+        // 同步外部传入的 selectedStatus 到内部状态
+        setSelected(selectedStatus);
+    }, [selectedStatus]);  // 确保依赖项正确
+    
 
     const handleClick = (index, member) => {
         if (isButton) {

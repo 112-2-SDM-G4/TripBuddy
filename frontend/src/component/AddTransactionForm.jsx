@@ -17,76 +17,88 @@ const AddTransactionForm = ({ toggleForm, trip_id, refetchData }) => {
     const [currency, setCurrency] = useState(CountryData.places[0].money.en);
     const [symbol, setSymbol] = useState(CountryData.places[0].money.symbol);
     const [payer, setPayer] = useState('you');
+    const [payees, setPayees] = useState([]);
     const [groupMembers, setGroupMembers] = useState([]);
-    const [splitType, setSplitType] = useState('equally');
+    const [currentType, setCurrentType] = useState('equally');
     const [showDropdown, setShowDropdown] = useState(false);
     const [showMemberSelector, setShowMemberSelector] = useState(false);
-    const [showSplitSelector, setShowSplitSelector] = useState(false);
     const [showCustomSplit, setShowCustomSplit] = useState(false);
 
 
     useEffect(() => {
         const fetchGroupMembers = async () => {
-            // try {
-            //     const response = await fetchWithJwt(`/api/v1/group/set_group_member?trip_id=${trip_id}`, 'GET');
-            //     if(!response.OK) {
-            //         throw new Error(`HTTP error! Status: ${response.status}`);
-            //     }
-            //     const data = await response.json();
-            //     setGroupMembers(data.trip_member_info);
-            //     if (data.trip_member_info.length > 0) {
-            //         setPayer(data.trip_member_info[0].user_name); // Set default payer
-            //     }
-            // } catch (error) {
-            //     console.error('Failed to fetch group members:', error);
-            //     setError('Failed to load group members');
-            // }
-
-            const data = {
-                "trip_member_info": [
-                    {
-                        "user_avatar": 1,
-                        "user_email": "test@gmail.com",
-                        "user_name": "testuser"
-                    },
-                    {
-                        "user_avatar": 2,
-                        "user_email": "r12725049@ntu.edu.tw",
-                        "user_name": "小明"
-                    }
-                ]
-            };
-            setGroupMembers(data.trip_member_info);
-            if (data.trip_member_info.length > 0) {
-                setPayer(data.trip_member_info[0].user_name); // Set default payer
+            try {
+                const response = await fetchWithJwt(`/api/v1/group/set_group_member?trip_id=${trip_id}`, 'GET');
+                if(!response.OK) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                const data = await response.json();
+                setGroupMembers(data.trip_member_info);
+                if (data.trip_member_info.length > 0) {
+                    setPayer(data.trip_member_info[0]); // Set default payer
+                }
+            } catch (error) {
+                console.error('Failed to fetch group members:', error);
+                setError('Failed to load group members');
             }
+
+            // const data = {
+            //     "trip_member_info": [
+            //         {
+            //             "user_avatar": 1,
+            //             "user_email": "test@gmail.com",
+            //             "user_name": "testuser"
+            //         },
+            //         {
+            //             "user_avatar": 2,
+            //             "user_email": "r12725049@ntu.edu.tw",
+            //             "user_name": "小明"
+            //         }
+            //     ]
+            // };
+            // setGroupMembers(data.trip_member_info);
+            // if (data.trip_member_info.length > 0) {
+            //     setPayer(data.trip_member_info[0]); // Set default payer
+            // }
         };
 
         fetchGroupMembers();
     }, [trip_id]);
+
+    const handleTypeChange = (newType) => {
+        setCurrentType(newType);
+    };
 
     const handleSubmit = async (event) => {
         event.preventDefault();
         console.log('Description:', description);
         console.log('Amount:', amount);
         console.log('Currency:', currency);
+        console.log({
+            schedule_id: trip_id,
+            item_name: description,
+            amount: parseFloat(amount),
+            currency: currency,
+            payer: payer.user_email,
+            payees: payees
+        });
 
         try {
-            // const response = await fetchWithJwt("/api/v1/ledger/manage_transaction", "POST", {
-            //     schedule_id: trip_id,
-            //     item_name: description,
-            //     amount: parseFloat(amount),
-            //     currency: currency,
-            //     payer: payer,
-            //     payees: []
-            // });
-            // if(!response.OK) {
-            //     throw new Error(`HTTP error! Status: ${response.status}`);
-            // }
-            // const data = await response.json();
-            // console.log('Transaction saved:', data);
-            // toggleForm(); 
-            // refetchData();
+            const response = await fetchWithJwt("/api/v1/ledger/manage_transaction", "POST", {
+                schedule_id: trip_id,
+                item_name: description,
+                amount: parseFloat(amount),
+                currency: currency,
+                payer: payer.user_email,
+                payees: payees
+            });
+            if(!response.OK) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            const data = await response.json();
+            console.log('Transaction saved:', data);
+            toggleForm(); 
+            refetchData();
 
         }
         catch (error) {
@@ -107,19 +119,36 @@ const AddTransactionForm = ({ toggleForm, trip_id, refetchData }) => {
     };
 
     const handlePayerSelection = (member) => {
-        setPayer(member.user_name);
+        setPayer(member);
         setShowMemberSelector(false); // Close the selector after selection
     };
 
     const toggleSplitType = () => {
+        if (!description) {
+            setError("Please describe the transaction");
+            return;
+        }
         if (parseFloat(amount) <= 0) {
             setError("Amount must be greater than 0 to choose a split type.");
-        } else {
-            setShowMemberSelector(false);
-            setShowSplitSelector(true);
-            setShowCustomSplit(!showCustomSplit);
-            setError("");  
+            return;
         }
+        setShowMemberSelector(false);
+        setShowCustomSplit(!showCustomSplit);
+        setCurrentType(currentType === 'equally' ? 'unequally' : 'equally');  // 切换类型
+        setShowCustomSplit(true);  // 根据新类型设置是否显示自定义分账
+        setError("");
+
+    };
+
+    const handleSplitDetailsSubmit = (submittedPayees, submittedType) => {
+        console.log('Submitted Payees:', submittedPayees);
+        setCurrentType(submittedType);
+        setShowCustomSplit(false);
+        setPayees(submittedPayees.map(payee => ({
+            payee: payee.user_email,
+            amount: parseFloat(payee.amount)
+        })));
+
     };
 
     return (
@@ -181,9 +210,8 @@ const AddTransactionForm = ({ toggleForm, trip_id, refetchData }) => {
                                             className={style.select}
                                             onClick={() => {
                                                 setShowMemberSelector(true);
-                                                setShowSplitSelector(false);
                                             }}>
-                                            {payer || "Select payer"}
+                                            {payer.user_name || "Select payer"}
                                         </button>
                                         <p>and split</p>
                                     </>
@@ -199,35 +227,38 @@ const AddTransactionForm = ({ toggleForm, trip_id, refetchData }) => {
                                     </div>
                                 )}
 
-                                {/* Split Type Selection */}
-                                {!showSplitSelector && !showMemberSelector && (
-                                    <button
-                                        className={style.select}
-                                        onClick={toggleSplitType}>
-                                        {showCustomSplit ? 'unequally' : 'equally'}
-                                    </button>
-                                )}
+
+                                <button
+                                    className={style.select}
+                                    onClick={toggleSplitType}>
+                                    {currentType === 'equally' ? 'equally' : 'unequally'}
+                                </button>
+
                             </>
                         )}
                         {showCustomSplit && (
                             <SplitDetailsForm
                                 payeesData={groupMembers}
                                 totalAmount={amount}
-                                onDetailsSubmit={(details) => console.log(details)}
-                                splitType={splitType}
+                                onDetailsSubmit={handleSplitDetailsSubmit}
+                                splitType={currentType}
+                                currencySymbol={symbol}
+                                onTypeChange={handleTypeChange}
                             />
                         )}
 
 
 
                     </div>
-                    <div className={style.saveButton}>
-                        <Button
-                            txt='Save'
-                            func={handleSubmit}
-                            setting={{ type: "submit" }}
-                        />
-                    </div>
+                    {!showCustomSplit && (
+                        <div className={style.saveButton}>
+                            <Button
+                                txt='Save'
+                                func={handleSubmit}
+                                setting={{ type: "submit" }}
+                            />
+                        </div>
+                    )}
                 </form>
             </div>
         </div>
