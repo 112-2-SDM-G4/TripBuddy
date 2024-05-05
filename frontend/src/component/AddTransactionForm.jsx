@@ -23,43 +23,35 @@ const AddTransactionForm = ({ toggleForm, trip_id, refetchData }) => {
     const [showDropdown, setShowDropdown] = useState(false);
     const [showMemberSelector, setShowMemberSelector] = useState(false);
     const [showCustomSplit, setShowCustomSplit] = useState(false);
+    const [currentPayees, setCurrentPayees] = useState([]);
+
+
+
 
 
     useEffect(() => {
         const fetchGroupMembers = async () => {
             try {
                 const response = await fetchWithJwt(`/api/v1/group/set_group_member?trip_id=${trip_id}`, 'GET');
-                if(!response.OK) {
+                if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
                 const data = await response.json();
-                setGroupMembers(data.trip_member_info);
-                if (data.trip_member_info.length > 0) {
+                if (data.trip_member_info && data.trip_member_info.length > 0) {
+                    setGroupMembers(data.trip_member_info);
+                    setCurrentPayees(data.trip_member_info.map(p => ({
+                        ...p,
+                        amount: '',
+                        isSelected: false
+                    })));
                     setPayer(data.trip_member_info[0]); // Set default payer
+                } else {
+                    setError('No group members found');
                 }
             } catch (error) {
                 console.error('Failed to fetch group members:', error);
                 setError('Failed to load group members');
             }
-
-            // const data = {
-            //     "trip_member_info": [
-            //         {
-            //             "user_avatar": 1,
-            //             "user_email": "test@gmail.com",
-            //             "user_name": "testuser"
-            //         },
-            //         {
-            //             "user_avatar": 2,
-            //             "user_email": "r12725049@ntu.edu.tw",
-            //             "user_name": "小明"
-            //         }
-            //     ]
-            // };
-            // setGroupMembers(data.trip_member_info);
-            // if (data.trip_member_info.length > 0) {
-            //     setPayer(data.trip_member_info[0]); // Set default payer
-            // }
         };
 
         fetchGroupMembers();
@@ -71,41 +63,45 @@ const AddTransactionForm = ({ toggleForm, trip_id, refetchData }) => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        console.log('Description:', description);
-        console.log('Amount:', amount);
-        console.log('Currency:', currency);
-        console.log({
-            schedule_id: trip_id,
-            item_name: description,
-            amount: parseFloat(amount),
-            currency: currency,
-            payer: payer.user_email,
-            payees: payees
-        });
+        if (!description.trim()) {
+            setError("Description is required.");
+            return;
+        }
+        if (parseFloat(amount) <= 0) {
+            setError("Amount must be greater than 0.");
+            return;
+        }
+        if (!payer || !payer.user_email) {
+            setError("Payer must be selected.");
+            return;
+        }
 
         try {
-            const response = await fetchWithJwt("/api/v1/ledger/manage_transaction", "POST", {
+            const payload = {
                 schedule_id: trip_id,
                 item_name: description,
                 amount: parseFloat(amount),
                 currency: currency,
                 payer: payer.user_email,
                 payees: payees
-            });
-            if(!response.OK) {
+            };
+            console.log('Submitting:', payload);
+            const response = await fetchWithJwt("/api/v1/ledger/manage_transaction", "POST", payload);
+
+            if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
             const data = await response.json();
             console.log('Transaction saved:', data);
-            toggleForm(); 
+            toggleForm();
             refetchData();
-
         }
         catch (error) {
             setError('Failed to save the transaction: ' + error.message);
             console.error('Transaction submission error:', error);
         }
     };
+
 
     const handleCurrencyChange = (event) => {
         const selectedCurrency = CountryData.places.find(place => place.money.en === event.target.value);
@@ -124,6 +120,7 @@ const AddTransactionForm = ({ toggleForm, trip_id, refetchData }) => {
     };
 
     const toggleSplitType = () => {
+
         if (!description) {
             setError("Please describe the transaction");
             return;
@@ -134,7 +131,7 @@ const AddTransactionForm = ({ toggleForm, trip_id, refetchData }) => {
         }
         setShowMemberSelector(false);
         setShowCustomSplit(!showCustomSplit);
-        setCurrentType(currentType === 'equally' ? 'unequally' : 'equally');  // 切换类型
+        // setCurrentType(currentType === 'equally' ? 'unequally' : 'equally');  // 切换类型
         setShowCustomSplit(true);  // 根据新类型设置是否显示自定义分账
         setError("");
 
@@ -142,14 +139,20 @@ const AddTransactionForm = ({ toggleForm, trip_id, refetchData }) => {
 
     const handleSplitDetailsSubmit = (submittedPayees, submittedType) => {
         console.log('Submitted Payees:', submittedPayees);
+
         setCurrentType(submittedType);
         setShowCustomSplit(false);
-        setPayees(submittedPayees.map(payee => ({
+        setCurrentPayees(submittedPayees);
+        const selectedPayees = submittedPayees.filter(p => p.isSelected);
+        setPayees(selectedPayees.map(payee => ({
             payee: payee.user_email,
             amount: parseFloat(payee.amount)
         })));
+        console.log('Payees:', payees);
 
     };
+
+
 
     return (
         <div className={style.main}>
@@ -158,7 +161,7 @@ const AddTransactionForm = ({ toggleForm, trip_id, refetchData }) => {
                 <FaArrowLeft />
             </button>
             <div className={`${style.centerBlock} ${showMemberSelector ? style.dimmed : ''}`}>
-                <form className={style.form} onSubmit={handleSubmit}>
+                <form className={style.form}>
                     <div className={style.inputGroup}>
                         {error && <div className={style.errorMessage}>{error}</div>}
                         <InputText
@@ -214,6 +217,11 @@ const AddTransactionForm = ({ toggleForm, trip_id, refetchData }) => {
                                             {payer.user_name || "Select payer"}
                                         </button>
                                         <p>and split</p>
+                                        <button
+                                            className={style.select}
+                                            onClick={toggleSplitType}>
+                                            {currentType === 'equally' ? 'equally' : 'unequally'}
+                                        </button>
                                     </>
                                 )}
                                 {showMemberSelector && (
@@ -228,17 +236,13 @@ const AddTransactionForm = ({ toggleForm, trip_id, refetchData }) => {
                                 )}
 
 
-                                <button
-                                    className={style.select}
-                                    onClick={toggleSplitType}>
-                                    {currentType === 'equally' ? 'equally' : 'unequally'}
-                                </button>
+
 
                             </>
                         )}
                         {showCustomSplit && (
                             <SplitDetailsForm
-                                payeesData={groupMembers}
+                                payeesData={currentPayees}
                                 totalAmount={amount}
                                 onDetailsSubmit={handleSplitDetailsSubmit}
                                 splitType={currentType}
