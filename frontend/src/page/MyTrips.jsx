@@ -27,7 +27,6 @@ const MyTrips = () => {
                           name={trip["name"]}
                           src={trip["image"]}
                           tripId={trip["id"]}
-                          hideAddIcon={true}
                       />
                   ))
                 : null}

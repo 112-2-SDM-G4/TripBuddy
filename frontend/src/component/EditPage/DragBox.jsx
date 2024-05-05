@@ -33,7 +33,7 @@ function SortableItem(props) {
     );
 }
 
-function DragBox({ spots, onItemsReordered, updateSpotData }) {
+function DragBox({ spots, onItemsReordered, updateSpotData, locked=false }) {
     const [items, setItems] = useState(spots.map((s) => s.relation_id));
     const sensors = useSensors(
         useSensor(PointerSensor, {
@@ -54,6 +54,7 @@ function DragBox({ spots, onItemsReordered, updateSpotData }) {
         });
     };
     const handleDragEnd = (event) => {
+        if(locked) return;
         const { active, over } = event;
         if (active !== null && over !== null && active.id !== over.id) {
             setItems((items) => {
@@ -84,6 +85,7 @@ function DragBox({ spots, onItemsReordered, updateSpotData }) {
                                 delSpot(item);
                             }}
                             updateSpotData={updateSpotData}
+                            locked={locked}
                         />
                     </SortableItem>
                 ))}

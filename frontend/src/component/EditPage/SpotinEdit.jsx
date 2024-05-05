@@ -3,7 +3,7 @@ import style from "./SpotinEdit.module.css";
 import { IoMdClose } from "react-icons/io";
 import EditViewSpot from "./EditViewSpot";
 
-export default function SpotinEdit({ spot, delSpot, updateSpotData }) {
+export default function SpotinEdit({ spot, delSpot, updateSpotData, locked=false }) {
     const [openEdit, setOpenEdit] = useState(false);
 
     const tryvalid = (obj) => {
@@ -51,6 +51,7 @@ export default function SpotinEdit({ spot, delSpot, updateSpotData }) {
                     spot={spot}
                     onClose={() => setOpenEdit(false)}
                     updateSpotData={updateSpotData}
+                    locked={locked}
                 />
             )}
         </div>

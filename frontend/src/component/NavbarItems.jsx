@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import style from "./NavbarItems.module.css";
@@ -16,6 +16,13 @@ function NavbarItem() {
     const windowSize = useWindowSize();
     const { language } = useLanguage();
     const [activeTab, setActiveTab] = useState("explore");
+    const [username, setUsername] = useState("");
+
+    useEffect(() => {
+        const userDataString = sessionStorage.getItem('user');
+        const userData = JSON.parse(userDataString);
+        setUsername(userData.user_name)
+    }, [])
 
 
     return (
@@ -52,8 +59,9 @@ function NavbarItem() {
         {windowSize.width < constants.MOBILE_SCREEN_WIDTH 
             && 
             <Avatar 
-                src={"https://picsum.photos/200"}
+                src={"../../1.png"}
                 alt="test"
+                username={username}
                 onClick={() => navigate("setting-options")}
             />}
         </div>

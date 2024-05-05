@@ -31,11 +31,6 @@ export const AuthProvider = ({ children }) => {
                 return { success: false, error: loginData.message, preference: false };
             }
 
-            // const userInfoResponse = await fetchWithJwt(`/api/v1/user/get_info?user_email=${email}`, "GET");
-            // const userInfoData = await userInfoResponse.json();
-            // setUserInfo(userInfoData)
-            // console.log("user info", userInfoData)
-
             const tripResponse = await fetchWithJwt("/api/v1/trip", "GET");
             const tripData = await tripResponse.json();
 

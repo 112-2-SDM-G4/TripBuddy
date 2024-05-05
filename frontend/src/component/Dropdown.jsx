@@ -24,7 +24,7 @@ const Dropdown = ({ setIsDropdownOpen }) => {
                 text={SettingOptionsData[1][language]}
                 icon={SettingOptionsData[1]["icon"]}
                 // onClick={() => navigate("/profile")}
-                onClick={() => navigate("/profile-setup")}
+                onClick={() => navigate("/profile")}
                 setIsDropdownOpen={setIsDropdownOpen}
             />
             <DropdownItem 

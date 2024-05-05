@@ -13,6 +13,12 @@
     align-items: center;
     justify-content: center;
     width: 95%;
+    padding-bottom: 4.5rem;
+}
+
+.searchbox {
+    width: 100%;
+    position: relative;
 }
 
 .tripcard {
@@ -53,6 +59,39 @@
     bottom: 7rem;
 }
 
+.block {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.blocktitle {
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: color-mix(
+        in srgb,
+        var(--backgroundcolor) 50%,
+        var(--fontcolor)
+    );;
+    padding: 1rem 1rem 0.5rem 1rem;
+    border-bottom: 0.2px solid color-mix(
+        in srgb,
+        var(--backgroundcolor) 50%,
+        var(--fontcolor)
+    );
+}
+
+.postscontainer {
+    column-gap: 0rem;
+    column-count: 1;
+    /* padding-top: 1rem; */
+    margin-top: 1rem;
+    /* margin-bottom: 1rem; */
+    width: 100%;
+    height: auto;
+    flex-grow: 1;
+}
+
 @media (max-width: 735px) {
     .upcoming {
         bottom: 10rem;
@@ -60,34 +99,14 @@
 
 }
 
-.postscontainer {
-    column-gap: 0rem;
-    column-count: 2;
-    /* padding-top: 1rem; */
-    padding-left: 1rem;
-    margin-top: 1.5rem;
-    margin-bottom: 4.5rem;
-    width: 100%;
-    flex-grow: 1;
-}
-
 @media (min-width: 30rem) {
     .postscontainer {
+        column-count: 2;
+    }
+}
+
+@media (min-width: 80rem) {
+    .postscontainer {
         column-count: 3;
-    }
-}
-@media (min-width: 78rem) {
-    .postscontainer {
-        column-count: 4;
-    }
-}
-@media (min-width: 98rem) {
-    .postscontainer {
-        column-count: 5;
-    }
-}
-@media (min-width: 120rem) {
-    .spotscontainer {
-        column-count: 6;
     }
 }

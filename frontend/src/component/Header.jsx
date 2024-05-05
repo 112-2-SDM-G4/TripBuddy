@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import * as constants from '../constants';
 
@@ -12,16 +12,46 @@ import NavbarItems from './NavbarItems';
 import Avatar from './Avatar';
 import Dropdown from './Dropdown';
 import { useAuth } from '../hooks/useAuth';
+import { fetchWithJwt } from '../hooks/fetchWithJwt';
 
 function Header() {
   const { isDarkMode, setIsDarkMode } = useTheme();
-  const { isLoggedIn, userInfo } = useAuth();
+  const { isLoggedIn } = useAuth();
   const windowSize = useWindowSize();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [userInfo, setUserInfo] = useState({});
+  const [username, setUsername] = useState("");
+
+  // useEffect(() => {
+  //   const getInfo = async () => {
+  //     try {
+  //       const response = await fetchWithJwt(`/api/v1/user/get_info?`, 'GET');
+  //       if(!response.OK) {
+  //           throw new Error(`HTTP error! Status: ${response.status}`);
+  //       }
+  //       const data = await response.json();
+  //       setUserInfo(data);
+  //   } catch (error) {
+  //       console.error('Failed to fetch group members:', error);
+  //       // setError('Failed to load group members');
+  //   }
+
+  //   }
+  //   getInfo();
+
+  // }, [])
+
+  useEffect(() => {
+    const userDataString = sessionStorage.getItem('user');
+    const userData = JSON.parse(userDataString);
+    setUsername(userData.user_name)
+  }, [])
 
 
   return (
-    <div className={style.main}>
+    <div className={style.main} onClick={(e) => {
+          setIsDropdownOpen(false);
+        }}>
         <div className={style.title}>TripBuddy</div>
         {windowSize.width > constants.MOBILE_SCREEN_WIDTH && <NavbarItems />}
 
@@ -41,10 +71,11 @@ function Header() {
               &&
               <>
                 <Avatar 
-                    src={userInfo.avatar} 
-                    alt={userInfo.user_name}
-                    username={userInfo.user_name}
-                    onClick={() => {
+                    src={"../../1.png"} 
+                    alt={"../../1.png"}
+                    username={username}
+                    onClick={(e) => {
+                      e.stopPropagation();
                       console.log("userinfo", userInfo);
                       setIsDropdownOpen(!isDropdownOpen);
                     }}
