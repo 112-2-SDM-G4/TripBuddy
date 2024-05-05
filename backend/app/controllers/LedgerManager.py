@@ -1,3 +1,4 @@
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_restful import Resource
 from flask import request, make_response
 from typing import Dict
@@ -6,6 +7,7 @@ from app.controllers.utils import *
 from app.services.currency import change_currency
 from app.models.transaction import Transaction
 from app.models.relation_user_transaction import RelationUserTransaction
+from app.models.relation_user_sch import RelationUserSch
 from app.models.user import User
 from app.models.schedule import Schedule
 
@@ -20,11 +22,20 @@ class Currency(Resource):
             return make_response({'exchange_rate': exchange_rate}, 400)
 
 class ManageTransaction(Resource):
-    # @jwt_required()
+    @jwt_required()
     def post(self) -> Dict:
+        user_id = varify_user(get_jwt_identity())
+
         """Add new transaction record"""
         transaction = request.get_json()
         transaction['date'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        schedule_id = transaction['schedule_id']
+
+        if not Schedule.get_by_id(schedule_id):
+            return make_response({"message": "Schedule not found"}, 400)
+        
+        if not RelationUserSch.get_by_user_schedule(user_id, schedule_id).access:
+            return make_response({"message": "User access forbidden"}, 403)
 
         # save to Transaction table
         Transaction.create(transaction)
@@ -57,8 +68,10 @@ class ManageTransaction(Resource):
         )
         return make_response({'message': "success!"}, 200)
     
-    # @jwt_required()
+    @jwt_required()
     def delete(self):
+        user_id = varify_user(get_jwt_identity())
+
         """Delete transaction records"""
         transaction_id = request.get_json()['transaction_id']
         # delete from Relation_User_Transaction
@@ -71,22 +84,40 @@ class ManageTransaction(Resource):
 
         return make_response({'message': "success!"}, 200)
 
-    # @jwt_required()
+    @jwt_required()
     def get(self):
+        user_id = varify_user(get_jwt_identity())
+
         """Get transaction records and details"""
         schedule_id = request.args.get('schedule_id')
+
+        if not Schedule.get_by_id(schedule_id):
+            return make_response({"message": "Schedule not found"}, 400)
+        
+        if not RelationUserSch.get_by_user_schedule(user_id, schedule_id).access:
+            return make_response({"message": "User access forbidden"}, 403)
 
         records = get_all_transactions_of_schedule(int(schedule_id))
         response = {
             'schedule_id': int(schedule_id),
             'records': records
         }
+
         return make_response(response, 200)
 
 class CheckBalance(Resource):
-    # @jwt_required()
+    @jwt_required()
     def get(self):
+        user_id = varify_user(get_jwt_identity())
+
         schedule_id = request.args.get('schedule_id')
+
+        if not Schedule.get_by_id(schedule_id):
+            return make_response({"message": "Schedule not found"}, 400)
+        
+        if not RelationUserSch.get_by_user_schedule(user_id, schedule_id).access:
+            return make_response({"message": "User access forbidden"}, 403)
+
         results = self.group_balances(schedule_id)
         total_cost = self.sum_expenses_of_trip(schedule_id)
         standard = Schedule.get_by_id(schedule_id).standard
@@ -95,6 +126,7 @@ class CheckBalance(Resource):
             'total_cost': total_cost,
             'result': results,
         }
+        
         return make_response(response, 200)
 
     def sum_expenses_of_trip(self, schedule_id: int) -> float:
