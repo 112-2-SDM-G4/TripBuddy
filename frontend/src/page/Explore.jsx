@@ -172,7 +172,7 @@ const Explore = () => {
                                     key={trip["id"]}
                                     tripId={trip["id"]}
                                     name={trip["name"]}
-                                    src={trip["image"]}
+                                    src={trip["image"]}git pu
                                     tagNames={trip["tags_id"].map(tagId => getTagsMap(allTags)[tagId][`tag_name_${language}`]).filter(n => n)}
                                     isFav={allTrips["hearted_trips"].map(t => t["id"]).includes(trip["id"])}
                                 />
