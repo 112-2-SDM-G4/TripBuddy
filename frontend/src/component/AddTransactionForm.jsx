@@ -161,7 +161,7 @@ const AddTransactionForm = ({ toggleForm, trip_id, refetchData }) => {
                 <FaArrowLeft />
             </button>
             <div className={`${style.centerBlock} ${showMemberSelector ? style.dimmed : ''}`}>
-                <form className={style.form}>
+                <form onSubmit={handleSubmit} className={style.form}>
                     <div className={style.inputGroup}>
                         {error && <div className={style.errorMessage}>{error}</div>}
                         <InputText
@@ -258,7 +258,7 @@ const AddTransactionForm = ({ toggleForm, trip_id, refetchData }) => {
                         <div className={style.saveButton}>
                             <Button
                                 txt='Save'
-                                func={handleSubmit}
+                                // func={handleSubmit}
                                 setting={{ type: "submit" }}
                             />
                         </div>

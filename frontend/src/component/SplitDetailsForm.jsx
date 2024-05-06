@@ -3,21 +3,15 @@ import Button from '../component/Button';
 import style from './SplitDetailsForm.module.css';
 import GroupMemberInfo from "./GroupMemberInfo";
 
-const SplitDetailsForm = ({ payeesData, totalAmount, onDetailsSubmit, splitType, currencySymbol, onTypeChange }) => {
+const SplitDetailsForm = ({ payeesData, totalAmount, onDetailsSubmit, splitType, currencySymbol }) => {
     const [payees, setPayees] = useState([]);
     const [type, setType] = useState(splitType);
     const [error, setError] = useState('');
 
     useEffect(() => {
-        const isSelected = splitType === 'equally';  // 根据 splitType 判断是否全选
-        const initializedPayees = payeesData.map(p => ({
-            ...p,
-            amount: '',
-            isSelected: isSelected
-        }));
-        setPayees(initializedPayees);
+        setPayees(payeesData);
         if (splitType === 'equally') {
-            calculateEqually(initializedPayees);
+            calculateEqually(payeesData);
         }
     }, [payeesData, splitType]);  // 当 payeesData 或 splitType 变化时重新初始化
 
@@ -65,10 +59,9 @@ const SplitDetailsForm = ({ payeesData, totalAmount, onDetailsSubmit, splitType,
         setPayees(updatedPayees);
     };
 
-    const handleTabClick = (newType) => {
-
+    const handleTabClick = (event, newType) => {
+        event.preventDefault();  
         setType(newType);
-        onTypeChange(newType);
         
         if (newType === 'equally') {
             calculateEqually(payees);
@@ -80,7 +73,15 @@ const SplitDetailsForm = ({ payeesData, totalAmount, onDetailsSubmit, splitType,
 
 
     const onDetailsSubmitModified = (event) => {
-        event.preventDefault();  
+        event.preventDefault();
+        
+        // Ensure all selected payees have a valid amount
+        const incompletePayees = payees.filter(p => p.isSelected && (!p.amount || parseFloat(p.amount) === 0));
+        if (incompletePayees.length > 0) {
+            setError("Please enter an amount for all selected payees.");
+            return;
+        }
+
         if (type === 'unequally') {
             const totalCalculated = payees.filter(p => p.isSelected).reduce((acc, curr) => acc + parseFloat(curr.amount || 0), 0);
             if (totalCalculated !== parseFloat(totalAmount)) {
@@ -88,23 +89,18 @@ const SplitDetailsForm = ({ payeesData, totalAmount, onDetailsSubmit, splitType,
                 return;
             }
         }
-        if (payees.every(payee => !payee.isSelected)) {
-            setError("Please select at least one payee.");
-            return;
-        }
-    
-        setError(""); // 清除现有错误信息
-        console.log(payees, type); // Log for debugging
-        onDetailsSubmit(payees.filter(p => p.isSelected), type); // 仅提交被选中的成员
+        
+        setError("");
+        onDetailsSubmit(payees.filter(p => p.isSelected), type);
     };
 
     return (
         <div className={style.splitContainer}>
             <div className={style.tabs}>
-                <button onClick={() => handleTabClick('equally')} className={type === "equally" ? style.active : ""}>
+                <button onClick={(event) => handleTabClick(event, 'equally')} className={type === "equally" ? style.active : ""}>
                     Equally
                 </button>
-                <button onClick={() => handleTabClick('unequally')} className={type === "unequally" ? style.active : ""}>
+                <button onClick={(event) => handleTabClick(event, 'unequally')} className={type === "unequally" ? style.active : ""}>
                     Unequally
                 </button>
             </div>
