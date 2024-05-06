@@ -27,23 +27,25 @@ const SplitDetailsForm = ({ payeesData, totalAmount, onDetailsSubmit, splitType,
                 ...payee,
                 isSelected: idx === index ? !payee.isSelected : payee.isSelected
             }));
-
+    
             if (type === 'equally') {
-                calculateEqually(updatedPayees);
+                setTimeout(() => calculateEqually(updatedPayees), 0);
             }
-
+    
             return updatedPayees;
         });
     };
 
-    const handlePayeeChange = (index, field, value) => {
-        if (value.includes('.')) {
-            const parts = value.split('.');
-            if (parts[1].length > 2) {
-                return;
-            }
-        }
+    const handlePayeeChange = ( index, field, value) => {
+         
+        
         if (type === 'unequally') {
+            if (value.includes('.')) {
+                const parts = value.split('.');
+                if (parts[1].length > 2) {
+                    return;
+                }
+            }
             setPayees(prevPayees => prevPayees.map((payee, idx) =>
                 idx === index ? { ...payee, [field]: parseFloat(value) } : payee
             ));
@@ -75,13 +77,10 @@ const SplitDetailsForm = ({ payeesData, totalAmount, onDetailsSubmit, splitType,
         setError('');
     };
 
-    useEffect(() => {
-        if (type === 'equally') {
-            calculateEqually(payees);
-        }
-    }, [type, payees]);  // 确保在 payees 或 type 更新后重新计算
 
-    const onDetailsSubmitModified = () => {
+
+    const onDetailsSubmitModified = (event) => {
+        event.preventDefault();  
         if (type === 'unequally') {
             const totalCalculated = payees.filter(p => p.isSelected).reduce((acc, curr) => acc + parseFloat(curr.amount || 0), 0);
             if (totalCalculated !== parseFloat(totalAmount)) {
@@ -89,9 +88,14 @@ const SplitDetailsForm = ({ payeesData, totalAmount, onDetailsSubmit, splitType,
                 return;
             }
         }
-        const selectedPayees = payees.filter(p => p.isSelected);
-        console.log(selectedPayees, type);  // Log for debugging
-        onDetailsSubmit(selectedPayees, type);  // Call the passed callback function with selected payees
+        if (payees.every(payee => !payee.isSelected)) {
+            setError("Please select at least one payee.");
+            return;
+        }
+    
+        setError(""); // 清除现有错误信息
+        console.log(payees, type); // Log for debugging
+        onDetailsSubmit(payees.filter(p => p.isSelected), type); // 仅提交被选中的成员
     };
 
     return (

@@ -3,6 +3,7 @@
     flex-direction: column;
     align-items: center;
     padding: 1rem;
+    margin-bottom: 2rem;
     background-color: var(--fieldcolor);
     border-radius: 1rem;
     box-shadow: 0 0.5rem 1rem color-mix(in srgb, var(--fontcolor) 15%, transparent);

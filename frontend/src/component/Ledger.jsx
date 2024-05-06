@@ -12,8 +12,7 @@ const findCurrencySymbol = (currency) => {
 };
 
 const Ledger = ({ close, schedule_id }) => {
-    const currentUser = JSON.parse(sessionStorage.getItem("user")).user_name;
-    // const currentUser = 'a';
+    const currentUser = JSON.parse(sessionStorage.getItem("user") || "{}").user_name || "defaultUser";
     const [totalCost, setTotalCost] = useState(0);
     const [transactions, setTransactions] = useState([]);
     const [checkBalance, setCheckBalance] = useState([]);
@@ -21,6 +20,7 @@ const Ledger = ({ close, schedule_id }) => {
     const [currency, setCurrency] = useState('');
     const [showAddForm, setShowAddForm] = useState(false);
     const [formAnimationClass, setFormAnimationClass] = useState('');
+
 
     // Refetching function that can be called on demand
     const refetchData = useCallback(async () => {
@@ -39,143 +39,15 @@ const Ledger = ({ close, schedule_id }) => {
                 setTotalCost(data.total_cost);
                 setCurrency(data.standard);
                 setCheckBalance(data.result);
+                console.log(checkBalance);
             }
         };
+        if (schedule_id) {
+            await fetchDetailCost();
+            await fetchTotalCost();
+        }
+    }, [schedule_id, fetchWithJwt]);
 
-        await fetchDetailCost();
-        await fetchTotalCost();
-        // const data0 = {
-        //     records: [
-        //         {
-        //             amount: 1000.0,
-        //             currency: "TWD",
-        //             date: "May 02",
-        //             item_name: "鼎泰豐晚餐",
-        //             payees: [
-        //                 {
-        //                     borrowed_amount: 250.0,
-        //                     payee: "b@gmail.com",
-        //                     payee_name: "b"
-        //                 },
-        //                 {
-        //                     borrowed_amount: 250.0,
-        //                     payee: "c@gmail.com",
-        //                     payee_name: "c"
-        //                 },
-        //                 {
-        //                     borrowed_amount: 250.0,
-        //                     payee: "d@gmail.com",
-        //                     payee_name: "d"
-        //                 }
-        //             ],
-        //             payer: "a@gmail.com",
-        //             payer_name: "a",
-        //             transaction_id: 1
-        //         },
-        //         {
-        //             amount: 300.0,
-        //             currency: "TWD",
-        //             date: "May 02",
-        //             item_name: "50嵐",
-        //             payees: [
-        //                 {
-        //                     borrowed_amount: 60.0,
-        //                     payee: "b@gmail.com",
-        //                     payee_name: "b"
-        //                 },
-        //                 {
-        //                     borrowed_amount: 70.0,
-        //                     payee: "c@gmail.com",
-        //                     payee_name: "c"
-        //                 },
-        //                 {
-        //                     borrowed_amount: 90.0,
-        //                     payee: "d@gmail.com",
-        //                     payee_name: "d"
-        //                 }
-        //             ],
-        //             payer: "a@gmail.com",
-        //             payer_name: "a",
-        //             transaction_id: 2
-        //         }
-        //     ],
-        //     schedule_id: 556
-        // };
-        // setTransactions(data0.records);
-
-        // const data = {
-        //     standard: "TWD",
-        //     total_cost: 2557.0,
-        //     result: [
-        //         {
-        //             user: "c@gmail.com",
-        //             user_name: "c",
-        //             detail: [
-        //                 {
-        //                     amount: 622.75,
-        //                     associate: "d@gmail.com",
-        //                     associate_name: "d",
-        //                     status: "owed"
-        //                 }
-        //             ]
-        //         },
-        //         {
-        //             user: "d@gmail.com",
-        //             user_name: "d",
-        //             detail: [
-        //                 {
-        //                     amount: 622.75,
-        //                     associate: "c@gmail.com",
-        //                     associate_name: "c",
-        //                     status: "owe"
-        //                 },
-        //                 {
-        //                     amount: 31.5,
-        //                     associate: "a@gmail.com",
-        //                     associate_name: "a",
-        //                     status: "owe"
-        //                 }
-        //             ]
-        //         },
-        //         {
-        //             user: "a@gmail.com",
-        //             user_name: "a",
-        //             detail: [
-        //                 {
-        //                     amount: 31.5,
-        //                     associate: "d@gmail.com",
-        //                     associate_name: "d",
-        //                     status: "owed"
-        //                 },
-        //                 {
-        //                     amount: 624.25,
-        //                     associate: "b@gmail.com",
-        //                     associate_name: "b",
-        //                     status: "owed"
-        //                 }
-        //             ]
-        //         },
-        //         {
-        //             user: "b@gmail.com",
-        //             user_name: "b",
-        //             detail: [
-        //                 {
-        //                     amount: 624.25,
-        //                     associate: "a@gmail.com",
-        //                     associate_name: "a",
-        //                     status: "owe"
-        //                 }
-        //             ]
-        //         }
-        //     ]
-        // };
-
-
-        // setTotalCost(data.total_cost);
-        // setCurrency(data.standard);
-        // setCheckBalance(data.result);
-
-    }, [schedule_id]);
 
     useEffect(() => {
         refetchData();
@@ -217,10 +89,12 @@ const Ledger = ({ close, schedule_id }) => {
                         <ul>
                             {balanceDetails.map((balanceDetail, index) => (
                                 <li key={index} className={`${style.detailItem} ${balanceDetail.status === 'owe' ? style.owe : style.owed}`}>
-                                    {balanceDetail.status === 'owe' ? `You owe ${balanceDetail.associate_name} ${findCurrencySymbol(currency)}${balanceDetail.amount}` :
-                                        `You are owed ${findCurrencySymbol(currency)}${balanceDetail.amount} by ${balanceDetail.associate_name}`}
+                                    {balanceDetail.status === 'owe' ?
+                                        `You owe ${balanceDetail.associate_name} ${findCurrencySymbol(currency)}${parseFloat(balanceDetail.amount).toFixed(2)}` :
+                                        `You are owed ${findCurrencySymbol(currency)}${parseFloat(balanceDetail.amount).toFixed(2)} by ${balanceDetail.associate_name}`}
                                 </li>
                             ))}
+
                         </ul>
                         <TransactionsList transactions={transactions} currentUser={currentUser} />
                         <Button txt='Add a transaction' func={toggleAddForm} />

@@ -3,7 +3,7 @@ import style from "./GroupMemberInfo.module.css";
 
 const GroupMemberInfo = ({ trip_member_info, description, isButton, onSelect, selectedStatus = [] }) => {
 
-    const [selected, setSelected] = useState(selectedStatus.length ? selectedStatus : new Array(trip_member_info.length).fill(false));
+    const [selected, setSelected] = useState(selectedStatus);
 
     useEffect(() => {
         // 同步外部传入的 selectedStatus 到内部状态

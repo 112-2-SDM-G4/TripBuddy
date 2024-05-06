@@ -3,7 +3,7 @@
     flex-direction: column;
     position: relative;
     padding-top: 2rem;
-    min-width: 30vw;
+    min-width: 45vw;
 }
 
 .centerBlock {
@@ -103,7 +103,11 @@
     .container {
         padding-top: 1rem;
         position: relative;
-        max-height: calc(100vh - 6rem);
-        min-height: auto;
+        overflow-y: scroll;
+        max-height: calc(100vh - 2.5rem);
+        height: 100vh;
+    }
+    .centerBlock {
+        margin-bottom: 4rem;
     }
 }
