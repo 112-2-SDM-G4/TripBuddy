@@ -33,11 +33,11 @@ function PostCard({ name, src, tripId, tagNames, isFav }) {
             })
             .then((data) => {
                 console.log(data);
-                if(!isFav) {
-                    alert(words[language]["addSuccess"]);
-                } else {
-                    alert(words[language]["removeSuccess"]);
-                }
+                // if(!isFav) {
+                //     alert(words[language]["addSuccess"]);
+                // } else {
+                //     alert(words[language]["removeSuccess"]);
+                // }
                 window.location.reload();
             })
             .catch((error) => {

@@ -47,7 +47,7 @@ function Header() {
       });
   
       waitForSessionData("avatar").then(avatarData => {
-        setAvatar(avatarData + 1);
+        setAvatar(avatarData);
       }).catch(error => {
         console.error("Error waiting for avatar data:", error);
       });
