@@ -25,6 +25,7 @@ const Explore = () => {
     const [isSearchDropdownOpen, setIsSearchDropdownOpen] = useState(false);
     const [allTags, setAllTags] = useState([]);
     const [selectedTagsId, setSelectedTagsId] = useState([]);
+    const [hideUpcomingTrip, setHideUpcomingTrip] = useState(false);
 
     const getTagsMap = (allTags) => {
         const tagidToName = {};
@@ -41,39 +42,6 @@ const Explore = () => {
         return tagidToName;
     }
 
-    const trips = [
-        {
-            id: 1,
-            name: "Trip to Tokyo",
-            tags_id: [1, 2], // Example tags: [1, 2] for Tokyo
-            image: "https://picsum.photos/70/50"
-        },
-        {
-            id: 2,
-            name: "Trip to Paris",
-            tags_id: [3, 4], // Example tags: [3, 4] for Paris
-            image: "https://picsum.photos/38/30"
-        },
-        {
-            id: 3,
-            name: "Trip to New York City",
-            tags_id: [5, 35], // Example tags: [5, 6] for New York City
-            image: "https://picsum.photos/80"
-        },
-        {
-            id: 4,
-            name: "Trip to Rome",
-            tags_id: [5, 3, 4], // Example tags: [7, 8] for Rome
-            image: "https://picsum.photos/79/90"
-        },
-        {
-            id: 5,
-            name: "Trip to Sydney",
-            tags_id: [34, 24], // Example tags: [9, 10] for Sydney
-            image: "https://picsum.photos/20/38"
-        }
-    ];
-
     useEffect(() => {
         const getAllTags = async () => {
             try {
@@ -86,6 +54,7 @@ const Explore = () => {
                 console.error("Fetching preferences failed:", error);
             }
         };
+
         setIsLoading(true);
         getAllTags();
 
@@ -123,8 +92,8 @@ const Explore = () => {
                 const tripResponse = await fetchWithJwt("/api/v1/post", "GET");
                 const tripData = await tripResponse.json();
                 if (tripResponse.ok) {
-                    console.log("trips:", tripData.public_trips);
-                    setAllTrips(tripData.public_trips)
+                    console.log("trips:", tripData);
+                    setAllTrips(tripData)
                     setIsLoading(false);
                     return { success: true, error: null };
                 } else {
@@ -165,49 +134,72 @@ const Explore = () => {
             <div className={style.container}>
                 <Loader isLoading={isLoading} />
 
-                <TripSearchBox 
-                    onSearch={handleSearch}
-                    setIsDropdownOpen={setIsSearchDropdownOpen}
-                    isDropdownOpen={isSearchDropdownOpen}
-                    allTags={allTags}
-                    addSelectedTagsId={tagId => {
-                        setSelectedTagsId([...selectedTagsId, tagId])
-                    }}
-                    removeSelectedTagsId={(tagId) => {
-                        setSelectedTagsId(selectedTagsId.filter(t => t !== tagId))
-                    }}
-                    selectedTagsId={selectedTagsId}
-                />
-
-                <div className={style.postscontainer}>
-                    {(allTrips.length !== 0 && allTags.length !== 0)
-                        ? allTrips.map((trip) => (
-                            <PostCard 
-                                key={trip["id"]}
-                                tripId={trip["id"]}
-                                name={trip["name"]}
-                                src="https://picsum.photos/200"
-                                tagNames={trip["tags_id"].map(tagId => getTagsMap(allTags)[tagId][`tag_name_${language}`]).filter(n => n)}
-                            />
-                            ))
-                    : null}
-
-                    {/* {trips.map((trip) => (
-                        <PostCard 
-                            key={trip["id"]}
-                            name={trip["name"]}
-                            src={trip["image"]}
-                            // tagNames={trip["tags_id"].map(tagId => getTagsMap(allTags)[tagId][`tag_name_${language}`]).filter(n => n)}
-                            tagNames={trip["tags_id"].map(tagId => getTagsMap(allTags)[tagId][`tag_name_zh`])}
-
-                        />
-                    ))} */}
+                <div className={style.searchbox}>
+                    <TripSearchBox 
+                        onSearch={handleSearch}
+                        setIsDropdownOpen={setIsSearchDropdownOpen}
+                        isDropdownOpen={isSearchDropdownOpen}
+                        allTags={allTags}
+                        addSelectedTagsId={(tagId) => {
+                            setSelectedTagsId((prev) => {
+                              if (prev.includes(tagId)) {
+                                return [...prev];
+                              }
+                              return [...prev, tagId];
+                            });
+                        }}
+                        removeSelectedTagsId={(tagId) => {
+                            setSelectedTagsId(selectedTagsId.filter(t => t !== tagId))
+                        }}
+                        selectedTagsId={selectedTagsId}
+                    />
                 </div>
+                
+
+                <div className={style.block}>
+                    <div className={style.blocktitle}>{language === "en" ? "Suggestions" : "為你推薦" }</div>
+                    <div className={style.postscontainer}>
+                        {(allTrips["public_trips"]?.length !== 0 && allTags.length !== 0)
+                            ? allTrips["public_trips"]?.map((trip) => (
+                                <PostCard 
+                                    key={trip["id"]}
+                                    tripId={trip["id"]}
+                                    name={trip["name"]}
+                                    src={trip["image"]}
+                                    tagNames={trip["tags_id"].map(tagId => getTagsMap(allTags)[tagId][`tag_name_${language}`]).filter(n => n)}
+                                    isFav={allTrips["hearted_trips"].map(t => t["id"]).includes(trip["id"])}
+                                />
+                                ))
+                        : null}
+                    </div>
+                </div>
+
+                <div className={style.block}>
+                    <div className={style.blocktitle}>{language === "en" ? "My favorites" : "我的收藏" }</div>
+                    <div className={style.postscontainer}>
+                        {(allTrips["hearted_trips"]?.length !== 0 && allTags.length !== 0)
+                            ? allTrips["hearted_trips"]?.map((trip) => (
+                                <PostCard 
+                                    key={trip["id"]}
+                                    tripId={trip["id"]}
+                                    name={trip["name"]}
+                                    src={trip["image"]}
+                                    tagNames={trip["tags_id"].map(tagId => getTagsMap(allTags)[tagId][`tag_name_${language}`]).filter(n => n)}
+                                    isFav={true}
+                                />
+                                ))
+                        : null}
+                    </div>
+                </div>
+
             </div>
 
-            {haveUpcomingTrip &&
+            {(haveUpcomingTrip && !hideUpcomingTrip) &&
             <div className={style.upcoming}>
-                <UpcomingTrip trip={upcomingTrip} />
+                <UpcomingTrip trip={upcomingTrip} setHideUpcomingTrip={(e) => {
+                    e.stopPropagation();
+                    setHideUpcomingTrip(true);
+                }}/>
             </div>}
 
 

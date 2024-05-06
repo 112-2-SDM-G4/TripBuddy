@@ -9,7 +9,7 @@ import { FaMapMarkedAlt } from "react-icons/fa";
 import { TiStarFullOutline } from "react-icons/ti";
 import { useLanguage } from "../../hooks/useLanguage";
 
-export default function EditViewSpot({ spot, onClose, updateSpotData }) {
+export default function EditViewSpot({ spot, onClose, updateSpotData, locked=false }) {
     const words = {
         zh: {
             rate: "評分:",
@@ -149,12 +149,12 @@ export default function EditViewSpot({ spot, onClose, updateSpotData }) {
                             />
                         </div>
                     </div>
-                    <div className={style.submit}>
+                    {!locked && <div className={style.submit}>
                         <Button
                             txt={words[language]["submit"]}
                             func={handleSubmit}
                         />
-                    </div>
+                    </div>}
                 </div>
             </div>
         </Modal>

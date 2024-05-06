@@ -1,12 +1,12 @@
 import React from 'react';
 import style from "./UpcomingTrip.module.css";
 import { FaPlaneDeparture } from "react-icons/fa";
+import { IoMdClose } from "react-icons/io";
 
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../hooks/useLanguage';
-import TripCard from './TripCard';
 
-const UpcomingTrip = ({ trip }) => {
+const UpcomingTrip = ({ trip, setHideUpcomingTrip }) => {
     const navigate = useNavigate();
     const { language } = useLanguage();
 
@@ -17,6 +17,10 @@ const UpcomingTrip = ({ trip }) => {
         >
             <div className={style.upcomingtriptitle}>
                 {language === "en" ? "Upcoming Trip" : "即將到來的旅程"}
+            </div>
+
+            <div className={style.close} onClick={setHideUpcomingTrip}>
+                <IoMdClose size={18} style={{ fill: "color-mix(in srgb, var(--fontcolor) 45%, transparent)"}}/>
             </div>
 
                 <div
@@ -35,8 +39,8 @@ const UpcomingTrip = ({ trip }) => {
                                 />
                             </div>
                             {language === "en"
-                                ? `Departure on ${trip.start_date[0]}/${trip.start_date[1]}`
-                                : `${trip.start_date[0]}/${trip.start_date[1]} 出發`}
+                                ? `Departure on ${trip.start_date[1]}/${trip.start_date[2]}`
+                                : `${trip.start_date[1]}/${trip.start_date[2]} 出發`}
                         </div>
                     </div>
                 </div>

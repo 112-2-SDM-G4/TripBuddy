@@ -1,6 +1,6 @@
 .main {
     position: absolute;
-    width: 95%;
+    width: 93%;
     margin-top: 0.2rem;
     background-color: color-mix(
         in srgb,
@@ -16,6 +16,7 @@
     transition: all 0.5s ease;
     overflow: auto;
     height: 18rem;
+    animation: expand 0.5s forwards;
 }
 
 .section {
@@ -65,3 +66,13 @@
     width: auto;
     color: color-mix(in srgb, var(--fontcolor) 50%, var(--backgroundcolor));
 }
+
+@keyframes expand {
+    from {
+        height: 0; /* Start from height 0 */
+    }
+    to {
+        height: 18rem; /* Expand to desired height */
+    }
+}
+

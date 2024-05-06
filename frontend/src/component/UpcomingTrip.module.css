@@ -60,18 +60,8 @@
     margin-top: 0.3rem;
 }
 
-
-/* @media (max-width: 735px) {
-    .upcomingtrip {
-        width: 100vh;
-        height: 2rem;
-        flex-direction: row;
-        border-radius: 0;
-    }
-
-    .card {
-        flex-direction: row;
-        background-color: color-mix(in srgb, var(--fontcolor) 15%, var(--backgroundcolor));
-        padding: 0;
-    }
-} */
+.close {
+    position: absolute;
+    right: 0.5rem;
+    top: 0.6rem;
+}

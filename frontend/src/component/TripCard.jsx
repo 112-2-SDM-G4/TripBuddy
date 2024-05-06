@@ -9,13 +9,6 @@ import defultImage from "../assets/defaultImg.jpg";
 
 function TripCard({ name, src, tripId, tagNames, isPublic = false }) {
     const navigate = useNavigate();
-
-    const handleCopyTrip = async () => {
-        // TODO: copy other's to my trip
-        // get this trip data
-        // add to my trip
-    };
-
     return (
         <div
             className={style.card}
@@ -38,20 +31,8 @@ function TripCard({ name, src, tripId, tagNames, isPublic = false }) {
                                 event.stopPropagation();
                             }}
                         >
-                            <IoMdHeartEmpty size={20} />
+                            {/* <IoMdHeartEmpty size={20} /> */}
                         </div>
-                        {isPublic && (
-                            <div
-                                className={style.icon}
-                                onClick={(event) => {
-                                    event.stopPropagation();
-                                    handleCopyTrip();
-                                    navigate(`/edit/${tripId}`);
-                                }}
-                            >
-                                <AiOutlinePlusCircle size={20} />
-                            </div>
-                        )}
                     </div>
                 </div>
                 {isPublic && (
