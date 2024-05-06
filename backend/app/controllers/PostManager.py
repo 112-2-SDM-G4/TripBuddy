@@ -150,7 +150,7 @@ class PostManager(Resource):
         print(f'Old tag relations deleted')
 
         ## delete all old tag relation
-        RelationSchTag.delete_all(trip_id)
+        RelationSchTag.delete_by_trip(trip_id)
 
         for tag in data['tags_id']:
             RelationSchTag.create({
