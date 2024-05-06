@@ -5,7 +5,6 @@ import style from "./NavbarItems.module.css";
 
 import { useLanguage } from "../hooks/useLanguage";
 import { useWindowSize } from "../hooks/useWindowSize";
-import { fetchWithJwt } from "../hooks/fetchWithJwt";
 
 import { NavbarItemsData } from "./NavbarItemsData";
 import * as constants from "../constants";
@@ -22,54 +21,39 @@ function NavbarItem() {
 
     const [username, setUsername] = useState("");
     const [avatar, setAvatar] = useState("");
-  
-    // useEffect(() => {
-    //   const getUserInfo = async () => {
-    //     // fetchWithJwt(`/api/v1/tag/get_tags?source=UserProfile`, "GET")
-    //     try {
-    //         const response = await fetchWithJwt(`/api/v1/user/get_info`, 'GET');
-    //         if(response.status !== 200) {
-    //             throw new Error(`HTTP error! Status: ${response.status}`);
-    //         }
-    //         const data = await response.json();
-  
-    //         setUsername(data["user_name"]);
-    //         setAvatar(data["avatar"] + 1);
-    //         console.log("user info:", data);
-    //     } catch (error) {
-    //         console.error('Failed to fetch user info:', error);
-    //     }
-    //   };
-    //   if(isLoggedIn) {
-    //     getUserInfo();
-    //   }
-  
-  
-    // }, [userInfo, isLoggedIn])
 
-    useEffect(() => {
-        if(isLoggedIn) {
-          const userDataString = sessionStorage.getItem("user");
-          if (userDataString) {
-            const userData = JSON.parse(userDataString);
-            setUsername(userData["user_name"]);
-          } else {
-            // Handle case when user data is not available
-            console.error("User data not found in sessionStorage");
-          }
+    function waitForSessionData(key) {
+        return new Promise((resolve, reject) => {
+          const checkData = () => {
+            const dataString = sessionStorage.getItem(key);
+            if (dataString) {
+              const data = JSON.parse(dataString);
+              resolve(data);
+            } else {
+              setTimeout(checkData, 100); // 每100毫秒检查一次
+            }
+          };
       
-          const avatarDataString = sessionStorage.getItem("avatar");
-          if (avatarDataString) {
-            const avatarData = JSON.parse(avatarDataString);
+          checkData();
+        });
+      }
+      
+    useEffect(() => {
+        if (isLoggedIn) {
+            waitForSessionData("user").then(userData => {
+            setUsername(userData["user_name"]);
+            }).catch(error => {
+            console.error("Error waiting for user data:", error);
+            });
+        
+            waitForSessionData("avatar").then(avatarData => {
             setAvatar(avatarData + 1);
-          } else {
-            // Handle case when avatar data is not available
-            console.error("Avatar data not found in sessionStorage");
-          }
+            }).catch(error => {
+            console.error("Error waiting for avatar data:", error);
+            });
         }
+    }, [userInfo, isLoggedIn]);
     
-    }, [isLoggedIn])
-  
 
     return (
         <div className={style.tabcontainer}>
