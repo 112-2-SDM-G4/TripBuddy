@@ -20,7 +20,7 @@ function Header() {
   const windowSize = useWindowSize();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [userInfo, setUserInfo] = useState({});
-  const [username, setUsername] = useState("");
+  const [username, setUsername] = useState("hihihi");
 
   // useEffect(() => {
   //   const getInfo = async () => {
@@ -41,11 +41,13 @@ function Header() {
 
   // }, [])
 
-  useEffect(() => {
-    const userDataString = sessionStorage.getItem('user');
-    const userData = JSON.parse(userDataString);
-    setUsername(userData.user_name)
-  }, [])
+  // useEffect(() => {
+  //   const userDataString = sessionStorage.getItem('user');
+  //   const userData = JSON.parse(userDataString);
+  //   setUsername(userData?.user_name)
+  //   console.log('username: ' + userData.user_name)
+
+  // }, [isLoggedIn])
 
 
   return (

@@ -59,6 +59,7 @@ function Profile() {
         // fetchWithJwt(`/api/v1/tag/get_tags?source=UserProfile`, "GET")
         try {
             const response = await fetchWithJwt(`/api/v1/user/get_info`, 'GET');
+            // const response = await fetchWithJwt(`/api/v1/user/get_info?user_email=${"kmes9940130@gmail.com"}`, 'GET');
             if(!response.OK) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }

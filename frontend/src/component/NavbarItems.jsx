@@ -10,19 +10,22 @@ import { NavbarItemsData } from "./NavbarItemsData";
 import * as constants from "../constants";
 
 import Avatar from "./Avatar";
+import { useAuth } from "../hooks/useAuth";
 
 function NavbarItem() {
     const navigate = useNavigate();
     const windowSize = useWindowSize();
     const { language } = useLanguage();
+    const { isLoggedIn } = useAuth();
     const [activeTab, setActiveTab] = useState("explore");
-    const [username, setUsername] = useState("");
+    const [username, setUsername] = useState("hihihi");
 
-    useEffect(() => {
-        const userDataString = sessionStorage.getItem('user');
-        const userData = JSON.parse(userDataString);
-        setUsername(userData.user_name)
-    }, [])
+    // useEffect(() => {
+    //     const userDataString = sessionStorage.getItem('user');
+    //     const userData = JSON.parse(userDataString);
+    //     setUsername(userData?.user_name)
+    //     console.log('username: ' + userData.user_name)
+    // }, [isLoggedIn])
 
 
     return (
