@@ -7,9 +7,9 @@ from app.controllers.utils import *
 from app.services.currency import change_currency
 from app.models.transaction import Transaction
 from app.models.relation_user_transaction import RelationUserTransaction
-from app.models.relation_user_sch import RelationUserSch
 from app.models.user import User
 from app.models.schedule import Schedule
+from app.controllers.utils import user_owns_schedule
 
 class Currency(Resource):
     def get(self) -> Dict:
@@ -34,7 +34,7 @@ class ManageTransaction(Resource):
         if not Schedule.get_by_id(schedule_id):
             return make_response({"message": "Schedule not found"}, 400)
         
-        if not RelationUserSch.get_by_user_schedule(user_id, schedule_id).access:
+        if not user_owns_schedule(user_id, schedule_id):
             return make_response({"message": "User access forbidden"}, 403)
 
         # save to Transaction table
@@ -94,7 +94,7 @@ class ManageTransaction(Resource):
         if not Schedule.get_by_id(schedule_id):
             return make_response({"message": "Schedule not found"}, 400)
         
-        if not RelationUserSch.get_by_user_schedule(user_id, schedule_id).access:
+        if not user_owns_schedule(user_id, schedule_id):
             return make_response({"message": "User access forbidden"}, 403)
 
         records = get_all_transactions_of_schedule(int(schedule_id))
@@ -115,7 +115,7 @@ class CheckBalance(Resource):
         if not Schedule.get_by_id(schedule_id):
             return make_response({"message": "Schedule not found"}, 400)
         
-        if not RelationUserSch.get_by_user_schedule(user_id, schedule_id).access:
+        if not user_owns_schedule(user_id, schedule_id):
             return make_response({"message": "User access forbidden"}, 403)
 
         results = self.group_balances(schedule_id)
