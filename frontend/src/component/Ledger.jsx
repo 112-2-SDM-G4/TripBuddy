@@ -11,7 +11,7 @@ const findCurrencySymbol = (currency) => {
     return CountryData.places.find(place => place.money.en === currency)?.money.symbol || null;
 };
 
-const Ledger = ({ close, schedule_id }) => {
+const Ledger = ({ close, schedule_id, standard }) => {
     const currentUser = JSON.parse(sessionStorage.getItem("user") || "{}").user_name || "defaultUser";
     const [totalCost, setTotalCost] = useState(0);
     const [transactions, setTransactions] = useState([]);
@@ -106,6 +106,7 @@ const Ledger = ({ close, schedule_id }) => {
                         toggleForm={toggleAddForm}
                         trip_id={schedule_id}
                         refetchData={refetchData}
+                        standard={standard}
                     />
                 </div>
             )}

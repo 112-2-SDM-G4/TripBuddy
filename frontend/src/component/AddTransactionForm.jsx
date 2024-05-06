@@ -9,13 +9,14 @@ import { useLanguage } from "../hooks/useLanguage";
 import CountryData from "../assets/Country.json";
 import { fetchWithJwt } from '../hooks/fetchWithJwt';
 
-const AddTransactionForm = ({ toggleForm, trip_id, refetchData }) => {
+const AddTransactionForm = ({ toggleForm, trip_id, refetchData, standard }) => {
     const { language } = useLanguage();
     const [description, setDescription] = useState('');
     const [amount, setAmount] = useState(0);
     const [error, setError] = useState('');
-    const [currency, setCurrency] = useState(CountryData.places[0].money.en);
-    const [symbol, setSymbol] = useState(CountryData.places[0].money.symbol);
+    const [currency, setCurrency] = useState(standard);
+    const selectedCurrency = CountryData.places.find(place => place.money.en === standard);
+    const [symbol, setSymbol] = useState(selectedCurrency.money.symbol);
     const [payer, setPayer] = useState('you');
     const [payees, setPayees] = useState([]);
     const [groupMembers, setGroupMembers] = useState([]);
