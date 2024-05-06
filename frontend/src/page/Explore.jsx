@@ -17,7 +17,7 @@ const Explore = () => {
     const windowSize = useWindowSize();
 
     const { language } = useLanguage();
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     const [haveUpcomingTrip, setHaveUpcomingTrip] = useState(false);
     const [upcomingTrip, setUpcomingTrip] = useState({});
     const [allTrips, setAllTrips] = useState([]);
@@ -49,19 +49,17 @@ const Explore = () => {
                 const data = await response.json();
                 console.log("tagdata", data)
                 setAllTags(data);
-
             } catch (error) {
                 console.error("Fetching preferences failed:", error);
             }
         };
-
-        setIsLoading(true);
         getAllTags();
 
     }, []);
 
     useEffect(() => {
         const getMyTrips = async () => {
+            setIsLoading(true);
             try {
                 const tripResponse = await fetchWithJwt("/api/v1/trip", "GET");
                 const tripData = await tripResponse.json();
@@ -76,7 +74,7 @@ const Explore = () => {
                     }
 
                     // console.log(tripData.user_trip);
-                    // setIsLoading(false);
+                    setIsLoading(false);
                     return { success: true, error: null };
                 } else {
                     throw new Error("Failed to fetch my trips");
@@ -88,13 +86,14 @@ const Explore = () => {
         };
 
         const getAllTrips = async () => {
+            setIsLoading(true);
             try {
                 const tripResponse = await fetchWithJwt("/api/v1/post", "GET");
                 const tripData = await tripResponse.json();
                 if (tripResponse.ok) {
                     console.log("trips:", tripData);
                     setAllTrips(tripData)
-                    // setIsLoading(false);
+                    setIsLoading(false);
                     return { success: true, error: null };
                 } else {
                     throw new Error("Failed to fetch all trips");
@@ -104,11 +103,9 @@ const Explore = () => {
                 return { success: false, error: error.message };
             }
         };
-        setIsLoading(true);
 
         getMyTrips();
         getAllTrips();
-        setIsLoading(false);
     }, []);
 
     const handleSearch = async (query) => {
