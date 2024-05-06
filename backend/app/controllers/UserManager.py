@@ -5,6 +5,10 @@ from flask_restful import Resource
 from flask import request, make_response, jsonify
 from flask_mail import Message
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
+# from google.oauth2 import id_token
+# from google.auth.transport import requests
+# import google.auth.oauthlib.flow
+# from googleapiclient.discovery import build
 
 from app.models.user import User, UserVerify
 from app.models.relation_user_tag import RelationUserTag
@@ -293,5 +297,50 @@ class GetUserInfo(Resource):
         if not user:
             return make_response(err_msg, 401)
 
-            
+class ValidateEmail(Resource):
+    def post(self):
+        user_email = str(request.get_json()['user_email']).strip(' ')
+        user = User.get_by_email(user_email)
+
+        res_json = {
+            "valid": False, 
+            "jwt_token": "",
+            "message": ""
+        }
+
+        if not user:
+            res_json['message'] = "User not found."
+            return make_response(res_json, 200)
         
+        if not user.google_token:
+            res_json['message'] = "User had been registered from original system."
+            return make_response(res_json, 200)
+        
+        jwt_token = create_access_token(identity=user_email)
+        res_json['valid'] = True
+        res_json['jwt_token'] = jwt_token
+        res_json['message'] = "Email from google token is valid."
+        
+        return make_response(res_json, 200)
+
+class CreateUser(Resource):
+    def post(self):
+        data = request.get_json()
+        user_email = str(request.get_json()['user_email']).strip(' ')
+
+        if User.get_by_email(user_email):
+            return make_response({'valid': False, 'message': "This email had been taken."}, 200)
+        
+        user_data = {
+            'user_name': data['user_name'],
+            'email': user_email,
+            'hashed_password': 'google',
+            'salt': 'google',
+            'language': 'zh',
+            'questionnaire': False,
+            'user_icon': 0,
+            'google_token': data['google_id']
+        }
+
+        User.create(user_data)
+        return make_response({'valid': True, 'message': "Register Successfully!!!"}, 200)
