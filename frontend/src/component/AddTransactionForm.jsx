@@ -39,6 +39,7 @@ const AddTransactionForm = ({ toggleForm, trip_id, refetchData }) => {
                 const data = await response.json();
                 if (data.trip_member_info && data.trip_member_info.length > 0) {
                     setGroupMembers(data.trip_member_info);
+                    console.log(data.trip_member_info);
                     setCurrentPayees(data.trip_member_info.map(p => ({
                         ...p,
                         amount: '',

@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import style from './TransactionItem.module.css';  // Assume you have CSS for styling
 import CountryData from "../assets/Country.json";
+import TransactionDetail from './TransactionDetail';
 
 const CashIcon = () => {
     return (
@@ -26,8 +27,11 @@ const findCurrencySymbol = (currency) => {
 };
 
 
-const TransactionItem = ({ date, currentUser, currency, item_name, payer, payees, amount }) => {
+
+
+const TransactionItem = ({ transaction_id, date, currentUser, currency, item_name, payer, payees, amount }) => {
     let amountText, amountValue, amountColor = style.amountGray;
+    const [showDetail, setShowDetail] = useState(false);
     const symbol = findCurrencySymbol(currency);
     if (payer === currentUser) {
         const totalLent = payees.reduce((acc, payee) => acc + (payee.payee_name === currentUser ? 0 : payee.borrowed_amount), 0);
@@ -47,21 +51,39 @@ const TransactionItem = ({ date, currentUser, currency, item_name, payer, payees
         }
     }
 
+    const toggleDetail = () => {
+        setShowDetail(!showDetail);
+    };
+
     return (
-        <div className={style.transactionItem}>
-            <div className={style.date}>{date}</div>
-            <CashIcon />
-            <div className={style.details}>
-                <div className={style.textContent}>
-                    <div className={style.title}>{item_name}</div>
-                    <div className={style.paidBy}>{payer} paid {symbol}{amount}</div>
+        <>
+            {showDetail &&
+                <TransactionDetail 
+                    transactionId={transaction_id}  // Assume transactionId is passed instead of key
+                    date={date}
+                    currentUser={currentUser}
+                    currency={currency}
+                    item_name={item_name}
+                    payer={payer}
+                    payees={payees}
+                    amount={amount}
+                />}
+            {!showDetail &&
+            <div className={`${style.transactionItem} ${showDetail ? style.activeItem : ''}`} onClick={toggleDetail}>
+                <div className={style.date}>{date}</div>
+                <CashIcon />
+                <div className={style.details}>
+                    <div className={style.textContent}>
+                        <div className={style.title}>{item_name}</div>
+                        <div className={style.paidBy}>{payer} paid {symbol}{amount}</div>
+                    </div>
+                    <div className={`${style.amount} ${amountColor}`}>
+                        <div className={style.amountDescription}>{amountText}</div>
+                        <div className={style.amountValue}>{amountValue}</div>
+                    </div>
                 </div>
-                <div className={`${style.amount} ${amountColor}`}>
-                    <div className={style.amountDescription}>{amountText}</div>
-                    <div className={style.amountValue}>{amountValue}</div>
-                </div>
-            </div>
-        </div>
+            </div>}
+        </>
     );
 };
 
