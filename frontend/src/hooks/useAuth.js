@@ -31,6 +31,15 @@ export const AuthProvider = ({ children }) => {
                 return { success: false, error: loginData.message, preference: false };
             }
 
+            const response = await fetchWithJwt(`/api/v1/user/get_info`, 'GET');
+            if(response.status !== 200) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            const infoData = await response.json();
+            console.log("user info:", infoData)
+            setUserInfo(infoData);
+            sessionStorage.setItem("avatar", infoData["avatar"]);
+
             const tripResponse = await fetchWithJwt("/api/v1/trip", "GET");
             const tripData = await tripResponse.json();
 
@@ -53,6 +62,7 @@ export const AuthProvider = ({ children }) => {
     const logout = () => {
         sessionStorage.removeItem("jwtToken");
         sessionStorage.removeItem("user"); // Remove user data from sessionStorage
+        sessionStorage.removeItem("avatar"); // Remove user data from sessionStorage
         setUser({});
         setIsLoggedIn(false);
     };
