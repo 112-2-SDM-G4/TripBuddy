@@ -76,7 +76,7 @@ const Explore = () => {
                     }
 
                     // console.log(tripData.user_trip);
-                    setIsLoading(false);
+                    // setIsLoading(false);
                     return { success: true, error: null };
                 } else {
                     throw new Error("Failed to fetch my trips");
@@ -94,7 +94,7 @@ const Explore = () => {
                 if (tripResponse.ok) {
                     console.log("trips:", tripData);
                     setAllTrips(tripData)
-                    setIsLoading(false);
+                    // setIsLoading(false);
                     return { success: true, error: null };
                 } else {
                     throw new Error("Failed to fetch all trips");
@@ -108,6 +108,7 @@ const Explore = () => {
 
         getMyTrips();
         getAllTrips();
+        setIsLoading(false);
     }, []);
 
     const handleSearch = async (query) => {
@@ -119,11 +120,17 @@ const Explore = () => {
             keyword: query
         })
             .then(function (response) {
+                console.log("res", response);
                 return response.json();
             })
             .then(function (result) {
-                if (result["search_result"]) {
-                    setAllTrips(result["search_result"]);
+                if(result["search_result"]) {
+                    setAllTrips(prevState => ({
+                        ...prevState,
+                        public_trips: result["search_result"],
+                    }))
+                    // setAllTrips({..., public_trips: result["search_result"]});
+                    console.log("search result:", result["search_result"]);
                     setIsLoading(false);
                 }
             });
@@ -165,7 +172,7 @@ const Explore = () => {
                                     key={trip["id"]}
                                     tripId={trip["id"]}
                                     name={trip["name"]}
-                                    src={trip["image"]}
+                                    src={trip["image"]}git pu
                                     tagNames={trip["tags_id"].map(tagId => getTagsMap(allTags)[tagId][`tag_name_${language}`]).filter(n => n)}
                                     isFav={allTrips["hearted_trips"].map(t => t["id"]).includes(trip["id"])}
                                 />
