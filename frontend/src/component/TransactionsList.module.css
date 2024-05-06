@@ -1,0 +1,6 @@
+@media (max-width: 735px) {
+    .transactionsList {
+        width: 80vw;
+        /* max-width: 25rem; */
+    }
+}

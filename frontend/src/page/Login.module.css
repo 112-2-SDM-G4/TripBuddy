@@ -58,7 +58,7 @@ button.active {
 }
 
 .errorMessage {
-    color: red;
+    color: var(--color-for-red);
     /* Style it as needed, for example: */
     font-size: 0.6rem;
     margin-top: 0.6rem;

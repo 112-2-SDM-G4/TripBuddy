@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import style from "./AddTransactionForm.module.css";
 import Button from "../component/Button";
 import InputText from "../component/InputText";
@@ -25,10 +25,22 @@ const AddTransactionForm = ({ toggleForm, trip_id, refetchData, standard }) => {
     const [showMemberSelector, setShowMemberSelector] = useState(false);
     const [showCustomSplit, setShowCustomSplit] = useState(false);
     const [currentPayees, setCurrentPayees] = useState([]);
+    const dropdownRef = useRef(null);
 
 
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setShowDropdown(false);
+            }
+        };
 
+        document.addEventListener('mousedown', handleClickOutside);
 
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
 
     useEffect(() => {
         const fetchGroupMembers = async () => {
@@ -106,6 +118,7 @@ const AddTransactionForm = ({ toggleForm, trip_id, refetchData, standard }) => {
 
 
     const handleCurrencyChange = (event) => {
+        event.preventDefault();
         const selectedCurrency = CountryData.places.find(place => place.money.en === event.target.value);
         setCurrency(selectedCurrency.money.en);
         setSymbol(selectedCurrency.money.symbol);
@@ -179,6 +192,7 @@ const AddTransactionForm = ({ toggleForm, trip_id, refetchData, standard }) => {
                             </button>
                             {showDropdown && (
                                 <select
+                                    ref={dropdownRef}
                                     value={currency}
                                     onChange={handleCurrencyChange}
                                     className={style.currencySelect}
@@ -186,7 +200,7 @@ const AddTransactionForm = ({ toggleForm, trip_id, refetchData, standard }) => {
                                     size={CountryData.places.length}  // This makes it act like a dropdown
                                 >
                                     {CountryData.places.map((place, index) => (
-                                        <option key={index} value={place.money.en}>
+                                        <option key={index} value={place.money.en} >
                                             {place.country[language]} ({place.money.symbol})
                                         </option>
                                     ))}
@@ -230,7 +244,6 @@ const AddTransactionForm = ({ toggleForm, trip_id, refetchData, standard }) => {
                                     <div className={style.select}>
                                         <GroupMemberInfo
                                             trip_member_info={groupMembers}
-                                            description={'Payer'}
                                             isButton={true}
                                             onSelect={handlePayerSelection}
                                         />

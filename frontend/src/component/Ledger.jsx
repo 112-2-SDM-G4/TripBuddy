@@ -96,8 +96,10 @@ const Ledger = ({ close, schedule_id, standard }) => {
                             ))}
 
                         </ul>
-                        <TransactionsList transactions={transactions} currentUser={currentUser} />
-                        <Button txt='Add a transaction' func={toggleAddForm} />
+                        <div className={style.transactionField}>
+                            <TransactionsList transactions={transactions} currentUser={currentUser} />
+                            <Button txt='Add a transaction' func={toggleAddForm} />
+                        </div>
                     </div>
                 </>
             ) : (
