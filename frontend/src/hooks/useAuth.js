@@ -38,6 +38,8 @@ export const AuthProvider = ({ children }) => {
             const infoData = await response.json();
             console.log("user info:", infoData)
             setUserInfo(infoData);
+            localStorage.setItem("language", infoData["language"] );
+
             sessionStorage.setItem("avatar", infoData["avatar"]);
 
             const tripResponse = await fetchWithJwt("/api/v1/trip", "GET");
