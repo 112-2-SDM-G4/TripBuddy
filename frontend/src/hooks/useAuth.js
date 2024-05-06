@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { fetchWithJwt } from "./fetchWithJwt";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useLanguage } from "./useLanguage";
 
 const AuthContext = createContext();
 
@@ -11,6 +12,7 @@ export const AuthProvider = ({ children }) => {
     const navigate = useNavigate();
     const location = useLocation();
     const { pathname } = location;
+    const {setLanguage} = useLanguage();
 
     const login = async (email, hashedPassword) => {
         const url = "/api/v1/user/check_password";
@@ -38,6 +40,7 @@ export const AuthProvider = ({ children }) => {
             const infoData = await response.json();
             console.log("user info:", infoData)
             setUserInfo(infoData);
+            setLanguage(infoData["language"])
             localStorage.setItem("language", infoData["language"] );
 
             sessionStorage.setItem("avatar", infoData["avatar"]);
