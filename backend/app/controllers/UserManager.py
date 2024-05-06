@@ -83,6 +83,7 @@ class UserVerification(Resource):
                 else: # Success
                     new_user = User(
                         user_name="User", 
+                        google_token=None,
                         email=user_email,
                         hashed_password=hashed_password,
                         salt=salt,
