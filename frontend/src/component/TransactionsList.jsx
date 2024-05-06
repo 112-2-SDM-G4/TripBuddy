@@ -7,7 +7,7 @@ const TransactionsList = ({ transactions, currentUser }) => {
         <div className={style.transactionsList}>
             {transactions.map(transaction => (
                 <TransactionItem
-                    key={transaction.transaction_id}
+                    transaction_id={transaction.transaction_id}
                     date={transaction.date}
                     currentUser={currentUser}
                     currency={transaction.currency}

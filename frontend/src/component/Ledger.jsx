@@ -85,7 +85,7 @@ const Ledger = ({ close, schedule_id }) => {
                     </div>
 
                     <div className={style.centerBlock}>
-                        <span className={style.totalCost}>Total Trip Cost: ${findCurrencySymbol(currency)}${parseFloat(totalCost).toFixed(2)}</span>
+                        <span className={style.totalCost}>Total Trip Cost: {findCurrencySymbol(currency)}{parseFloat(totalCost).toFixed(2)}</span>
                         <ul>
                             {balanceDetails.map((balanceDetail, index) => (
                                 <li key={index} className={`${style.detailItem} ${balanceDetail.status === 'owe' ? style.owe : style.owed}`}>
