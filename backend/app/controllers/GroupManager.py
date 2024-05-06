@@ -3,6 +3,8 @@ from flask_restful import Resource
 from flask import request, make_response
 from app.controllers.utils import *
 from app.models.relation_user_sch import RelationUserSch
+from app.models.relation_sch_tag import RelationSchTag
+from app.models.relation_spot_sch import RelationSpotSch
 from app.models.user import User
 from app.models.schedule import Schedule
 from app.models.create_db import db
@@ -69,11 +71,21 @@ class SetGroupMember(Resource):
     def delete(self):
         data = request.get_json()
         user_email = get_jwt_identity()
-        # user_email = 'r12725049@ntu.edu.tw'
+        # user_email = 'test@gmail.com'
         user = User.get_by_email(user_email)
         trip_id = data.get('trip_id', None)
 
         RelationUserSch.delete(user.user_id, trip_id)
+
+        remain = RelationUserSch.get_by_schedule(trip_id)
+
+        if not remain:
+            # 刪 Relation_Sch_tag
+            RelationSchTag.delete_by_trip(trip_id)
+            # 刪 Relation_Spot_Sch
+            RelationSpotSch.delete_by_trip(trip_id)
+            # 刪 Schedule
+            Schedule.delete(trip_id)
 
         success_response = {
             "message": "successful",
