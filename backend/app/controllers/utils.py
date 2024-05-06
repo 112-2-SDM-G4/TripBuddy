@@ -80,6 +80,8 @@ def fetch_and_save_place(place_id: str, language: str) -> Tuple[int, Dict] :
         place_detail = query_row_to_dict(place)
         place_detail['address'] = place_detail['formatted_address']
         place_detail['regular_opening_hours'] = str_to_array(place_detail['regular_opening_hours'])
+        place_detail['rating'] = float(place_detail['rating']) if place_detail['rating'] != 'None' else None
+        place_detail['user_rating_count'] = int(place_detail['user_rating_count']) if place_detail['rating'] != 'None' else None
         place_detail.pop('id')
         place_detail.pop('language')
         place_detail.pop('place_summary')

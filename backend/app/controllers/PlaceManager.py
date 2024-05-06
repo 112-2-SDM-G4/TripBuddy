@@ -27,6 +27,8 @@ class PlaceSearch(Resource):
                     'place_id': place['place_id'],
                     'name': place['name'],
                     'address': place['formatted_address'],
+                    'rating': float(place['rating']) if place['rating'] != 'None' else None,
+                    'user_rating_count': int(place['user_rating_count']) if place['user_rating_count'] != 'None' else None,
                     'google_map_uri': place['google_map_uri'],
                     'image': place['image'],
                 }

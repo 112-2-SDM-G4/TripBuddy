@@ -14,6 +14,8 @@ class GoogleMapApi():
             'places.displayName',
             'places.formattedAddress',
             'places.googleMapsUri',
+            'places.rating',
+            'places.userRatingCount',
             'places.photos',
         ]
         self.place_params = {
@@ -132,6 +134,8 @@ class GoogleMapApi():
                     'google_map_uri': place['googleMapsUri'],
                     'image': photo_url,
                 }
+                info_json['rating'] = place['rating'] if 'rating' in place.keys() else None
+                info_json['user_rating_count'] = place['userRatingCount'] if 'userRatingCount' in place.keys() else None
                 place_info_list.append(info_json)
 
         else: # searching failed
@@ -179,8 +183,8 @@ class GoogleMapApi():
                 'image': photo_url,
             }
             # exception handling
-            res_json['rating'] = place['rating'] if 'rating' in place.keys() else None
-            res_json['user_rating_count'] = place['userRatingCount'] if 'userRatingCount' in place.keys() else None
+            res_json['rating'] = float(place['rating']) if 'rating' in place.keys() else None
+            res_json['user_rating_count'] = int(place['userRatingCount']) if 'userRatingCount' in place.keys() else None
             res_json['regular_opening_hours'] = place['regularOpeningHours']['weekdayDescriptions'] if 'regularOpeningHours' in place.keys() else None
 
         else: # searching failed
