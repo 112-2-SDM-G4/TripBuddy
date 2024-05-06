@@ -32,12 +32,16 @@ def check_date_status(start_date, end_date):
     else:
         return 0
     
-def str_to_array(string, t=','):
+def str_to_array(string, t='|'):
     if string == None:
         return []
+    # delimiters = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday",
+    #               "星期一", "星期二", "星期三", "星期四", "星期五", "星期六", "星期日"]
+    # for d in delimiters:
+    #     string = string.replace(d, t + d)
     return string.split(t)
 
-def array_to_str(array, t=','):
+def array_to_str(array, t='|'):
     return t.join(array)
 
 def varify_user(user_email):

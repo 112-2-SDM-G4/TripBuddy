@@ -59,7 +59,7 @@ class PlaceDetail(Resource):
     def get(self) -> Dict:
         place_id = request.args.get('place_id')
         language = request.args.get('language')
-
+        print(place_id, language)
         # check database, fetch it from google if not exists
         res_code, place_detail = fetch_and_save_place(place_id, language)
 
