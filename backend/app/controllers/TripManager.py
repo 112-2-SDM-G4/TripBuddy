@@ -79,16 +79,17 @@ class TripManager(Resource):
             trips = []
             relations = RelationUserSch.get_by_user(user_id)
             for relation in relations:
-                trip_info = {}
-                schedule = Schedule.get_by_id(relation.schedule_id)
-                trip_info['id'] = schedule.schedule_id
-                trip_info['name'] = schedule.schedule_name
-                trip_info['image'] = self.get_trip_photo(schedule) # random photo from places
-                trip_info['date_status'] = check_date_status(schedule.start_date, schedule.end_date)
-                trip_info['start_date'] = date_to_array(schedule.start_date)
-                trip_info['end_date'] = date_to_array(schedule.end_date)
-                trip_info['location_id'] = self.get_trip_location_id(schedule)
-                trips.append(trip_info) 
+                if relation.access:
+                    trip_info = {}
+                    schedule = Schedule.get_by_id(relation.schedule_id)
+                    trip_info['id'] = schedule.schedule_id
+                    trip_info['name'] = schedule.schedule_name
+                    trip_info['image'] = self.get_trip_photo(schedule) # random photo from places
+                    trip_info['date_status'] = check_date_status(schedule.start_date, schedule.end_date)
+                    trip_info['start_date'] = date_to_array(schedule.start_date)
+                    trip_info['end_date'] = date_to_array(schedule.end_date)
+                    trip_info['location_id'] = self.get_trip_location_id(schedule)
+                    trips.append(trip_info) 
 
             responce = {
                 'user_trip': trips,

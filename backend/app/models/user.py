@@ -13,8 +13,9 @@ class User(db.Model):
     language = db.Column(db.String(50), nullable=False)
     questionnaire = db.Column(db.Boolean, nullable=False, default=False)
     user_icon = db.Column(db.Integer, nullable=False)
+    google_token = db.Column(db.String(255), nullable=True)
 
-    def __init__(self, user_name, email, hashed_password, salt, language, questionnaire, user_icon):
+    def __init__(self, user_name, email, hashed_password, salt, language, questionnaire, user_icon, google_token):
         self.user_name = user_name
         self.email = email
         self.hashed_password = hashed_password
@@ -22,7 +23,8 @@ class User(db.Model):
         self.language = language
         self.questionnaire = questionnaire
         self.user_icon = user_icon
-
+        self.google_token = google_token
+        
     @staticmethod
     def get_all():
         return User.query.all()
@@ -43,7 +45,8 @@ class User(db.Model):
                     salt=data['salt'],
                     language=data['language'],
                     questionnaire=data['questionnaire'],
-                    user_icon=data['user_icon']
+                    user_icon=data['user_icon'],
+                    google_token=data['google_token']
                     )
         db.session.add(user)
         db.session.commit()
