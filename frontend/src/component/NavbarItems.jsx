@@ -16,17 +16,44 @@ function NavbarItem() {
     const navigate = useNavigate();
     const windowSize = useWindowSize();
     const { language } = useLanguage();
-    const { isLoggedIn } = useAuth();
+    const { isLoggedIn, userInfo } = useAuth();
     const [activeTab, setActiveTab] = useState("explore");
-    const [username, setUsername] = useState("hihihi");
 
-    // useEffect(() => {
-    //     const userDataString = sessionStorage.getItem('user');
-    //     const userData = JSON.parse(userDataString);
-    //     setUsername(userData?.user_name)
-    //     console.log('username: ' + userData.user_name)
-    // }, [isLoggedIn])
+    const [username, setUsername] = useState("");
+    const [avatar, setAvatar] = useState("");
 
+    function waitForSessionData(key) {
+        return new Promise((resolve, reject) => {
+          const checkData = () => {
+            const dataString = sessionStorage.getItem(key);
+            if (dataString) {
+              const data = JSON.parse(dataString);
+              resolve(data);
+            } else {
+              setTimeout(checkData, 100); // 每100毫秒检查一次
+            }
+          };
+      
+          checkData();
+        });
+      }
+      
+    useEffect(() => {
+        if (isLoggedIn) {
+            waitForSessionData("user").then(userData => {
+            setUsername(userData["user_name"]);
+            }).catch(error => {
+            console.error("Error waiting for user data:", error);
+            });
+        
+            waitForSessionData("avatar").then(avatarData => {
+            setAvatar(avatarData + 1);
+            }).catch(error => {
+            console.error("Error waiting for avatar data:", error);
+            });
+        }
+    }, [userInfo, isLoggedIn]);
+    
 
     return (
         <div className={style.tabcontainer}>
@@ -59,11 +86,11 @@ function NavbarItem() {
                 );
             })}
 
-        {windowSize.width < constants.MOBILE_SCREEN_WIDTH 
+        {windowSize.width < constants.MOBILE_SCREEN_WIDTH && isLoggedIn
             && 
             <Avatar 
-                src={"../../1.png"}
-                alt="test"
+                src={`../../${avatar}.png`} 
+                alt={username}
                 username={username}
                 onClick={() => navigate("setting-options")}
             />}

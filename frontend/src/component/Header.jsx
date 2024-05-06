@@ -12,43 +12,47 @@ import NavbarItems from './NavbarItems';
 import Avatar from './Avatar';
 import Dropdown from './Dropdown';
 import { useAuth } from '../hooks/useAuth';
-import { fetchWithJwt } from '../hooks/fetchWithJwt';
 
 function Header() {
   const { isDarkMode, setIsDarkMode } = useTheme();
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, userInfo } = useAuth();
   const windowSize = useWindowSize();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [userInfo, setUserInfo] = useState({});
-  const [username, setUsername] = useState("hihihi");
 
-  // useEffect(() => {
-  //   const getInfo = async () => {
-  //     try {
-  //       const response = await fetchWithJwt(`/api/v1/user/get_info?`, 'GET');
-  //       if(!response.OK) {
-  //           throw new Error(`HTTP error! Status: ${response.status}`);
-  //       }
-  //       const data = await response.json();
-  //       setUserInfo(data);
-  //   } catch (error) {
-  //       console.error('Failed to fetch group members:', error);
-  //       // setError('Failed to load group members');
-  //   }
+  const [username, setUsername] = useState("");
+  const [avatar, setAvatar] = useState("");
 
-  //   }
-  //   getInfo();
-
-  // }, [])
-
-  // useEffect(() => {
-  //   const userDataString = sessionStorage.getItem('user');
-  //   const userData = JSON.parse(userDataString);
-  //   setUsername(userData?.user_name)
-  //   console.log('username: ' + userData.user_name)
-
-  // }, [isLoggedIn])
-
+  function waitForSessionData(key) {
+    return new Promise((resolve, reject) => {
+      const checkData = () => {
+        const dataString = sessionStorage.getItem(key);
+        if (dataString) {
+          const data = JSON.parse(dataString);
+          resolve(data);
+        } else {
+          setTimeout(checkData, 100); // 每100毫秒检查一次
+        }
+      };
+  
+      checkData();
+    });
+  }
+  
+  useEffect(() => {
+    if (isLoggedIn) {
+      waitForSessionData("user").then(userData => {
+        setUsername(userData["user_name"]);
+      }).catch(error => {
+        console.error("Error waiting for user data:", error);
+      });
+  
+      waitForSessionData("avatar").then(avatarData => {
+        setAvatar(avatarData + 1);
+      }).catch(error => {
+        console.error("Error waiting for avatar data:", error);
+      });
+    }
+  }, [userInfo, isLoggedIn]);
 
   return (
     <div className={style.main} onClick={(e) => {
@@ -73,8 +77,8 @@ function Header() {
               &&
               <>
                 <Avatar 
-                    src={"../../1.png"} 
-                    alt={"../../1.png"}
+                    src={`../../${avatar}.png`} 
+                    alt={username}
                     username={username}
                     onClick={(e) => {
                       e.stopPropagation();

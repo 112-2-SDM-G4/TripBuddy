@@ -5,11 +5,12 @@ import { useLanguage } from '../hooks/useLanguage';
 import TripSearchDropdown from '../component/TripSearchDropdown';
 import Button from '../component/Button';
 import Tag from '../component/Tag';
-import Dropdown from '../component/Dropdown';
+import { useAuth } from '../hooks/useAuth';
+import Loader from '../component/Loader';
 
 function Profile() {
-  const [userInfo, setUserInfo] = useState({});
   const { language } = useLanguage();
+  const [isLoading, setIsLoading] = useState(true);
 
   const [allTags, setAllTags] = useState([]);
 
@@ -17,10 +18,10 @@ function Profile() {
   const [isTagDropdownOpen, setIsTagDropdownOpen] = useState(false);
   const [isLangDropdownOpen, setIsLangDropdownOpen] = useState(false);
 
-
-  const [username, setUsername] = useState("hihihi");
-  const [selectedAvatarId, setSelectedAvatarId] = useState(0);
-  const [selectedTagsId, setSelectedTagsId] = useState([1, 2]);
+  const [userInfo, setUserInfo] = useState({});
+  const [username, setUsername] = useState("");
+  const [selectedAvatarId, setSelectedAvatarId] = useState(-1);
+  const [selectedTagsId, setSelectedTagsId] = useState([]);
   const [isSelectedEn, setIsSelectedEn] = useState(true);
   const avatars = ['../../1.png', '../../2.png', '../../3.png', '../../4.png', '../../5.png'];
 
@@ -59,14 +60,21 @@ function Profile() {
         // fetchWithJwt(`/api/v1/tag/get_tags?source=UserProfile`, "GET")
         try {
             const response = await fetchWithJwt(`/api/v1/user/get_info`, 'GET');
-            // const response = await fetchWithJwt(`/api/v1/user/get_info?user_email=${"kmes9940130@gmail.com"}`, 'GET');
-            if(!response.OK) {
+            if(response.status !== 200) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
             const data = await response.json();
+
             setUserInfo(data);
+            console.log("user info:", data);
+
+            setSelectedTagsId(data["tags"].map(tag => tag["tag_id"]));
+            setUsername(data["user_name"]);
+            setIsSelectedEn(data["language"] === 'en');
+            setSelectedAvatarId(data["avatar"]);
+            setIsLoading(false);
         } catch (error) {
-            console.error('Failed to fetch group members:', error);
+            console.error('Failed to fetch user info:', error);
         }
       };
 
@@ -87,9 +95,8 @@ function Profile() {
   }, []);
 
   const handleSubmit = async () => {
-
     try {
-      console.log({
+      console.log("submitted info:", {
         user_name: username,
         tags: selectedTagsId,
         avatar: selectedAvatarId,
@@ -112,6 +119,7 @@ function Profile() {
         user_name: data.user_name,
       };
       sessionStorage.setItem('user', JSON.stringify(updatedUserData));
+      sessionStorage.setItem('avatar', selectedAvatarId);
       localStorage.setItem('language', data.language);
       alert(language === 'en' ? 'Successfully updated user info:)' : '成功更新使用者資料')
       window.location.reload();
@@ -124,6 +132,7 @@ function Profile() {
 
   return (
     <div className={style.main}>
+      <Loader isLoading={isLoading} />
       <div className={style.container}>
           <div className={style.row}>
             <div className={style.title}>
@@ -171,7 +180,9 @@ function Profile() {
                             tagId={tagId}
                             text={allTagsMapping.find(tag => tag["tag_id"] === tagId)[`tag_name_${language}`]}
                             inSearchbox={true}
-                            removeFromSearch={() => setSelectedTagsId(selectedTagsId.filter(t => t !== tagId))}
+                            removeFromSearch={() => {
+                              console.log("selected tagsid: " + selectedTagsId);
+                              setSelectedTagsId(selectedTagsId.filter(t => t !== tagId))}}
                         />)
                 }
                 <div className={style.smallbtn} onClick={() => setIsTagDropdownOpen(!isTagDropdownOpen)}>
