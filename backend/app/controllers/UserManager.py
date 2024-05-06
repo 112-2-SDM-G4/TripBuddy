@@ -123,6 +123,7 @@ class SetUserInfo(Resource):
             user.questionnaire = True
 
         if tags:
+            RelationUserTag.delete_by_user(user.user_id)
             for t_id in tags:
                 new_relation_user_tag = RelationUserTag(
                     user_id = user.user_id,

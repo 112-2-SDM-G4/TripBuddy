@@ -19,3 +19,11 @@ class RelationUserTag(db.Model):
     @staticmethod
     def get_by_user_id(user_id):
         return RelationUserTag.query.filter_by(user_id=user_id).all()
+    
+    @staticmethod
+    def delete_by_user(user_id):
+        relation_user_tag = RelationUserTag.query.filter_by(user_id=user_id).all()
+        for i in relation_user_tag:
+            db.session.delete(i)
+        db.session.commit()
+        return relation_user_tag
