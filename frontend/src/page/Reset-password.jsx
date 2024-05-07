@@ -114,7 +114,7 @@ const PasswordResetPage = () => {
                 <h2>Reset Your Password</h2>
                 <form onSubmit={handleSubmit} className={style.resetForm}>
                     <div className={style.logoContainer}>
-                        <img className={style.logo} src="../../logo.svg" alt="TourBuddy" />
+                        <img className={style.logo} src="../../logo.png" alt="TourBuddy" />
                     </div>
                     {error && <div className={style.errorMessage}>{error}</div>}
                     <InputText

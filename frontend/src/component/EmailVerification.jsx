@@ -99,7 +99,7 @@ const EmailVerification = ({ email, hashed_password, salt }) => {
                 ) : (
                     <>
                         <div className={style.logoContainer}>
-                            <img src="../../logo.svg" alt="TripBuddy" />
+                            <img className={style.logo} src="../../logo.png" alt="TripBuddy" />
                         </div>
                         <h2>Your registration is almost done!</h2>
                         <div className={style.description}>

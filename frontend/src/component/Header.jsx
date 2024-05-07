@@ -58,7 +58,7 @@ function Header() {
     <div className={style.main} onClick={(e) => {
           setIsDropdownOpen(false);
         }}>
-        <div className={style.title}>TripBuddy</div>
+        <img src="../../logoTitle.png" alt="TripBuddy" />
         {windowSize.width > constants.MOBILE_SCREEN_WIDTH && <NavbarItems />}
 
         <div className={style.switchcontainer}>
