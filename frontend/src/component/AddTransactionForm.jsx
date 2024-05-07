@@ -90,6 +90,12 @@ const AddTransactionForm = ({ toggleForm, trip_id, refetchData, standard }) => {
             return;
         }
 
+        
+        if (payees.length === 0) {
+            setError("Please select at least one payee.");
+            return;
+        }
+
         try {
             const payload = {
                 schedule_id: trip_id,
