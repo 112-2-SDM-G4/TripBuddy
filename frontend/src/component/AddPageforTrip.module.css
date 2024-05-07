@@ -8,6 +8,8 @@
     flex-direction: column;
     gap: 1rem;
     overflow-y: scroll;
+    width: 70vw;
+    max-width: 40rem;
     max-height: calc(100dvh - 13rem);
     padding-bottom: 2rem;
 }

@@ -18,6 +18,7 @@ export default function ShareModal({ close }) {
             title: "公開行程",
             intro: "簡單介紹你的行程",
             send: "分享",
+            back: "取消",
             tag: "標籤選擇",
             success:
                 "成功分享！你的行程現已公開，任何人都可以查看。快來探索吧！",
@@ -26,6 +27,7 @@ export default function ShareModal({ close }) {
             title: "Share Trip",
             intro: "Briefly introduce your trip",
             send: "Share",
+            back: "Not to share",
             tag: "Tag selection",
             success:
                 "Shared successfully! Your itinerary is now public for everyone to see. Start exploring!",
@@ -115,7 +117,7 @@ export default function ShareModal({ close }) {
                 <InputText
                     propmt={words[language]["intro"]}
                     name={"intro"}
-                    setting={{ require: true, width: "100%" }}
+                    setting={{ require: true, width: "100%", height: "6rem" }}
                     onChange={setContent}
                 />
                 <div className={style.sharedropdown}>
@@ -159,14 +161,27 @@ export default function ShareModal({ close }) {
                         }}
                     />
                 </div>
-
-                <Button
-                    txt={words[language]["send"]}
-                    func={() => {
-                        shareTrip(selectedTag, content, true);
+                <div
+                    style={{
+                        display: "flex",
+                        justifyContent: "space-around",
                     }}
-                    setting={{ width: "100%" }}
-                />
+                >
+                    <Button
+                        txt={words[language]["back"]}
+                        func={() => {
+                            shareTrip(selectedTag, content, false);
+                        }}
+                        setting={{ width: "45%" }}
+                    />
+                    <Button
+                        txt={words[language]["send"]}
+                        func={() => {
+                            shareTrip(selectedTag, content, true);
+                        }}
+                        setting={{ width: "45%" }}
+                    />
+                </div>
             </div>
         </Modal>
     );

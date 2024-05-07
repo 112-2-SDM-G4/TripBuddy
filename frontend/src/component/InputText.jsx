@@ -9,18 +9,18 @@ const InputText = ({ propmt, name, setting = {}, onChange, onBlur }) => {
         width = "100%",
         defaultValue = "",
         min = 0,
-        readOnly = false
+        readOnly = false,
     } = setting;
     const inputtxt = useRef(null);
     const [inputValue, setInputValue] = useState(defaultValue);
     const handleChange = (event) => {
         const newValue = event.target.value;
-        if (type === 'number') {
+        if (type === "number") {
             if (newValue < min) {
                 return;
             }
-            if (newValue.includes('.')) {
-                const parts = newValue.split('.');
+            if (newValue.includes(".")) {
+                const parts = newValue.split(".");
                 if (parts[1].length > 2) {
                     return;
                 }

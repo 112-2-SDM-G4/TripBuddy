@@ -12,6 +12,7 @@ import SpotSearchBox from "../component/SpotSearchBox";
 import Ledger from "../component/Ledger";
 import SpotCard from "../component/SpotCard";
 import Dropdown from "../component/EditPage/DropDown";
+import ViewSpot from "../component/EditPage/ViewSpot";
 
 import { useLanguage } from "../hooks/useLanguage";
 import { useAuth } from "../hooks/useAuth";
@@ -636,7 +637,6 @@ function EditPage({ tripinfo, language, refreshTrip }) {
                     close={() => setOpenWallet(false)}
                     schedule_id={tripinfo["id"]}
                     standard={tripinfo["standard"]}
-                
                 />
             </div>
         </div>
@@ -655,6 +655,7 @@ const Explore = ({ refreshTrip, location, close, startSearch }) => {
     const { language } = useLanguage();
     const [isLoading, setIsLoading] = useState(false);
     const [spots, setSpots] = useState([]);
+    const [detailSpot, setDetailSpot] = useState("");
 
     useEffect(() => {
         if (!startSearch) {
@@ -705,6 +706,12 @@ const Explore = ({ refreshTrip, location, close, startSearch }) => {
     return (
         <div className={style.container}>
             <Loader isLoading={isLoading} />
+            {detailSpot !== "" && (
+                <ViewSpot
+                    spotid={detailSpot}
+                    closeModal={() => setDetailSpot("")}
+                ></ViewSpot>
+            )}
             <div className={`${style.title} ${style.exploretitle}`}>
                 <IoChevronBack
                     className={`${style.backbt}`}
@@ -725,6 +732,9 @@ const Explore = ({ refreshTrip, location, close, startSearch }) => {
                         spotId={spot["place_id"]}
                         spotData={spot}
                         refreshTrip={refreshTrip}
+                        onClick={() => {
+                            setDetailSpot(spot["place_id"]);
+                        }}
                     />
                 ))}
             </div>

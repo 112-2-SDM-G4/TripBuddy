@@ -3,17 +3,16 @@ import React, { useEffect, useState } from "react";
 import style from "./ViewSpot.module.css";
 import { FaMapMarkedAlt } from "react-icons/fa";
 import { TiStarFullOutline } from "react-icons/ti";
-import { useParams } from "react-router";
 
-import { useLanguage } from "../hooks/useLanguage";
-import { fetchWithJwt } from "../hooks/fetchWithJwt";
+import { useLanguage } from "../../hooks/useLanguage";
+import { fetchWithJwt } from "../../hooks/fetchWithJwt";
 
-import Button from "../component/Button";
-import AddPageforTrip from "../component/AddPageforTrip";
-import Loader from "../component/Loader";
+import Button from "../Button";
+import AddPageforTrip from "../AddPageforTrip";
+import Loader from "../Loader";
+import Modal from "../Modal";
 
-
-const ViewSpot = () => {
+const ViewSpot = ({ spotid, closeModal }) => {
     const words = {
         zh: {
             rate: "評分:",
@@ -32,15 +31,17 @@ const ViewSpot = () => {
             summary: "Summary:",
         },
     };
-    
-    const { id } = useParams();
+
     const { language } = useLanguage();
     const [addPage, showAddPage] = useState(false);
     const [spot, setSpot] = useState({});
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        fetchWithJwt(`/api/v1/place/detail?place_id=${id}&language=${language}`, "GET")
+        fetchWithJwt(
+            `/api/v1/place/detail?place_id=${spotid}&language=${language}`,
+            "GET"
+        )
             .then(function (response) {
                 return response.json();
             })
@@ -50,7 +51,7 @@ const ViewSpot = () => {
                 setSpot(result["result"]);
             });
         return () => {};
-    }, [id]);
+    }, [spotid]);
 
     const handleRedirect = () => {
         window.open(spot["google_map_uri"], "_blank", "noreferrer");
@@ -58,7 +59,7 @@ const ViewSpot = () => {
     };
 
     return (
-        <>
+        <Modal onClose={closeModal}>
             <Loader isLoading={isLoading} />
             {!isLoading && (
                 <div className={style.main}>
@@ -90,14 +91,20 @@ const ViewSpot = () => {
                                 </div>
 
                                 <div className={style.rating}>
-                                    <div className={style.ratingtext}>{spot["rating"]} </div>
+                                    <div className={style.ratingtext}>
+                                        {spot["rating"]}{" "}
+                                    </div>
                                     <div className={style.item}>
-                                        <TiStarFullOutline 
+                                        <TiStarFullOutline
                                             size={17}
-                                            style={{ fill: "var(--secondarycolor)" }}
+                                            style={{
+                                                fill: "var(--secondarycolor)",
+                                            }}
                                         />
                                     </div>
-                                    <div className={style.item}>{"(" + spot["user_rating_count"] + ")"}</div>
+                                    <div className={style.item}>
+                                        {"(" + spot["user_rating_count"] + ")"}
+                                    </div>
                                 </div>
                             </div>
                             <div className={style.row}>
@@ -108,21 +115,26 @@ const ViewSpot = () => {
                             </div>
                             <div className={style.row}>
                                 <div className={style.rowname}>
-                                    {words[language]["summary"]}
-                                </div>
-                                {spot["summary"]}
-                            </div>
-                            <div className={style.row}>
-                                <div className={style.rowname}>
                                     {words[language]["open"]}
                                 </div>
                                 <div className={style.openhrblock}>
-                                    {spot["regular_opening_hours"]?.map (
+                                    {spot["regular_opening_hours"]?.map(
                                         (openday, index) => {
                                             return (
-                                                <div key={"zh" + index} className={style.openhrrow}>
-                                                    <div>{openday.split(":")[0]}</div>
-                                                    <div>{openday.split(/:(.*)/s)[1]}</div>
+                                                <div
+                                                    key={"zh" + index}
+                                                    className={style.openhrrow}
+                                                >
+                                                    <div>
+                                                        {openday.split(":")[0]}
+                                                    </div>
+                                                    <div>
+                                                        {
+                                                            openday.split(
+                                                                /:(.*)/s
+                                                            )[1]
+                                                        }
+                                                    </div>
                                                 </div>
                                             );
                                         }
@@ -139,7 +151,7 @@ const ViewSpot = () => {
                     </div>
                 </div>
             )}
-        </>
+        </Modal>
     );
 };
 
