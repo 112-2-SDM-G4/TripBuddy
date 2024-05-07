@@ -1,12 +1,9 @@
 .memberContainer {
     display: flex;
-    /* flex-wrap: wrap; */
-    
-    padding: 1rem;
-    /* border-radius: 1rem;
-    background-color: color-mix(in srgb, var(--fieldcolor) 45%, transparent);
-    border: 0.05rem solid color-mix(in srgb, var(--fontcolor) 45%, transparent); */
+    align-items: center;
+    flex-wrap: wrap;
 }
+
 
 .memberButton {
     display: flex;
@@ -15,14 +12,13 @@
     justify-content: center;
     width: 5rem;
     height: 5rem;
-    
     border: none;
     border-radius: 1rem;
     background-size: cover;
     background-position: center;
-    /* box-shadow: 0 0.1rem 0.2rem color-mix(in srgb, var(--fontcolor) 25%, transparent);; */
     cursor: pointer;
     transition: transform 0.3s ease;
+    margin: 0.5rem;
 }
 
 .memberButton:hover, .memberButton:focus {
@@ -32,20 +28,23 @@
 
 .memberName {
     margin-top: 0.2rem;
-    font-size: 1rem;
+    font-size: 0.8rem;
     color: var(--fontcolor);
-    text-align: right;
+    text-align: center;
 }
 
+.avatar {
+    width: 2rem;
+    height: 2rem;
+}
 .selected {
-    background-color: color-mix(in srgb, var(--primarycolor) 25%, transparent);;  /* 淡蓝色背景 */
+    background-color: color-mix(in srgb, var(--primarycolor) 25%, transparent);
     border: 2px solid color-mix(in srgb, var(--primarycolor) 50%, transparent);
 }
 
 @media (max-width: 1070px) {
-    .memberContainer {
-        
-    flex-wrap: wrap;
-        
+    .memberContainer {  
+        flex-wrap: wrap;
     }
+
 }

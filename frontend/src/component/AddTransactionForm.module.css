@@ -1,6 +1,4 @@
-.main {
-    /* min-height: 100vh; */
-}
+
 
 .centerBlock {
     display: flex;
@@ -42,20 +40,30 @@
     transition: background-color 0.3s;
 }
 
-.currencyButton:hover {
-    background-color: color-mix(in srgb, var(--accentcolor) 70%, transparent);;
+.currencySelect {
+    display: block; 
+    position: absolute; 
+    width: 100%;
+    border: 0.05rem solid color-mix(in srgb, var(--fontcolor) 45%, transparent);
+    border-radius: 0.2rem; 
+    background-color: var(--fieldcolor); 
+    z-index: 10;
+    max-height: 20rem; 
+    overflow-y: auto; 
 }
 
-.currencySelect {
-    position: inherit;
-    left: 0;
-    right: 0;
-    border: 0.05rem solid color-mix(in srgb, var(--fontcolor) 45%, transparent);;
-    z-index: 10;
-    background-color: var(--fieldcolor);
-    box-shadow: 0rem 0.5rem 1rem
-        color-mix(in srgb, var(--fontcolor) 15%, transparent);
+
+.currencySelect option {
+    padding: 0.5rem 1rem; 
+    cursor: pointer;
 }
+
+
+.currencySelect option:hover,
+.currencySelect option:focus {
+    background-color: color-mix(in srgb, var(--accentcolor) 15%, transparent); 
+}
+
 
 .amountWrapper {
     flex-grow: 1;
@@ -72,7 +80,7 @@
 }
 
 .errorMessage {
-    color: red;
+    color: var(--color-for-red);
     font-size: 0.9rem;
 }
 

@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import style from './TransactionItem.module.css';  // Assume you have CSS for styling
 import CountryData from "../assets/Country.json";
-import TransactionDetail from './TransactionDetail';
 
 const CashIcon = () => {
     return (
@@ -27,19 +26,19 @@ const findCurrencySymbol = (currency) => {
 };
 
 
-
-
-const TransactionItem = ({ transaction_id, date, currentUser, currency, item_name, payer, payees, amount }) => {
+const TransactionItem = ({ transaction_id, date, currentUser, currency, item_name, payer, payees, amount, onClick }) => {
+    
     let amountText, amountValue, amountColor = style.amountGray;
-    const [showDetail, setShowDetail] = useState(false);
+    
     const symbol = findCurrencySymbol(currency);
+
     if (payer === currentUser) {
         const totalLent = payees.reduce((acc, payee) => acc + (payee.payee_name === currentUser ? 0 : payee.borrowed_amount), 0);
         amountColor = style.amountGreen; // Green if current user paid
         amountText = "You lent";
-        
         amountValue = `${symbol}${totalLent}`;
-    } else {
+    } 
+    else {
         const currentUserPayee = payees.find(payee => payee.payee_name === currentUser);
         if (currentUserPayee) {
             amountColor = style.amountRed; // Red if current user needs to pay
@@ -51,25 +50,13 @@ const TransactionItem = ({ transaction_id, date, currentUser, currency, item_nam
         }
     }
 
-    const toggleDetail = () => {
-        setShowDetail(!showDetail);
-    };
+    
 
     return (
         <>
-            {showDetail &&
-                <TransactionDetail 
-                    transactionId={transaction_id}  // Assume transactionId is passed instead of key
-                    date={date}
-                    currentUser={currentUser}
-                    currency={currency}
-                    item_name={item_name}
-                    payer={payer}
-                    payees={payees}
-                    amount={amount}
-                />}
-            {!showDetail &&
-            <div className={`${style.transactionItem} ${showDetail ? style.activeItem : ''}`} onClick={toggleDetail}>
+            
+            
+            <div className={style.transactionItem} onClick={() => onClick()}>
                 <div className={style.date}>{date}</div>
                 <CashIcon />
                 <div className={style.details}>
@@ -82,7 +69,7 @@ const TransactionItem = ({ transaction_id, date, currentUser, currency, item_nam
                         <div className={style.amountValue}>{amountValue}</div>
                     </div>
                 </div>
-            </div>}
+            </div>
         </>
     );
 };

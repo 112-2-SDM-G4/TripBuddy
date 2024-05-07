@@ -123,7 +123,7 @@ const LoginForm = () => {
             <div className={style.logoContainer}>
                 <img
                     className={style.logo}
-                    src="../../logo.svg"
+                    src="../../logo.png"
                     alt="TourBuddy"
                 />
             </div>
@@ -259,10 +259,10 @@ const SignupForm = ({ onSignupSuccess }) => {
     return (
         <form onSubmit={handleSubmit} className={style.form}>
             <div className={style.logoContainer}>
-                {/* You will replace 'logo.svg' with your actual logo */}
+                {/* You will replace 'logo.png' with your actual logo */}
                 <img
                     className={style.logo}
-                    src="../../logo.svg"
+                    src="../../logo.png"
                     alt="TourBuddy"
                 />
             </div>

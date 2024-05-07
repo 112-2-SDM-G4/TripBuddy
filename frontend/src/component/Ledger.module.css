@@ -66,11 +66,11 @@
 }
 
 .owe {
-    color: red;
+    color: var(--color-for-red);
 }
 
 .owed {
-    color: green;
+    color: var(--color-for-green);
 }
 
 @keyframes fadeIn {
@@ -109,5 +109,8 @@
     }
     .centerBlock {
         margin-bottom: 4rem;
+    }
+    .transactionField{
+        width: fit-content;
     }
 }

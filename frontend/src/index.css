@@ -41,6 +41,8 @@ body {
     --backgroundcolor: #464646;
     --fontcolor: #e2efe7;
     --fieldcolor: #486160;
+    --color-for-red: #ff6e58;
+    --color-for-green: rgb(0, 204, 0);
 }
 .App[theme="light"] {
     --accentcolor: #e26c5a;
@@ -49,6 +51,8 @@ body {
     --backgroundcolor: #eae8e1;
     --fontcolor: #050003;
     --fieldcolor: white;
+    --color-for-red: #dc371d;
+    --color-for-green: green;
 }
 
 ::-webkit-scrollbar {

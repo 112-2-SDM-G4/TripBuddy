@@ -282,7 +282,7 @@ const ProfileSetup = () => {
             <h2>Welcome to TripBuddy!</h2>
             <p className={style.introText}>Your profile is all set up. Start exploring now!</p>
             <div className={style.logoContainer}>
-              <img className={style.logo} src="../../logo.svg" alt="TourBuddy" />
+              <img className={style.logo} src="../../logo.png" alt="TourBuddy" />
             </div>
             <div className={style.pageButtons}>
               <Button

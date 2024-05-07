@@ -21,18 +21,18 @@ const SplitDetailsForm = ({ payeesData, totalAmount, onDetailsSubmit, splitType,
                 ...payee,
                 isSelected: idx === index ? !payee.isSelected : payee.isSelected
             }));
-    
+
             if (type === 'equally') {
                 setTimeout(() => calculateEqually(updatedPayees), 0);
             }
-    
+
             return updatedPayees;
         });
     };
 
-    const handlePayeeChange = ( index, field, value) => {
-         
-        
+    const handlePayeeChange = (index, field, value) => {
+
+
         if (type === 'unequally') {
             if (value.includes('.')) {
                 const parts = value.split('.');
@@ -60,13 +60,13 @@ const SplitDetailsForm = ({ payeesData, totalAmount, onDetailsSubmit, splitType,
     };
 
     const handleTabClick = (event, newType) => {
-        event.preventDefault();  
+        event.preventDefault();
         setType(newType);
-        
+
         if (newType === 'equally') {
             calculateEqually(payees);
         }
-        
+
         setError('');
     };
 
@@ -74,13 +74,20 @@ const SplitDetailsForm = ({ payeesData, totalAmount, onDetailsSubmit, splitType,
 
     const onDetailsSubmitModified = (event) => {
         event.preventDefault();
-        
+
         // Ensure all selected payees have a valid amount
         const incompletePayees = payees.filter(p => p.isSelected && (!p.amount || parseFloat(p.amount) === 0));
         if (incompletePayees.length > 0) {
             setError("Please enter an amount for all selected payees.");
             return;
         }
+
+        const selectedPayees = payees.filter(p => p.isSelected);
+        if (selectedPayees.length === 0) {
+            setError("Please select at least one payee.");
+            return;
+        }
+
 
         if (type === 'unequally') {
             const totalCalculated = payees.filter(p => p.isSelected).reduce((acc, curr) => acc + parseFloat(curr.amount || 0), 0);
@@ -89,9 +96,9 @@ const SplitDetailsForm = ({ payeesData, totalAmount, onDetailsSubmit, splitType,
                 return;
             }
         }
-        
+
         setError("");
-        onDetailsSubmit(payees.filter(p => p.isSelected), type);
+        onDetailsSubmit(payees, type);
     };
 
     return (

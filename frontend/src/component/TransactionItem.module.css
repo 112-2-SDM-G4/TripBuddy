@@ -20,7 +20,7 @@
     padding-left: 0.7rem;
     padding-right: 0.7rem;
     display: flex;
-    justify-content: space-between; /* Space out content between start and end */
+    justify-content: space-between;
     align-items: center;
 }
 
@@ -35,7 +35,7 @@
 }
 
 .cashIcon {
-    width: 1.8rem; /* Icon size */
+    width: 1.8rem;
     height: 1.8rem;
     margin: 0.8rem;
     fill: var(--fontcolor);
@@ -59,23 +59,62 @@
 
 .amountValue {
     font-size: 1.2rem;
-    font-weight: bold; /* Larger and bolder text for the amount */
+    font-weight: bold;
 }
 
 .amountRed .amountValue,
 .amountRed .amountDescription {
-    color: red; /* Red color for money borrowed */
+    color: var(--color-for-red);
 }
 
 .amountGreen .amountValue,
-.amountGreen .amountDescription{
-    color: green; /* Green color for money lent */
+.amountGreen .amountDescription {
+    color: var(--color-for-green);
 }
 
 .amountGray .amountValue,
 .amountGray .amountDescription {
-    color: color-mix(in srgb, var(--fontcolor) 50%, transparent);; /* Gray color for not involved */
+    color: color-mix(in srgb, var(--fontcolor) 50%, transparent);
 }
 
 
+@media (max-width: 1000px) {
+    .paidBy {
+        width: 8rem;
+    }
+}
 
+@media (max-width: 600px) {
+
+    .cashIcon {
+        
+        width: 1.5rem;
+        height: 1.5rem;
+     
+    }
+
+    .amount {
+        
+        margin-left: 0;
+    }
+
+    .amountValue {
+        font-size: 1rem;
+    }
+
+    .paidBy {
+        width: 6rem;
+        font-size: 0.7rem; 
+        overflow: hidden;
+        text-overflow: ellipsis; 
+        white-space: nowrap;
+    }
+
+}
+
+
+@media (max-width: 400px) {
+    .cashIcon {
+        width: 0;
+    }
+}

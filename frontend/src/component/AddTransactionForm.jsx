@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import style from "./AddTransactionForm.module.css";
 import Button from "../component/Button";
 import InputText from "../component/InputText";
@@ -9,13 +9,14 @@ import { useLanguage } from "../hooks/useLanguage";
 import CountryData from "../assets/Country.json";
 import { fetchWithJwt } from '../hooks/fetchWithJwt';
 
-const AddTransactionForm = ({ toggleForm, trip_id, refetchData }) => {
+const AddTransactionForm = ({ toggleForm, trip_id, refetchData, standard }) => {
     const { language } = useLanguage();
     const [description, setDescription] = useState('');
     const [amount, setAmount] = useState(0);
     const [error, setError] = useState('');
-    const [currency, setCurrency] = useState(CountryData.places[0].money.en);
-    const [symbol, setSymbol] = useState(CountryData.places[0].money.symbol);
+    const [currency, setCurrency] = useState(standard);
+    const selectedCurrency = CountryData.places.find(place => place.money.en === standard);
+    const [symbol, setSymbol] = useState(selectedCurrency.money.symbol);
     const [payer, setPayer] = useState('you');
     const [payees, setPayees] = useState([]);
     const [groupMembers, setGroupMembers] = useState([]);
@@ -24,10 +25,22 @@ const AddTransactionForm = ({ toggleForm, trip_id, refetchData }) => {
     const [showMemberSelector, setShowMemberSelector] = useState(false);
     const [showCustomSplit, setShowCustomSplit] = useState(false);
     const [currentPayees, setCurrentPayees] = useState([]);
+    const dropdownRef = useRef(null);
 
 
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setShowDropdown(false);
+            }
+        };
 
+        document.addEventListener('mousedown', handleClickOutside);
 
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
 
     useEffect(() => {
         const fetchGroupMembers = async () => {
@@ -77,6 +90,12 @@ const AddTransactionForm = ({ toggleForm, trip_id, refetchData }) => {
             return;
         }
 
+        
+        if (payees.length === 0) {
+            setError("Please select at least one payee.");
+            return;
+        }
+
         try {
             const payload = {
                 schedule_id: trip_id,
@@ -105,6 +124,7 @@ const AddTransactionForm = ({ toggleForm, trip_id, refetchData }) => {
 
 
     const handleCurrencyChange = (event) => {
+        event.preventDefault();
         const selectedCurrency = CountryData.places.find(place => place.money.en === event.target.value);
         setCurrency(selectedCurrency.money.en);
         setSymbol(selectedCurrency.money.symbol);
@@ -178,6 +198,7 @@ const AddTransactionForm = ({ toggleForm, trip_id, refetchData }) => {
                             </button>
                             {showDropdown && (
                                 <select
+                                    ref={dropdownRef}
                                     value={currency}
                                     onChange={handleCurrencyChange}
                                     className={style.currencySelect}
@@ -185,7 +206,7 @@ const AddTransactionForm = ({ toggleForm, trip_id, refetchData }) => {
                                     size={CountryData.places.length}  // This makes it act like a dropdown
                                 >
                                     {CountryData.places.map((place, index) => (
-                                        <option key={index} value={place.money.en}>
+                                        <option key={index} value={place.money.en} >
                                             {place.country[language]} ({place.money.symbol})
                                         </option>
                                     ))}
@@ -229,7 +250,6 @@ const AddTransactionForm = ({ toggleForm, trip_id, refetchData }) => {
                                     <div className={style.select}>
                                         <GroupMemberInfo
                                             trip_member_info={groupMembers}
-                                            description={'Payer'}
                                             isButton={true}
                                             onSelect={handlePayerSelection}
                                         />

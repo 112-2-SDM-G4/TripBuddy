@@ -61,7 +61,7 @@
 }
 
 .errorMessage {
-    color: red;
+    color: var(--color-for-red);
     font-size: 0.9rem;
     margin: 0.8rem 0;
 }

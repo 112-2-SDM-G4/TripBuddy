@@ -72,7 +72,7 @@ const Reset = () => {
                 </button>
                 <form className={style.form}>
                     <div className={style.logoContainer}>
-                        <img className={style.logo} src="../../logo.svg" alt="TourBuddy" />
+                        <img className={style.logo} src="../../logo.png" alt="TourBuddy" />
                     </div>
                     <div className={style.alert}>
                         <p className={style.text}>
