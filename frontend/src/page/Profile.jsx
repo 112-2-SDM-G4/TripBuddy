@@ -143,10 +143,10 @@ function Profile() {
                 return (
                   <img 
                     key={avatar}
-                    className={`${style.img} ${(selectedAvatarId === index) && style.imgwithcolor}`} 
+                    className={`${style.img} ${(selectedAvatarId === index + 1) && style.imgwithcolor}`} 
                     src={avatar}
                     alt={avatar}
-                    onClick={() => setSelectedAvatarId(index)}
+                    onClick={() => setSelectedAvatarId(index + 1)}
                   />
                 )
               })}
