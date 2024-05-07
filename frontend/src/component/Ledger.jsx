@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { useParams } from "react-router-dom";
 import style from "./Ledger.module.css";
 import TransactionsList from './TransactionsList';
 import AddTransactionForm from './AddTransactionForm';
@@ -21,6 +22,8 @@ const Ledger = ({ close, schedule_id, standard }) => {
     const [showAddForm, setShowAddForm] = useState(false);
     const [formAnimationClass, setFormAnimationClass] = useState('');
 
+    const { id } = useParams(); 
+
 
     // Refetching function that can be called on demand
     const refetchData = useCallback(async () => {
@@ -28,6 +31,7 @@ const Ledger = ({ close, schedule_id, standard }) => {
             const response = await fetchWithJwt(`/api/v1/ledger/manage_transaction?schedule_id=${schedule_id}`, 'GET');
             if (response.ok) {
                 const data = await response.json();
+                console.log('Detail cost: ', data.records);
                 setTransactions(data.records);
             }
         };
@@ -39,7 +43,7 @@ const Ledger = ({ close, schedule_id, standard }) => {
                 setTotalCost(data.total_cost);
                 setCurrency(data.standard);
                 setCheckBalance(data.result);
-                console.log(checkBalance);
+                console.log("Balance:", data.result);
             }
         };
         if (schedule_id) {
@@ -71,6 +75,24 @@ const Ledger = ({ close, schedule_id, standard }) => {
         }
     };
 
+
+    const handleDeleteTransaction = async (transactionId) => {
+        try {
+            const response = await fetchWithJwt('/api/v1/ledger/manage_transaction', 'DELETE',{
+                schedule_id: id,
+                transaction_id: transactionId
+            });
+            if (!response.ok) {
+                throw new Error('Failed to delete the transaction');
+            }
+            // Refetch transaction list after deletion to update the UI
+            await refetchData();
+            console.log('Transaction deleted successfully');
+        } catch (error) {
+            console.error('Error deleting transaction:', error);
+        }
+    };
+
     return (
         <div className={style.container}>
             {!showAddForm ? (
@@ -97,7 +119,12 @@ const Ledger = ({ close, schedule_id, standard }) => {
 
                         </ul>
                         <div className={style.transactionField}>
-                            <TransactionsList transactions={transactions} currentUser={currentUser} />
+                            <TransactionsList
+                                transactions={transactions}
+                                currentUser={currentUser}
+                                onDeleteTransaction={handleDeleteTransaction}
+                                findCurrencySymbol={findCurrencySymbol}
+                            />
                             <Button txt='Add a transaction' func={toggleAddForm} />
                         </div>
                     </div>

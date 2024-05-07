@@ -77,6 +77,13 @@
     color: color-mix(in srgb, var(--fontcolor) 50%, transparent);
 }
 
+
+@media (max-width: 1000px) {
+    .paidBy {
+        width: 8rem;
+    }
+}
+
 @media (max-width: 600px) {
 
     .cashIcon {

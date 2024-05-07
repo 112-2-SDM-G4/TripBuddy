@@ -111,6 +111,6 @@
         margin-bottom: 4rem;
     }
     .transactionField{
-        width: min-content;
+        width: fit-content;
     }
 }
