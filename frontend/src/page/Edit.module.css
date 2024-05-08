@@ -234,6 +234,10 @@ input[type="date"]::-webkit-calendar-picker-indicator {
         display: flex;
         justify-content: center;
     }
+    .hidepage{
+        height: 0;
+        overflow: hidden;
+    }
     .editpage {
         padding-top: 1.5rem;
     }

@@ -560,7 +560,7 @@ function EditPage({ tripinfo, language, refreshTrip }) {
 
     return (
         <div className={style.editpagecontainer}>
-            <div className={style.editpage}>
+            <div className={`${style.editpage} ${(openExplore||openWallet)?style.hidepage:null}`}>
                 <div className={`${style.editpageTitle}`}>
                     {tripinfo["name"]}
                     <div className={style.morebtcontianer}>
