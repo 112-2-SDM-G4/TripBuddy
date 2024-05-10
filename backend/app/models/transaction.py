@@ -23,6 +23,10 @@ class Transaction(db.Model):
         return Transaction.query.filter_by(schedule_id=schedule_id).all()
     
     @staticmethod
+    def get_by_id_schedule(id, schedule_id):
+        return Transaction.query.filter_by(transaction_id=id, schedule_id=schedule_id).first()
+    
+    @staticmethod
     def create(data):
         transaction = Transaction(
             schedule_id = data['schedule_id'],

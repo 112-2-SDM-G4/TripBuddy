@@ -72,8 +72,20 @@ class ManageTransaction(Resource):
     def delete(self):
         user_id = varify_user(get_jwt_identity())
 
+        schedule_id = request.get_json()['schedule_id']
+
+        if not Schedule.get_by_id(schedule_id):
+            return make_response({"message": "Schedule not found"}, 400)
+        
+        if not user_owns_schedule(user_id, schedule_id):
+            return make_response({"message": "User access forbidden"}, 403)
+
         """Delete transaction records"""
         transaction_id = request.get_json()['transaction_id']
+
+        if not Transaction.get_by_id_schedule(transaction_id, schedule_id):
+            return make_response({"message": "This transaction record does not belong to this schedule"}, 400)
+
         # delete from Relation_User_Transaction
         records = RelationUserTransaction.query.filter_by(transaction_id=transaction_id).all()
         for record in records:
