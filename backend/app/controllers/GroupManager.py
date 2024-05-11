@@ -8,13 +8,18 @@ from app.models.relation_spot_sch import RelationSpotSch
 from app.models.user import User
 from app.models.schedule import Schedule
 from app.models.create_db import db
+from app.controllers.utils import user_owns_schedule
 
 class SetGroupMember(Resource):
     @jwt_required()
     def post(self):
+        user_email = varify_user(get_jwt_identity())
         data = request.get_json()
         trip_id = data.get('trip_id', None)
         invited_id = data.get('invited_id', None)
+
+        if not user_owns_schedule(user_email, trip_id):
+            return make_response({'message': 'User access forbidden'}, 403)
 
         now_schdule = Schedule.get_by_id(trip_id)
         new_member = User.get_by_email(invited_id)
@@ -71,9 +76,12 @@ class SetGroupMember(Resource):
     def delete(self):
         data = request.get_json()
         user_email = get_jwt_identity()
-        # user_email = 'test@gmail.com'
+
         user = User.get_by_email(user_email)
         trip_id = data.get('trip_id', None)
+
+        if not user_owns_schedule(user_email, trip_id):
+            return make_response({'message': 'User access forbidden'}, 403)
 
         RelationUserSch.delete(user.user_id, trip_id)
 
