@@ -104,8 +104,14 @@ class SetGroupMember(Resource):
     
     @jwt_required()
     def get(self):
+        user_email = varify_user(get_jwt_identity())
         trip_id = request.args.get('trip_id')
+
+        if not user_owns_schedule(user_email, trip_id):
+            return make_response({'message': 'User access forbidden'}, 403)
+        
         schedule = RelationUserSch.get_by_schedule(trip_id)
+        
         user_ids = [user_id.user_id for user_id  in schedule]
 
         users = User.query.filter(User.user_id.in_(user_ids)).all()
