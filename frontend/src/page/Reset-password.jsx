@@ -6,6 +6,7 @@ import InputText from '../component/InputText'; // Adjust path as needed
 import InputCode from '../component/InputCode'; // Adjust path as needed
 import SHA256 from 'crypto-js/sha256';
 import { baseFetch } from "../hooks/baseFetch";
+import { useLanguage } from "../hooks/useLanguage";
 
 const PasswordResetPage = () => {
     const [email, setEmail] = useState('');
@@ -16,6 +17,35 @@ const PasswordResetPage = () => {
     const [isResetSuccessful, setIsResetSuccessful] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
+    const { language } = useLanguage();
+
+    const words = {
+        en: {
+            text : "You can now login with your new password.",
+            successfully: 'Password reset successfully!',
+            login: "Go to Login",
+            resetInfo: 'Reset Your Password',
+            email: 'E-mail',
+            password: 'New Password',
+            confirmPassword: 'Confirmed New Password',
+            resetCode: 'Reset Code',
+            submit: "Submit New Password",
+            updating: "Updating your info..."
+          
+        },
+        zh: {
+            text: "現在你可以使用你的新密碼來登入",
+            successfully: '密碼重設成功!',
+            login: '前往登入頁面',
+            resetInfo: '重置你的新密碼',
+            email: '電子信箱',
+            password: '新密碼',
+            confirmPassword: '確認新密碼',
+            resetCode: '重置驗證碼',
+            submit: "提交新密碼",
+            updating: "更新您的新資訊..."
+        }
+      }
 
     const generateSalt = (length = 10) => {
         const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -72,10 +102,7 @@ const PasswordResetPage = () => {
 
             });
             const data = await response.json();
-            // const data = {
-            //     "valid": true,
-            //     "message": "設置成功"
-            // }
+        
             if (data.valid) {
                 setIsResetSuccessful(true);
             } else {
@@ -96,13 +123,13 @@ const PasswordResetPage = () => {
                     <div className={style.logoContainer}>
                         <img src="../../circle-check.svg" alt="Success" />
                     </div>
-                    <h2>Password reset successfully!</h2>
+                    <h2>{words[language]['successfully']}</h2>
                     <div className={style.description}>
                         <p className={style.text}>
-                            You can now login with your new password.
+                            {words[language]['text']}
                         </p>
                     </div>
-                    <Button txt="Go to Login" func={() => navigate("/login")} />
+                    <Button txt={words[language]['login']} func={() => navigate("/login")} />
                 </div>
             </div>
         );
@@ -111,28 +138,28 @@ const PasswordResetPage = () => {
     return (
         <div className={style.main}>
             <div className={style.resetContainer}>
-                <h2>Reset Your Password</h2>
+                <h2>{words[language]['resetInfo']}</h2>
                 <form onSubmit={handleSubmit} className={style.resetForm}>
                     <div className={style.logoContainer}>
                         <img className={style.logo} src="../../logo.png" alt="TourBuddy" />
                     </div>
                     {error && <div className={style.errorMessage}>{error}</div>}
                     <InputText
-                        propmt={"Email"}
+                        propmt={words[language]['email']}
                         name={"email"}
                         setting={{ require: true, type: 'email' }}
                         value={email}
                         onChange={setEmail}
                     />
                     <InputText
-                        propmt={"New Password"}
+                        propmt={words[language]['password']}
                         name={"password"}
                         setting={{ require: true, type: 'password' }}
                         value={password}
                         onChange={setPassword}
                     />
                     <InputText
-                        propmt={"Confirm New Password"}
+                        propmt={words[language]['confirmPassword']}
                         name={"confirmPassword"}
                         setting={{ require: true, type: 'password' }}
                         value={confirmPassword}
@@ -141,7 +168,7 @@ const PasswordResetPage = () => {
                     <div className={style.inputCode}>
                         <InputCode
                             length={6}
-                            label="Reset Code"
+                            label={words[language]['resetCode']}
                             // loading={loading}
                             value={code}
                             onChange={handleCodeChange}
@@ -149,7 +176,7 @@ const PasswordResetPage = () => {
                         />
                     </div>
                     <Button
-                        txt={!isLoading ? "Submit New Password" : <span className={style.loadingEffect}>Updating Your Info...</span>}
+                        txt={!isLoading ? words[language]['submit'] : <span className={style.loadingEffect}>{words[language]['updating']}</span>}
                         setting={{ type: "submit", disabled: isLoading }}
                     // Add additional props if needed to pass className
                     />

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useLanguage } from "../hooks/useLanguage";
 import style from "./Login.module.css";
 import Button from "../component/Button";
 import InputText from "../component/InputText";
@@ -14,6 +15,20 @@ const Login = () => {
     const [password, setPassword] = useState("");
     const [salt, setSalt] = useState("");
     const [isSignupSuccess, setIsSignupSuccess] = useState(false);
+    const { language } = useLanguage();
+
+    const words = {
+        en: {
+            login: 'Login',
+            signup: 'Signup'
+          
+        },
+        zh: {
+            login: '登入',
+            signup: '註冊'
+          
+        }
+      }
 
     const handleTabClick = (tab) => {
         setActiveTab(tab);
@@ -40,7 +55,7 @@ const Login = () => {
                                     activeTab === "login" ? style.active : ""
                                 }
                             >
-                                Login
+                                {words[language]['login']}
                             </button>
                             <button
                                 onClick={() => handleTabClick("signup")}
@@ -48,12 +63,12 @@ const Login = () => {
                                     activeTab === "signup" ? style.active : ""
                                 }
                             >
-                                Signup
+                                {words[language]['signup']}
                             </button>
                         </div>
-                        {activeTab === "login" && <LoginForm />}
+                        {activeTab === "login" && <LoginForm language={language}/>}
                         {activeTab === "signup" && (
-                            <SignupForm onSignupSuccess={handleSignupSuccess} />
+                            <SignupForm onSignupSuccess={handleSignupSuccess} language={language}/>
                         )}
                     </div>
                 </>
@@ -64,19 +79,39 @@ const Login = () => {
                     email={email}
                     hashed_password={password}
                     salt={salt}
+                    language={language}
                 />
             )}
         </div>
     );
 };
 
-const LoginForm = () => {
+const LoginForm = ({ language }) => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [salt, setSalt] = useState("");
     const [error, setError] = useState(""); // State to store error messages
     const navigate = useNavigate();
     const { login } = useAuth();
+
+    const words = {
+        en: {
+            email: 'E-mail',
+            password: 'Password',
+            signin: 'Sign In',
+            forget_password: 'Forget Password?',
+            third_party_login: 'or you can login with'
+          
+        },
+        zh: {
+            email: '電子信箱',
+            password: '密碼',
+            signin: '登入',
+            forget_password: '忘記密碼了?',
+            third_party_login: '或是用以下方式登入'
+          
+        }
+      }
 
     const handleEmailBlur = async () => {
         setError(""); // Reset error message
@@ -132,7 +167,7 @@ const LoginForm = () => {
             </div>
             <div className={style.inputGroup}>
                 <InputText
-                    propmt={"E-mail"}
+                    propmt={words[language]["email"]}
                     name={"email"}
                     setting={{ require: true, type: "email" }}
                     value={email}
@@ -141,7 +176,7 @@ const LoginForm = () => {
                 />
 
                 <InputText
-                    propmt={"Password"}
+                    propmt={words[language]["password"]}
                     name={"password"}
                     setting={{ require: true, type: "password" }}
                     value={password}
@@ -149,16 +184,16 @@ const LoginForm = () => {
                 />
             </div>
             <Button
-                txt="Sign In"
+                txt={words[language]["signin"]}
                 func={handleSubmit} // You might not need this if it's just submitting the form
                 setting={{ type: "submit" }}
             />
 
             <div className={style.links}>
-                <a href="/forget-password">Forgot Password?</a>
+                <a href="/forget-password">{words[language]["forget_password"]}</a>
             </div>
             <div className={style.socialLogin}>
-                <div className={style.thirdSignin}>or you can sign in with</div>
+                <div className={style.thirdSignin}>{words[language]["third_party_login"]}</div>
                 <div className={style.icons}>
                     <a href="/auth/google" className={style.icon}>
                         <img
@@ -184,12 +219,30 @@ const LoginForm = () => {
     );
 };
 
-const SignupForm = ({ onSignupSuccess }) => {
+const SignupForm = ({ onSignupSuccess, language }) => {
     const [localEmail, setLocalEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [error, setError] = useState("");
     const [isLoading, setIsLoading] = useState(false);
+    const words = {
+        en: {
+            email: 'E-mail',
+            password: 'Password',
+            confirmedPassword: 'Confirmed Password',
+            signup: 'Sign Up',
+            signingUp: 'Signing Up...'
+          
+        },
+        zh: {
+            email: '電子信箱',
+            password: '密碼',
+            confirmedPassword: '確認密碼',
+            signup: '註冊',
+            signingUp: '註冊中...'
+            
+        }
+      }
 
     const generateSalt = (length = 10) => {
         const characters =
@@ -259,7 +312,6 @@ const SignupForm = ({ onSignupSuccess }) => {
     return (
         <form onSubmit={handleSubmit} className={style.form}>
             <div className={style.logoContainer}>
-                {/* You will replace 'logo.png' with your actual logo */}
                 <img
                     className={style.logo}
                     src="../../logo.png"
@@ -271,27 +323,27 @@ const SignupForm = ({ onSignupSuccess }) => {
             </div>
             <div className={style.inputGroup}>
                 <InputText
-                    propmt={"E-mail"}
+                    propmt={words[language]["email"]}
                     name={"email"}
                     value={localEmail}
                     setting={{ require: true, type: "email" }}
                     onChange={setLocalEmail}
                 />
                 <InputText
-                    propmt={"Password"}
+                    propmt={words[language]["password"]}
                     name={"password"}
                     setting={{ require: true, type: "password" }}
                     onChange={setPassword}
                 />
                 <InputText
-                    propmt={"Confirmed Password"}
+                    propmt={words[language]["confirmedPassword"]}
                     name={"confirmedPassword"}
                     setting={{ require: true, type: "password" }}
                     onChange={setConfirmPassword}
                 />
             </div>
             <Button
-                txt={!isLoading ? "Sign Up" : <span className={style.loadingEffect}>Signing Up...</span>}
+                txt={!isLoading ? words[language]["signup"] : <span className={style.loadingEffect}>{words[language]["signingUp"]}</span>}
                 func={handleSubmit}
                 setting={{ type: "submit", disabled: isLoading }}
             // Add additional props if needed to pass className

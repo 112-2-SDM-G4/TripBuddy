@@ -2,11 +2,31 @@ import React, { useState, useEffect } from 'react';
 import Button from '../component/Button';
 import style from './SplitDetailsForm.module.css';
 import GroupMemberInfo from "./GroupMemberInfo";
+import { useLanguage } from "../hooks/useLanguage";
 
 const SplitDetailsForm = ({ payeesData, totalAmount, onDetailsSubmit, splitType, currencySymbol }) => {
     const [payees, setPayees] = useState([]);
     const [type, setType] = useState(splitType);
     const [error, setError] = useState('');
+    const { language } = useLanguage();
+
+    const words = {
+        en: {
+            payee_err: "Please select at least one payee.",
+            selected_payee_err: "Please enter an amount for all selected payees.",
+            equally: 'Equally',
+            unequally: 'Unequally',
+            save: 'Save'
+        },
+        zh: {
+            payee_err: "請選擇至少一位的分帳對象",
+            selected_payee_err: '請對被選取到的成員輸入分帳金額',
+            equally: '平分',
+            unequally: '自訂',
+            save: '儲存'
+
+        }
+    }
 
     useEffect(() => {
         setPayees(payeesData);
@@ -78,13 +98,13 @@ const SplitDetailsForm = ({ payeesData, totalAmount, onDetailsSubmit, splitType,
         // Ensure all selected payees have a valid amount
         const incompletePayees = payees.filter(p => p.isSelected && (!p.amount || parseFloat(p.amount) === 0));
         if (incompletePayees.length > 0) {
-            setError("Please enter an amount for all selected payees.");
+            setError(words[language]['selected_payee_err']);
             return;
         }
 
         const selectedPayees = payees.filter(p => p.isSelected);
         if (selectedPayees.length === 0) {
-            setError("Please select at least one payee.");
+            setError(words[language]['payee_err']);
             return;
         }
 
@@ -92,7 +112,14 @@ const SplitDetailsForm = ({ payeesData, totalAmount, onDetailsSubmit, splitType,
         if (type === 'unequally') {
             const totalCalculated = payees.filter(p => p.isSelected).reduce((acc, curr) => acc + parseFloat(curr.amount || 0), 0);
             if (totalCalculated !== parseFloat(totalAmount)) {
-                setError(`The total amount distributed (${totalCalculated}) does not match the required total (${totalAmount}). Please adjust.`);
+                let errorMsg = ''; // 初始化 errorMsg 為空字符串
+
+                if (language === 'en') {
+                    errorMsg = `The total amount distributed (${totalCalculated}) does not match the required total (${totalAmount}). Please adjust.`;
+                } else {
+                    errorMsg = `分配的總金額（${totalCalculated}）與所需的總金額（${totalAmount}）不匹配。請調整。`;
+                }
+                setError(errorMsg);
                 return;
             }
         }
@@ -105,10 +132,10 @@ const SplitDetailsForm = ({ payeesData, totalAmount, onDetailsSubmit, splitType,
         <div className={style.splitContainer}>
             <div className={style.tabs}>
                 <button onClick={(event) => handleTabClick(event, 'equally')} className={type === "equally" ? style.active : ""}>
-                    Equally
+                    {words[language]['equally']}
                 </button>
                 <button onClick={(event) => handleTabClick(event, 'unequally')} className={type === "unequally" ? style.active : ""}>
-                    Unequally
+                    {words[language]['unequally']}
                 </button>
             </div>
             {error && <div className={style.errorMessage}>{error}</div>}
@@ -135,7 +162,7 @@ const SplitDetailsForm = ({ payeesData, totalAmount, onDetailsSubmit, splitType,
                     )}
                 </div>
             ))}
-            <Button txt="Submit Details" func={onDetailsSubmitModified} />
+            <Button txt={words[language]['save']} func={onDetailsSubmitModified} />
         </div>
     );
 };

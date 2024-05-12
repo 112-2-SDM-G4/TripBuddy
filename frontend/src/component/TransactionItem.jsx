@@ -26,7 +26,22 @@ const findCurrencySymbol = (currency) => {
 };
 
 
-const TransactionItem = ({ transaction_id, date, currentUser, currency, item_name, payer, payees, amount, onClick }) => {
+const TransactionItem = ({ transaction_id, date, currentUser, currency, item_name, payer, payees, amount, onClick, language }) => {
+    const words = {
+        en: {
+            amountText_lend: "You lent",
+            amountText_borrow: "You borrowed",
+            amountText_notInvolved: "Not involved",
+            paid: 'paid'
+          
+        },
+        zh: {
+            amountText_lend: "你借出了",
+            amountText_borrow: "你借了",
+            amountText_notInvolved: "不包含您在內",
+            paid: '付了'
+        }
+      }
     
     let amountText, amountValue, amountColor = style.amountGray;
     
@@ -35,17 +50,17 @@ const TransactionItem = ({ transaction_id, date, currentUser, currency, item_nam
     if (payer === currentUser) {
         const totalLent = payees.reduce((acc, payee) => acc + (payee.payee_name === currentUser ? 0 : payee.borrowed_amount), 0);
         amountColor = style.amountGreen; // Green if current user paid
-        amountText = "You lent";
+        amountText = words[language]['amountText_lend'];
         amountValue = `${symbol}${totalLent}`;
     } 
     else {
         const currentUserPayee = payees.find(payee => payee.payee_name === currentUser);
         if (currentUserPayee) {
             amountColor = style.amountRed; // Red if current user needs to pay
-            amountText = "You borrowed";
+            amountText = words[language]['amountText_borrow'];
             amountValue = `${symbol}${currentUserPayee.borrowed_amount}`;
         } else {
-            amountText = "Not involved";
+            amountText = words[language]['amountText_notInvolved'];
             amountValue = ""; // No amount displayed
         }
     }
@@ -62,7 +77,7 @@ const TransactionItem = ({ transaction_id, date, currentUser, currency, item_nam
                 <div className={style.details}>
                     <div className={style.textContent}>
                         <div className={style.title}>{item_name}</div>
-                        <div className={style.paidBy}>{payer} paid {symbol}{amount}</div>
+                        <div className={style.paidBy}>{payer} {words[language]['paid']} {symbol}{amount}</div>
                     </div>
                     <div className={`${style.amount} ${amountColor}`}>
                         <div className={style.amountDescription}>{amountText}</div>

@@ -6,7 +6,7 @@ import InputCode from "./InputCode";
 import { useAuth } from "../hooks/useAuth";
 import { baseFetch } from "../hooks/baseFetch";
 
-const EmailVerification = ({ email, hashed_password, salt }) => {
+const EmailVerification = ({ email, hashed_password, salt, language }) => {
     const [verificationStatus, setVerificationStatus] = useState("error");
     const [contentVisible, setContentVisible] = useState(false);
     const [error, setError] = useState("");
@@ -14,6 +14,31 @@ const EmailVerification = ({ email, hashed_password, salt }) => {
     const [loading, setLoading] = useState(false);
     const { login } = useAuth();
     const navigate = useNavigate();
+
+    const words = {
+        en: {
+            welcomemsg: 'Welcome to TripBuddy!',
+            successful: 'Your account has been successfully verified!',
+            successful_info: 'You can now use all the features of our website.',
+            almost_done: 'Your registration is almost done!',
+            check_inbox: 'Please check your inbox at',
+            check_inbox2: "to find the verification code we've sent.",
+            verificationCode: 'Verification Code',
+            start: 'Start'
+          
+        },
+        zh: {
+            welcomemsg: '歡迎來到 TripBuddy!',
+            successful: '你的帳號已經被成功驗證!',
+            successful_info: '現在你可以開始使用網站的所有功能',
+            almost_done: '你的註冊流程即將完成!',
+            check_inbox: '請至您的電子信箱',
+            check_inbox2: "確認我們剛才寄出的驗證碼",
+            verificationCode: '驗證碼',
+            start: '開始探索'
+          
+        }
+      }
 
     useEffect(() => {
         if (verificationStatus === "processing") {
@@ -82,17 +107,17 @@ const EmailVerification = ({ email, hashed_password, salt }) => {
                         <div className={style.logoContainer}>
                             <img src="../../circle-check.svg" alt="Success" />
                         </div>
-                        <h2>Welcome to TripBuddy!</h2>
+                        <h2>{words[language]['welcomemsg']}</h2>
                         <div className={style.description}>
                             <p className={style.text}>
-                                Your account has been successfully verified!
+                                {words[language]['successful']}
                             </p>
                             <p className={style.text}>
-                                You can now use all the features of our website.
+                                {words[language]['successful_info']}
                             </p>
                         </div>
                         <Button
-                            txt="Start"
+                            txt={words[language]['start']}
                             func={() => navigate("/profile-setup")}
                         />
                     </>
@@ -101,18 +126,17 @@ const EmailVerification = ({ email, hashed_password, salt }) => {
                         <div className={style.logoContainer}>
                             <img className={style.logo} src="../../logo.png" alt="TripBuddy" />
                         </div>
-                        <h2>Your registration is almost done!</h2>
+                        <h2>{words[language]['almost_done']}</h2>
                         <div className={style.description}>
                             <p className={style.text}>
-                                Please check your inbox at{" "}
-                                <strong>{email}</strong> to find the
-                                verification code we've sent.
+                                {words[language]['check_inbox']}{" "}
+                                <strong>{email}</strong> {words[language]['check_inbox2']}
                             </p>
                         </div>
                         {error && <p className={style.errorMessage}>{error}</p>}
                         <InputCode
                             length={6}
-                            label="Verification Code"
+                            label={words[language]['verificationCode']}
                             loading={loading}
                             value={code}
                             onChange={handleCodeChange}

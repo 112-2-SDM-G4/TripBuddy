@@ -50,17 +50,55 @@ const ProfileSetup = () => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
+  const words = {
+    en: {
+      error_for_avatar: "Please choose an avatar.",
+      error_for_language: "Please enter a username and select a language.",
+      title: "Let's Get to Know You!",
+      title_info: "Your answers to the following questions will help us tailor your experience and recommendations. It'll only take a minute!",
+      username: 'Username',
+      language: 'Language',
+      next: 'Next',
+      back: 'Back',
+
+      title2: 'Travel Preferences',
+      title2_info: 'Please choose some preferences when you decside to travel.',
+
+      title3: 'Welcome to TripBuddy!',
+      title3_info: 'Your profile is all set up. Start exploring now!',
+      submit: 'Explore'
+    },
+    zh: {
+      error_for_avatar: "請選擇一個頭像",
+      error_for_language: '請輸入您的使用者名稱以及選擇您的偏好語言',
+      title: "現在讓我們更了解你吧!",
+      title_info: "你的回答會幫助我們打造更適合你的推薦旅程，這只需要花一分鐘的時間完成!",
+      username: '使用者名稱',
+      language: '語言偏好',
+      next: '下一步',
+      back: '上一步',
+
+      title2: '旅遊偏好',
+      title2_info: '請選擇當你旅行時通常喜歡那些風格',
+
+      title3: '歡迎來到TripBuddy!',
+      title3_info: '你的個人檔案設定即將完成，現在開始探索旅程吧!',
+      submit: "開始探索"
+
+    }
+  }
+
 
   const totalSteps = 3;
 
   const nextStep = () => {
     if (currentStep === 1) {
       if (!avatar) {
-        setError("Please choose an avatar.");
+        setError(words[language]['error_for_avatar']);
         return;
       }
       if (!userName || !language) {
-        setError("Please enter a username and select a language.");
+        setError(words[language]['error_for_language']);
         return;
       }
     }
@@ -164,9 +202,9 @@ const ProfileSetup = () => {
         <>
           <div>
             <div className={style.questionnaireIntro}>
-              <h2 className={style.introTitle}>Let's Get to Know You!</h2>
+              <h2 className={style.introTitle}>{words[language]['title']}</h2>
               <p className={style.introText}>
-                Your answers to the following questions will help us tailor your experience and recommendations. It'll only take a minute!
+                {words[language]['title_info']}
               </p>
             </div>
             <div className={style.field}>
@@ -177,7 +215,7 @@ const ProfileSetup = () => {
                   selectedAvatar={selectedAvatar}
                 />
                 <InputText
-                  propmt={"Username"}
+                  propmt={words[language]['username']}
                   name={"username"}
                   setting={{ require: true, type: 'text', defaultValue: userName ? userName : '' }}
                   onChange={setUserName}
@@ -185,7 +223,7 @@ const ProfileSetup = () => {
               </div>
 
               <div className={style.languagePreference}>
-                <p className={style.introText}>Language</p>
+                <p className={style.introText}>{words[language]['language']}</p>
                 <div className={style.options}>
                   <button
                     name='language'
@@ -204,7 +242,7 @@ const ProfileSetup = () => {
                 </div>
               </div>
               {error && <p className={style.errorMessage}>{error}</p>}
-              <Button txt="Next" func={nextStep} />
+              <Button txt={words[language]['next']} func={nextStep} />
             </div>
           </div>
         </>
@@ -216,10 +254,10 @@ const ProfileSetup = () => {
       content = (
         <>
           <div>
-            <h2>Travel Preferences</h2>
+            <h2>{words[language]['title2']}</h2>
             <div className={style.sharedropdown}>
               <p className={style.introText}>
-                Please choose some preferences when you decside to travel. 
+                {words[language]['title2_info']}
               </p>
               <div style={{ marginTop: "1rem" }}>
                 {Array.isArray(selectedTag) &&
@@ -252,7 +290,7 @@ const ProfileSetup = () => {
                   });
                 }}
                 stylesetting={{
-                  height: "fit-content",
+                  height: "min-content",
                   marginTop: "1rem",
                   position: "relative",
                   backgroundColor: 'transparent',
@@ -262,11 +300,11 @@ const ProfileSetup = () => {
             </div>
             <div className={style.pageButtons}>
               <Button
-                txt="Back"
+                txt={words[language]['back']}
                 func={prevStep}
               />
               <Button
-                txt="Next"
+                txt={words[language]['next']}
                 func={nextStep}
               />
             </div>
@@ -279,18 +317,18 @@ const ProfileSetup = () => {
       content = (
         <>
           <div>
-            <h2>Welcome to TripBuddy!</h2>
-            <p className={style.introText}>Your profile is all set up. Start exploring now!</p>
+            <h2>{words[language]['title3']}</h2>
+            <p className={style.introText}>{words[language]['title3_info']}</p>
             <div className={style.logoContainer}>
               <img className={style.logo} src="../../logo.png" alt="TourBuddy" />
             </div>
             <div className={style.pageButtons}>
               <Button
-                txt="Back"
+                txt={words[language]['back']}
                 func={prevStep}
               />
               <Button
-                txt="Submit"
+                txt={words[language]['submit']}
                 func={handleSubmit}
               />
             </div>

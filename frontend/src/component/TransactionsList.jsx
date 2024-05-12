@@ -5,12 +5,22 @@ import TransactionDetail from './TransactionDetail';
 import { fetchWithJwt } from '../hooks/fetchWithJwt';
 import style from './TransactionsList.module.css';
 
-const TransactionsList = ({ transactions, currentUser, onDeleteTransaction, findCurrencySymbol }) => {
+const TransactionsList = ({ transactions, currentUser, onDeleteTransaction, findCurrencySymbol, language }) => {
     const [showDetail, setShowDetail] = useState(false);
-    const [selectedTransaction, setSelectedTransaction] = useState(null);  // Store the selected transaction
+    const [selectedTransaction, setSelectedTransaction] = useState(null);  
     const [groupMembers, setGroupMembers] = useState([]);
 
     const { id } = useParams();
+
+    const words = {
+        en: {
+            fetch_group_member_err: 'Failed to fetch group members:'
+        },
+        zh: {
+            fetch_group_member_err: '讀取成員名單失敗:'
+        }
+      }
+
 
     useEffect(() => {
         const fetchGroupMembers = async () => {
@@ -24,7 +34,7 @@ const TransactionsList = ({ transactions, currentUser, onDeleteTransaction, find
                     setGroupMembers(data.trip_member_info);
                 }
             } catch (error) {
-                console.error('Failed to fetch group members:', error);
+                console.error(words[language]['fetch_group_member_err'], error);
             }
         };
 
@@ -87,6 +97,7 @@ const TransactionsList = ({ transactions, currentUser, onDeleteTransaction, find
                         payees={transaction.payees}
                         amount={transaction.amount}
                         onClick={() => handleTransactionClick(transaction)}
+                        language={language}
                     />
                 </div>
             ))}

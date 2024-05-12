@@ -5,17 +5,15 @@ import InputText from "../component/InputText";
 import SplitDetailsForm from './SplitDetailsForm';
 import GroupMemberInfo from "./GroupMemberInfo";
 import { FaArrowLeft } from 'react-icons/fa';
-import { useLanguage } from "../hooks/useLanguage";
 import CountryData from "../assets/Country.json";
 import { fetchWithJwt } from '../hooks/fetchWithJwt';
 
-const AddTransactionForm = ({ toggleForm, trip_id, refetchData, standard }) => {
-    const { language } = useLanguage();
+const AddTransactionForm = ({ toggleForm, trip_id, refetchData, exchange, language }) => {
     const [description, setDescription] = useState('');
     const [amount, setAmount] = useState(0);
     const [error, setError] = useState('');
-    const [currency, setCurrency] = useState(standard);
-    const selectedCurrency = CountryData.places.find(place => place.money.en === standard);
+    const [currency, setCurrency] = useState(exchange);
+    const selectedCurrency = CountryData.places.find(place => place.money.en === exchange);
     const [symbol, setSymbol] = useState(selectedCurrency.money.symbol);
     const [payer, setPayer] = useState('you');
     const [payees, setPayees] = useState([]);
@@ -27,6 +25,37 @@ const AddTransactionForm = ({ toggleForm, trip_id, refetchData, standard }) => {
     const [currentPayees, setCurrentPayees] = useState([]);
     const dropdownRef = useRef(null);
 
+
+    const words = {
+        en: {
+            fetch_group_member_err: 'Failed to fetch group members:',
+            description_err: "Description is required.",
+            amount_err: "Amount must be greater than 0.",
+            payer_err: "Payer must be selected.",
+            payee_err: "Please select at least one payee.",
+            description: "Enter a description",
+            amount: 'Amount',
+            payer: 'Payer',
+            splitType: 'Splitting Method',
+            equally: 'Equal Split',
+            unequally: 'Customized Split',
+            save: 'Add'
+        },
+        zh: {
+            fetch_group_member_err: '讀取成員名單失敗:',
+            description_err: '請描述該筆消費',
+            amount_err: '輸入金額請大於0',
+            payer_err: '請選擇付款人',
+            payee_err: "請選擇至少一位的分帳對象",
+            description: '請描述該筆消費',
+            amount: '金額',
+            payer: '付款人',
+            splitType: '分款方式',
+            equally: '平分',
+            unequally: '自訂',
+            save: '新增'
+        }
+    }
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -64,35 +93,36 @@ const AddTransactionForm = ({ toggleForm, trip_id, refetchData, standard }) => {
                 }
             } catch (error) {
                 console.error('Failed to fetch group members:', error);
-                setError('Failed to load group members');
+                setError(words[language]['fetch_group_member_err']);
             }
         };
 
         fetchGroupMembers();
     }, [trip_id]);
 
-    const handleTypeChange = (newType) => {
+    const handleTypeChange = (event, newType) => {
+        event.preventDefault();
         setCurrentType(newType);
     };
 
     const handleSubmit = async (event) => {
         event.preventDefault();
         if (!description.trim()) {
-            setError("Description is required.");
+            setError(words[language]['description_err']);
             return;
         }
         if (parseFloat(amount) <= 0) {
-            setError("Amount must be greater than 0.");
+            setError(words[language]['amount_err']);
             return;
         }
         if (!payer || !payer.user_email) {
-            setError("Payer must be selected.");
+            setError(words[language]['payer_err']);
             return;
         }
 
-        
+
         if (payees.length === 0) {
-            setError("Please select at least one payee.");
+            setError(words[language]['payee_err']);
             return;
         }
 
@@ -140,20 +170,19 @@ const AddTransactionForm = ({ toggleForm, trip_id, refetchData, standard }) => {
         setShowMemberSelector(false); // Close the selector after selection
     };
 
-    const toggleSplitType = () => {
-
-        if (!description) {
-            setError("Please describe the transaction");
+    const toggleSplitType = (event) => {
+        event.preventDefault();
+        if (!description.trim()) {
+            setError(words[language]['description_err']);
             return;
         }
         if (parseFloat(amount) <= 0) {
-            setError("Amount must be greater than 0 to choose a split type.");
+            setError(words[language]['amount_err']);
             return;
         }
         setShowMemberSelector(false);
         setShowCustomSplit(!showCustomSplit);
-        // setCurrentType(currentType === 'equally' ? 'unequally' : 'equally');  // 切换类型
-        setShowCustomSplit(true);  // 根据新类型设置是否显示自定义分账
+        setShowCustomSplit(true);
         setError("");
 
     };
@@ -186,7 +215,7 @@ const AddTransactionForm = ({ toggleForm, trip_id, refetchData, standard }) => {
                     <div className={style.inputGroup}>
                         {error && <div className={style.errorMessage}>{error}</div>}
                         <InputText
-                            propmt="Enter a description"
+                            propmt={words[language]['description']}
                             name="description"
                             setting={{ require: true, type: 'text' }}
                             value={description}
@@ -200,7 +229,7 @@ const AddTransactionForm = ({ toggleForm, trip_id, refetchData, standard }) => {
                                 <select
                                     ref={dropdownRef}
                                     value={currency}
-                                    onChange={handleCurrencyChange}
+                                    onChange={(event) => {handleCurrencyChange(event)}}
                                     className={style.currencySelect}
                                     onBlur={() => setShowDropdown(false)}
                                     size={CountryData.places.length}  // This makes it act like a dropdown
@@ -214,7 +243,7 @@ const AddTransactionForm = ({ toggleForm, trip_id, refetchData, standard }) => {
                             )}
                             <div className={style.amountWrapper}>
                                 <InputText
-                                    propmt="Amount"
+                                    propmt={words[language]['amount']}
                                     name="amount"
                                     setting={{ require: true, type: 'number' }}
                                     value={amount}
@@ -230,20 +259,25 @@ const AddTransactionForm = ({ toggleForm, trip_id, refetchData, standard }) => {
                                 {/* Payer Selection */}
                                 {!showMemberSelector && (
                                     <>
-                                        <p>Paid by</p>
-                                        <button
-                                            className={style.select}
-                                            onClick={() => {
-                                                setShowMemberSelector(true);
-                                            }}>
-                                            {payer.user_name || "Select payer"}
-                                        </button>
-                                        <p>and split</p>
-                                        <button
-                                            className={style.select}
-                                            onClick={toggleSplitType}>
-                                            {currentType === 'equally' ? 'equally' : 'unequally'}
-                                        </button>
+                                        <div className={style.row}>
+                                            <p>{words[language]['payer']}: </p>
+                                            <button
+                                                className={style.select}
+                                                onClick={() => {
+                                                    setShowMemberSelector(true);
+                                                }}>
+                                                <img src={`../../${payer.user_avatar}.png`} alt="Avatar" className={style.avatar} />
+                                                {payer.user_name || "Select payer"}
+                                            </button>
+                                        </div>
+                                        <div className={style.row}>
+                                            <p>{words[language]['splitType']}: </p>
+                                            <button
+                                                className={style.select}
+                                                onClick={(event) => {toggleSplitType(event)}}>
+                                                {currentType === 'equally' ? words[language]['equally'] : words[language]['unequally']}
+                                            </button>
+                                        </div>
                                     </>
                                 )}
                                 {showMemberSelector && (
@@ -278,7 +312,7 @@ const AddTransactionForm = ({ toggleForm, trip_id, refetchData, standard }) => {
                     {!showCustomSplit && (
                         <div className={style.saveButton}>
                             <Button
-                                txt='Save'
+                                txt={words[language]['save']}
                                 // func={handleSubmit}
                                 setting={{ type: "submit" }}
                             />

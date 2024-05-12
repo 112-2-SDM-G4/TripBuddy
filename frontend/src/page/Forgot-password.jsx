@@ -6,6 +6,7 @@ import Button from "../component/Button";
 import InputText from "../component/InputText";
 import { FaArrowLeft } from 'react-icons/fa';
 import { baseFetch } from "../hooks/baseFetch";
+import { useLanguage } from "../hooks/useLanguage";
 
 const Reset = () => {
     const [email, setEmail] = useState('');
@@ -14,6 +15,23 @@ const Reset = () => {
     const [isLoading, setIsLoading] = useState(false);
 
     const navigate = useNavigate();
+    const { language } = useLanguage();
+
+    const words = {
+        en: {
+            text : "Forgotten your password? Enter your e-mail address below, and we'll send you an e-mail allowing you to reset it.",
+            email: 'E-mail',
+            submit: 'Submit',
+            submitInfo: 'Sending an email...'
+          
+        },
+        zh: {
+            text: "忘記密碼啦? 請輸入你的電子郵件，我們會寄送一封信到您的信箱讓你重置密碼",
+            email: '電子信箱',
+            submit: '送出',
+            submitInfo: '發送驗證信中...'
+        }
+      }
 
     // Email validation logic
     const handleSubmit = async (e) => {
@@ -76,13 +94,13 @@ const Reset = () => {
                     </div>
                     <div className={style.alert}>
                         <p className={style.text}>
-                            Forgotten your password? Enter your e-mail address below, and we'll send you an e-mail allowing you to reset it.
+                            {words[language]['text']}
                         </p>
                     </div>
                     <div className={style.inputGroup}>
                         {emailError && <div className={style.errorMessage}>{emailError}</div>}
                         <InputText
-                            propmt={"E-mail"}
+                            propmt={words[language]['email']}
                             name={"email"}
                             setting={{ require: true, type: 'email' }}
                             value={email}
@@ -91,10 +109,9 @@ const Reset = () => {
 
                     </div>
                     <Button
-                        txt={!isLoading ? "Submit" : <span className={style.loadingEffect}>Sending an email...</span>}
+                        txt={!isLoading ? words[language]['submit'] : <span className={style.loadingEffect}>{words[language]['submitInfo']}</span>}
                         func={handleSubmit}
                         setting={{ type: "submit", disabled: isLoading }}
-                    // Add additional props if needed to pass className
                     />
 
 

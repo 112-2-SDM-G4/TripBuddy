@@ -7,12 +7,13 @@ import CountryData from "../assets/Country.json";
 import { fetchWithJwt } from "../hooks/fetchWithJwt";
 import Button from "../component/Button";
 import { IoChevronBack } from "react-icons/io5";
+import { useLanguage } from "../hooks/useLanguage";
 
 const findCurrencySymbol = (currency) => {
     return CountryData.places.find(place => place.money.en === currency)?.money.symbol || null;
 };
 
-const Ledger = ({ close, schedule_id, standard }) => {
+const Ledger = ({ close, schedule_id, exchange }) => {
     const currentUser = JSON.parse(sessionStorage.getItem("user") || "{}").user_name || "defaultUser";
     const [totalCost, setTotalCost] = useState(0);
     const [transactions, setTransactions] = useState([]);
@@ -21,8 +22,28 @@ const Ledger = ({ close, schedule_id, standard }) => {
     const [currency, setCurrency] = useState('');
     const [showAddForm, setShowAddForm] = useState(false);
     const [formAnimationClass, setFormAnimationClass] = useState('');
+    const { language } = useLanguage();
 
-    const { id } = useParams(); 
+    const { id } = useParams();
+
+    const words = {
+        en: {
+            ledger: 'Shared Ledger',
+            trip_cost: 'Total Trip Cost:',
+            owe: "You owe",
+            owed: "You are owed by",
+            addTransaction: 'Add a transaction'
+        },
+        zh: {
+            ledger: '共享帳本',
+            trip_cost: '旅程總花費:',
+            owe: "您欠",
+            owed: "應還您",
+            addTransaction: '新增消費'
+            
+        }
+    }
+
 
 
     // Refetching function that can be called on demand
@@ -50,7 +71,7 @@ const Ledger = ({ close, schedule_id, standard }) => {
             await fetchDetailCost();
             await fetchTotalCost();
         }
-    }, [schedule_id, fetchWithJwt]);
+    }, [schedule_id]);
 
 
     useEffect(() => {
@@ -78,7 +99,7 @@ const Ledger = ({ close, schedule_id, standard }) => {
 
     const handleDeleteTransaction = async (transactionId) => {
         try {
-            const response = await fetchWithJwt('/api/v1/ledger/manage_transaction', 'DELETE',{
+            const response = await fetchWithJwt('/api/v1/ledger/manage_transaction', 'DELETE', {
                 schedule_id: id,
                 transaction_id: transactionId
             });
@@ -103,17 +124,20 @@ const Ledger = ({ close, schedule_id, standard }) => {
                             className={`${style.backbt}`}
                             onClick={close}
                         />
-                        Transaction History
+                        {words[language]['ledger']}
                     </div>
 
                     <div className={style.centerBlock}>
-                        <span className={style.totalCost}>Total Trip Cost: {findCurrencySymbol(currency)}{parseFloat(totalCost).toFixed(2)}</span>
+                        <span className={style.totalCost}>{words[language]['trip_cost']} {findCurrencySymbol(currency)}{parseFloat(totalCost).toFixed(2)}</span>
                         <ul>
                             {balanceDetails.map((balanceDetail, index) => (
                                 <li key={index} className={`${style.detailItem} ${balanceDetail.status === 'owe' ? style.owe : style.owed}`}>
-                                    {balanceDetail.status === 'owe' ?
-                                        `You owe ${balanceDetail.associate_name} ${findCurrencySymbol(currency)}${parseFloat(balanceDetail.amount).toFixed(2)}` :
-                                        `You are owed ${findCurrencySymbol(currency)}${parseFloat(balanceDetail.amount).toFixed(2)} by ${balanceDetail.associate_name}`}
+                                    {language === 'en' ?
+                                        `${words[language][balanceDetail.status]} ${balanceDetail.associate_name} ${findCurrencySymbol(currency)}${parseFloat(balanceDetail.amount).toFixed(2)}` :
+                                        (balanceDetail.status === 'owe' ?
+                                            `${words[language][balanceDetail.status]} ${balanceDetail.associate_name} ${findCurrencySymbol(currency)}${parseFloat(balanceDetail.amount).toFixed(2)}` :
+                                            `${balanceDetail.associate_name} ${words[language][balanceDetail.status]} ${findCurrencySymbol(currency)}${parseFloat(balanceDetail.amount).toFixed(2)}`)
+                                    }
                                 </li>
                             ))}
 
@@ -124,8 +148,9 @@ const Ledger = ({ close, schedule_id, standard }) => {
                                 currentUser={currentUser}
                                 onDeleteTransaction={handleDeleteTransaction}
                                 findCurrencySymbol={findCurrencySymbol}
+                                language={language}
                             />
-                            <Button txt='Add a transaction' func={toggleAddForm} />
+                            <Button txt={words[language]['addTransaction']} func={toggleAddForm} />
                         </div>
                     </div>
                 </>
@@ -135,7 +160,8 @@ const Ledger = ({ close, schedule_id, standard }) => {
                         toggleForm={toggleAddForm}
                         trip_id={schedule_id}
                         refetchData={refetchData}
-                        standard={standard}
+                        exchange={exchange}
+                        language={language}
                     />
                 </div>
             )}
