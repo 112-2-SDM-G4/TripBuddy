@@ -222,3 +222,136 @@ class TripManager(Resource):
         
 
         return make_response({'message': 'Trip deleted successfully.'}, 200)
+
+class AITripGeneration(Resource):
+    # @jwt_required()
+    def post(self):
+        """User input text for Gemini-powered auto schedule generation"""
+        user_id = varify_user(get_jwt_identity())
+        if user_id == None:
+            return make_response({'message': 'User not found.'}, 400)
+        data = request.get_json()
+        text = data['text']
+        try:
+            start_date = array_to_date(data['start_date'])
+            end_date = array_to_date(data['end_date'])
+            assert start_date <= end_date
+        except:
+            return make_response({'message': 'Invalid date.'}, 400)
+        
+        schedule_info = self._generate_raw_schedule(text)
+        schedule_id = self._create_schedule(schedule_info, user_id)
+        self._create_places_in_trip(schedule_info, schedule_id, user_id)
+        res_code, response = self._get_schedule_detail(schedule_id)
+
+        return make_response(res_code, response)
+    
+    def _generate_raw_schedule(self, text: str, start_date: date, end_date: date) -> Dict:
+        """Use Google Gemini to generate raw schedule"""
+        #TODO import gemini service here!!!
+
+        return 
+    
+    def _create_schedule(self, schedule_info: Dict, user_id: int, start_date: date, end_date: date) -> int:
+        """Create schedule from post-processed schedule_info"""
+        # create new post for the schedule
+        post_params = {
+            'content': None,
+            'like_count': 0,
+        }
+        trip_post = Post.create(post_params)
+
+        # create new schedule
+        """
+        符合 Tags 表的 location_id，必須是數字 #TODO: prompt 中必須限制國家和給對應表
+        國家 location 的經緯度（需要查表）
+        standard 預設 TWD
+        exchange 使用國家的貨幣
+        schedule_name 從 gemini 生成
+        start_date & end_date 須在開始時由使用者輸入，這邊應取得處理過後的格式
+        """
+        schedule_params = {
+            'post_id': trip_post.post_id,
+            'location_name_zh': Tags.get_by_id(schedule_info['location_id']).name_zh,
+            'location_lng': schedule_info['location_lng'],
+            'location_lat': schedule_info['location_lat'],
+            'standard': 'TWD',
+            'exchange': schedule_info['exchange'],
+            'schedule_name': schedule_info['schedule_name'],
+            'start_date': start_date,
+            'end_date': end_date,
+        }        
+        schedule = Schedule.create(schedule_params)
+
+        # Update RelationUserSch
+        RelationUserSch.create({
+            'user_id': user_id,
+            'schedule_id': schedule.schedule_id,
+            'access': True,
+            'heart': False,
+            'rate': None,
+        })
+
+        # Update RelationSchTag
+        RelationSchTag.create({
+            'schedule_id': schedule.schedule_id,
+            'tag_id': schedule_info['location_id'], #TODO
+        })
+        return schedule.schedule_id
+
+    def _create_places_in_trip(self, schedule_info: Dict, schedule_id: int, user_id: int) -> None:
+        '''Insert places into trip, move the corresponding places'''
+        # Assertion
+        if not Schedule.get_by_id(schedule_id):
+                return make_response({'message': 'Trip not found.'}, 400)            
+        if not user_owns_schedule(user_id, schedule_id):
+            return make_response({'message': 'User does not have access to this trip.'}, 403)
+        
+        # Insert places
+        for place in schedule_info['places']:
+            # if order = 0 then insert at the end
+            if place['order'] == 0:
+                place['order'] = RelationSpotSch.get_max_order(schedule_id, place['date']) + 1
+
+            RelationSpotSch.update_order(schedule_id, place['date'], place['order'], increase=True)
+            place['schedule_id'] = schedule_id
+            place['category'] = "common"
+            place['period_hours'] = 1 #TODO
+            place['period_minutes'] = 0 #TODO
+            RelationSpotSch.create(place)
+
+    def _get_schedule_detail(self, schedule_id: int, lang: str='zh') -> Tuple[int, Dict]:
+        """Get the generated schedule"""
+        if not Schedule.get_by_id(schedule_id):
+            return 400, {'message': 'Trip not found.'}
+        
+        schedule: Schedule = Schedule.get_by_id(schedule_id)
+        places_in_trip = RelationSpotSch.get_by_schedule(schedule_id)
+        
+        trip_detail = [[] for _ in range(TripManager.get_trip_length(schedule))]
+        places_in_trip.sort(key=lambda x: (x.date, x.order))
+        for relation_spot_sch in places_in_trip:
+            res_code, place_info = fetch_and_save_place(relation_spot_sch.place_id, lang)
+            if res_code != 200:
+                continue
+            place_info['relation_id'] = relation_spot_sch.rss_id
+            place_info['comment'] = relation_spot_sch.comment
+            place_info['money'] = relation_spot_sch.money
+            place_info['stay_time'] = [relation_spot_sch.period_hours, relation_spot_sch.period_minutes]
+            
+            trip_detail[relation_spot_sch.date-1].append(place_info)
+
+        response = {
+            "id": schedule.schedule_id,
+            "name": schedule.schedule_name,
+            "image": TripManager.get_trip_photo(schedule), # random photo from places
+            "start_date": date_to_array(schedule.start_date),
+            "end_date": date_to_array(schedule.end_date),
+            "location_id": TripManager.get_trip_location_id(schedule),
+            "location": [schedule.location_lat, schedule.location_lng],
+            "trip": trip_detail,
+            "public": schedule.public,
+            "standard": schedule.standard,
+            "exchange": schedule.exchange,
+        }
+        return 200, response

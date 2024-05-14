@@ -1,5 +1,5 @@
 # import your controller here
-from app.controllers.TripManager import TripManager
+from app.controllers.TripManager import TripManager, AITripGeneration
 from tests.test import Test
 from app.controllers.Base import ExampleController, GetTags
 from app.controllers.PlaceManager import PlaceSearch, PlaceDetail, PlaceInTrip
@@ -20,6 +20,7 @@ def initialize_routes(api: Api):
                      f'{BASE_ROUTE}/trip',
                      f'{BASE_ROUTE}/trip/<string:trip_id>',
                      f'{BASE_ROUTE}/trip/<string:trip_id>/<string:lang>')
+    api.add_resource(AITripGeneration, f'{BASE_ROUTE}/trip/ai_generate')
     api.add_resource(PlaceSearch, f'{BASE_ROUTE}/place/search')
     api.add_resource(PlaceDetail, f'{BASE_ROUTE}/place/detail')
     api.add_resource(PlaceInTrip, f'{BASE_ROUTE}/single_place/<string:trip_id>',
