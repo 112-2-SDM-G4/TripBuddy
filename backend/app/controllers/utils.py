@@ -10,7 +10,7 @@ from app.models.tags import Tags
 from app.models.relation_sch_tag import RelationSchTag
 from app.models.transaction import Transaction
 from app.models.relation_user_transaction import RelationUserTransaction
-from app.services.google import GoogleMapApi
+from backend.app.services.googlemap import GoogleMapApi
 
 GOOGLE_MAPS_API_KEY = os.getenv('GOOGLE_MAPS_API_KEY')
 

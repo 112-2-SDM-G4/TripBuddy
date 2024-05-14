@@ -10,6 +10,7 @@ from app.models.tags import Tags
 from app.models.relation_user_sch import RelationUserSch
 from app.models.relation_spot_sch import RelationSpotSch
 from app.models.relation_sch_tag import RelationSchTag
+from app.services.gemini import Gemini
 
 class TripManager(Resource):
     def get_trip_length(self, trip):
@@ -232,6 +233,8 @@ class AITripGeneration(Resource):
             return make_response({'message': 'User not found.'}, 400)
         data = request.get_json()
         text = data['text']
+        country = Tags.get_name_en(data['location_id'])
+        location_lat, location_lng = data['location']
         try:
             start_date = array_to_date(data['start_date'])
             end_date = array_to_date(data['end_date'])
@@ -239,18 +242,80 @@ class AITripGeneration(Resource):
         except:
             return make_response({'message': 'Invalid date.'}, 400)
         
-        schedule_info = self._generate_raw_schedule(text)
+        
+        trip_name, raw_schedule = self._generate_raw_schedule(text, start_date, end_date, country)
+        schedule_info = {
+            'location_id': data['location_id'],
+            'location_lng': location_lng,
+            'location_lat': location_lat,
+            'exchange': data['exchange'] if 'exchange' in data else None,
+            'schedule_name': trip_name,
+            'places': self.search_places_id(raw_schedule, location_lat, location_lng)
+        }
         schedule_id = self._create_schedule(schedule_info, user_id)
         self._create_places_in_trip(schedule_info, schedule_id, user_id)
         res_code, response = self._get_schedule_detail(schedule_id)
 
         return make_response(res_code, response)
     
-    def _generate_raw_schedule(self, text: str, start_date: date, end_date: date) -> Dict:
-        """Use Google Gemini to generate raw schedule"""
-        #TODO import gemini service here!!!
+    def search_places_id(self, raw_schedule: list[dict], location_lat, location_lng, lang='en') -> list[dict]:
+        """Search places in the raw schedule"""
+        google_maps = GoogleMapApi(GOOGLE_MAPS_API_KEY)
+        
+        for place in raw_schedule:
+            search_res, search_places = google_maps.get_search_info(place['place_name'], lang, location_lat, location_lng)
+            place['place_id'] = search_places[0]['place_id']
+        return raw_schedule
+    
+    def parse_gemini_response(raw_response: str, travel_days: int) -> list[list[str]]:
+        """
+        Parse Gemini response into a list of lists of strings
+        gemini response example:
+        trip_name: Your trip name
+        Day 1: Attraction 1, Attraction 2, Attraction 3, ...
+        Day 2: Attraction 4, Attraction 5, Attraction 6, ...
+        """
+        schedule = []
+        for i in range(travel_days):
+            day = f"Day {i+1}:"
+            if i == 0:
+                start = raw_response.find('trip_name:')
+                if start == -1:
+                    trip_name = "AI generated trip"
+                else:
+                    end = raw_response.find(day)
+                    trip_name = raw_response[start:end].replace('trip_name:', "").strip()
+            start = raw_response.find(day)
+            if start == -1:
+                break
+            end = raw_response.find("Day", start+1)
+            if end == -1:
+                end = len(raw_response)
+            day_schedule = raw_response[start:end].replace(day, "").strip().split(",")
+            schedule.append(day_schedule)
+        if len(schedule) != travel_days:
+            print("Error: Gemini response does not match travel days")
 
-        return 
+        return trip_name, schedule
+
+
+    def _generate_raw_schedule(self, user_input: str, start_date: date, end_date: date, country: str):
+        """Use Google Gemini to generate raw schedule"""
+        travel_days = (end_date - start_date).days + 1
+        gpt_input = f"You are a local expert in {country}, you must plan a {travel_days}-day itinerary list for the user, and have some user preferences: {user_input}"
+        gemini = Gemini()
+        raw_response = gemini.generate_content(gpt_input)
+        trip_name, parsed_response = self.parse_gemini_response(raw_response, travel_days)
+
+        raw_schedule = []
+        for date, day_schedule in enumerate(parsed_response):
+            for order, place in enumerate(day_schedule):
+                raw_schedule.append({
+                    'place_name': place,
+                    'date': date+1,
+                    'order': order+1,
+                })
+        return trip_name, raw_schedule
     
     def _create_schedule(self, schedule_info: Dict, user_id: int, start_date: date, end_date: date) -> int:
         """Create schedule from post-processed schedule_info"""

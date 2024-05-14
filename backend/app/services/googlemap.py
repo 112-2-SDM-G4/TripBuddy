@@ -56,7 +56,10 @@ class GoogleMapApi():
             location_lat: Optional[float],
             location_lng: Optional[float],
     ) -> Tuple[requests.models.Response, List[Dict]]:
-        """Google Maps Places API - Text Search"""
+        """
+        Google Maps Places API - Text Search
+        return response and list of places
+        """
         place_api_url = f"https://places.googleapis.com/v1/places:searchText?fields={('%2C').join(self.place_field_mask)}"
         data = dict()
         # if lat, lng are both specified

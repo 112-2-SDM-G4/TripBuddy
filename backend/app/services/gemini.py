@@ -1,38 +1,30 @@
 import vertexai
 from vertexai.generative_models import GenerativeModel, Part
+import vertexai.generative_models as generative_models
 import os
+from datetime import date
 
 
 class Gemini:
-    def __init__(self):
+    def __init__(self, system_instruction=""):
         project_id = os.getenv("APP_ENGINE_PROJECT_ID")
         vertexai.init(project=project_id, location="asia-east1")
-        self.model = GenerativeModel(model_name="gemini-1.0-pro-002")
+        self.model = GenerativeModel(
+            model_name="gemini-1.0-pro-002",
+            system_instruction="""
+Your answer must strictly follow the rules:
+1. Answer by line, one line represents a day's itinerary sorted by time
+2. Each destination has only a name, and the names should be as clear as possible, separated by commas.
+3. Other descriptions, notes, punctuation marks, etc. are NOT allowed, only place names.
+4. At least three attractions per day, including hotels, restaurants, etc.
+5. Don’t use bold fonts and wrap lines at will.
+6. A creative trip name at first line
+Answers must be in the following format:
+trip_name: Your trip name
+Day 1: Attraction 1, Attraction 2, Attraction 3, ...
+Day 2: Attraction 4, Attraction 5, Attraction 6, ..."""
+        )
 
     def generate_content(self, text):
-        response = self.model.generate_content(
-            [
-                Part.from_text(text)
-            ]
-        )
+        response = self.model.generate_content(text)
         return response.text
-
-
-if __name__ == "__main__":
-    from dotenv import load_dotenv
-    load_dotenv()
-    gemini = Gemini()
-    print(gemini.generate_content("""
-                                  你是台北當地人，
-                                  我打算春節去台北旅遊兩天一夜，
-                                  希望住在台北101附近，
-                                  請你幫我擬定一份兩天一夜的旅遊計畫，
-                                  同行有老人和小孩，
-                                  行程不能太緊湊勞累，
-                                  包含推薦住宿地點、推薦小吃及餐廳、推薦景點，
-                                  用條列式方式呈現，飯店、餐廳、景點請說出明確名稱，
-                                  並包含明確時間、標籤(餐廳、飯店、景點其中一個)、google地圖連結，
-                                  以下面形式呈現：
-                                  8:30 xxxx (餐廳) https://.....
-                                  9:00 yyyy (飯店) https://.....
-                                  """))

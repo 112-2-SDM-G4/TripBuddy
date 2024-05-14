@@ -17,6 +17,10 @@ class Tags(db.Model):
         return Tags.query.filter_by(name_zh=name_zh).first()
     
     @staticmethod
+    def get_name_en(id):
+        return Tags.query.get(id).name_en
+    
+    @staticmethod
     def get_all(filter_types=None):
         if filter_types:            
             query = Tags.query

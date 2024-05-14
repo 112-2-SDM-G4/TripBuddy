@@ -6,7 +6,7 @@ from typing import Dict
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.controllers.utils import *
 
-from app.services.google import GoogleMapApi
+from backend.app.services.googlemap import GoogleMapApi
 
 from app.models.schedule import Schedule
 from app.models.place import Place
