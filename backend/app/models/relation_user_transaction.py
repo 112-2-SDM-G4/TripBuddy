@@ -36,3 +36,11 @@ class RelationUserTransaction(db.Model):
         db.session.delete(relation)
         db.session.commit()
         return relation
+    
+    @staticmethod
+    def delete_by_transaction(transaction_id):
+        relation = RelationUserTransaction.get_by_transaction(transaction_id)
+        for i in relation:
+            db.session.delete(i)
+        db.session.commit()
+        return relation

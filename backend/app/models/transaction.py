@@ -56,3 +56,11 @@ class Transaction(db.Model):
         db.session.delete(transaction)
         db.session.commit()
         return transaction
+    
+    @staticmethod
+    def delete_by_schedule(schedule_id):
+        transaction = Transaction.query.filter_by(schedule_id=schedule_id).all()
+        for i in transaction:
+            db.session.delete(i)
+        db.session.commit()
+        return transaction
