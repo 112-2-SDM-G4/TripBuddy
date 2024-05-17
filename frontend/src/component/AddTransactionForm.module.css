@@ -52,16 +52,19 @@
     overflow-y: auto; 
 }
 
-
-.currencySelect option {
+.currencyItem {
     padding: 0.5rem 1rem; 
     cursor: pointer;
+    transition: background-color 0.2s;
 }
 
-
-.currencySelect option:hover,
-.currencySelect option:focus {
+.currencyItem:hover {
     background-color: color-mix(in srgb, var(--accentcolor) 15%, transparent); 
+}
+
+.currencyItem.selected {
+    background-color: color-mix(in srgb, var(--accentcolor) 30%, transparent); 
+    font-weight: bold;
 }
 
 

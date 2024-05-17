@@ -11,8 +11,8 @@
     flex-direction: column;
     align-items: center;
     position: relative;
-    margin: 1rem ;
-    
+    margin: 1rem;
+
 }
 
 .button {
@@ -55,14 +55,14 @@
     font-weight: bolder;
     margin-bottom: 1rem;
     display: block;
-    
-    
+
+
 }
 
 .detailItem {
     margin-bottom: 1rem;
-    
-    
+
+
 }
 
 .owe {
@@ -74,8 +74,13 @@
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 @keyframes fadeOut {
@@ -83,6 +88,7 @@
         opacity: 1;
         transform: translateX(0);
     }
+
     to {
         opacity: 0;
         transform: translateX(100%);
@@ -97,6 +103,25 @@
     animation: fadeOut 0.5s forwards;
 }
 
+.transactionField {
+    width: 100%;
+    padding-bottom: 3rem;
+}
+
+.hidden {
+    display: none;
+}
+
+
+.buttonContainer {
+    position: fixed;
+    bottom: 0.7rem;
+    width: 42%;
+    
+    
+}
+
+
 
 
 @media (max-width: 1070px) {
@@ -107,10 +132,25 @@
         max-height: calc(100vh - 2.5rem);
         height: 100vh;
     }
+
     .centerBlock {
         margin-bottom: 4rem;
     }
-    .transactionField{
+
+    .transactionField {
         width: fit-content;
+    }
+
+    .buttonContainer {
+        width: 50%;
+        bottom: 1.5rem;
+    }
+}
+
+@media (max-width: 735px) {
+
+    .buttonContainer {
+        bottom: 4.5rem;
+        width: 80%;
     }
 }

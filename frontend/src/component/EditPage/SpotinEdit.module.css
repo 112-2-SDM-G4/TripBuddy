@@ -5,13 +5,13 @@
     touch-action: none;
     user-select: none;
     background-color: var(--backgroundcolor);
-    border: var(--secondarycolor) 1px solid;
+    border: color-mix(in srgb, var(--fontcolor) 40%, transparent) 1px solid;
     margin: 1rem;
-    border-radius: 0.25rem;
+    border-radius: 0.5rem;
     display: flex;
     position: relative;
     box-shadow: 0rem 0rem 0.2rem 0rem
-        color-mix(in srgb, var(--secondarycolor) 60%, transparent);
+        color-mix(in srgb, var(--fontcolor) 40%, transparent);
 }
 .block::after {
     position: absolute;

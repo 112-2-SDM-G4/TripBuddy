@@ -1,67 +1,69 @@
 .tabcontainer {
-    width: 50%;
-    height: 100%;
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
     align-items: center;
-    user-select: none;
-}
-
-.tabcontainer a {
-    text-decoration: none;
-    text-align: center;
+    justify-content: flex-end; /* Align items to the right */
+    gap: 2rem; /* Spacing between items */
+    margin-right: 2rem;
+    
 }
 
 .tab {
-    display: flex;
+    cursor: pointer;
+    transition: color 0.3s ease;
     align-items: center;
+    border-radius: 0.25rem;
+    display: flex;
+    font-size: .75rem;
+    font-weight: 700;
+    padding: 0.5rem 0.5rem 0.5rem 0.3rem;
     justify-content: center;
-    font-size: 0.75rem;
-    font-weight: bold;
-    /* padding: 0 0.5rem 0 0.5rem; */
 }
 
 .tab:hover {
-    /* background-color: var(--secondarycolor); */
-    cursor: pointer;
-}
-
-.icon {
-    padding: 0.3rem;
-    display: flex;
-    align-items: center;
-}
-
-.title {
-    /* color: var(--primarycolor); */
+    background-color: color-mix(in srgb, var(--fontcolor) 10%, transparent);;
 }
 
 .titlefocus {
-    color: var(--primarycolor);
+    color: var(--secondarycolor); /* Change as needed */
 }
 
-.title:hover {
-    color: var(--primarycolor);
+.icon {
+    align-items: center;
+    display: flex;
+    padding: .3rem;
+}
+
+.title, .titlefocus {
+    display: inline-block;
+    vertical-align: middle;
+    font-size: 0.8rem;
+}
+
+.titlefocus {
+    color: var(--secondarycolor);
 }
 
 @media (max-width: 735px) {
     .tabcontainer {
-        width: 80%;
+        width: 100%;
+        margin: 0 2rem;
+        justify-content: space-between;
     }
 
     .tab {
         display: flex;
         flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        
     }
     .title {
         font-size: 0.6rem;
     }
 
     .titlefocus {
-        color: var(--primarycolor);
+        color: var(--secondarycolor);
         font-size: 0.6rem;
-        color: var(--primarycolor);
     }
 
     .icon {

@@ -64,7 +64,7 @@ body {
 ::-webkit-scrollbar-thumb {
     background-color: color-mix(
         in srgb,
-        var(--secondarycolor) 80%,
+        var(--secondarycolor) 60%,
         transparent
     );
     border-radius: 10px;

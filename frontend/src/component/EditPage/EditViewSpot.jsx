@@ -58,7 +58,9 @@ export default function EditViewSpot({
     };
 
     return (
-        <Modal onClose={onClose}>
+        
+        <Modal onClose={onClose} >
+            
             <div className={style.main}>
                 <img src={spot["image"]} alt="Logo" className={style.img} />
 
