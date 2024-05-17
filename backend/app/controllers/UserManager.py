@@ -1,7 +1,7 @@
 import os
 import random
 from datetime import datetime, timedelta
-from flask_restful import Resource
+from flask_restful import Resource, reqparse
 from flask import request, make_response, jsonify
 from flask_mail import Message
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
@@ -16,6 +16,7 @@ from app.models.tags import Tags
 # import app
 from app.models.create_db import db
 from app.services.mail import get_mail
+from app.services.googlelogin import GoogleLogin
 
 
 class SendVerifyEmail(Resource):
@@ -299,50 +300,81 @@ class GetUserInfo(Resource):
         if not user:
             return make_response(err_msg, 401)
 
-class ValidateEmail(Resource):
+class HandleGoogleLogin(Resource):
+    ''' TODO: Implement Google OAuth2 login flow
+    1. Receive authorization code from google oauth server
+    2. Exchange code for tokens and potentially user information
+    3. Verify/Create user, generate JWT
+    4. Return user data and JWT
+    '''
     def post(self):
-        user_email = str(request.get_json()['user_email']).strip(' ')
-        user = User.get_by_email(user_email)
+        parser = reqparse.RequestParser()
+        parser.add_argument('code', type=str, required=True)  # Assuming authorization code is in request body
+        args = parser.parse_args()
 
-        res_json = {
-            "valid": False, 
-            "jwt_token": "",
-            "message": ""
-        }
+        # Create GoogleLogin instance (if needed)
+        google_login = GoogleLogin()
 
-        if not user:
-            res_json['message'] = "User not found."
-            return make_response(res_json, 200)
+        # Exchange code for tokens and potentially user information
+        try:
+            credentials = google_login.callback(args['code'])
+        except Exception as e:
+            return {'error': str(e)}, 400  # Handle errors
+
+        # Verify/Create user, generate JWT (implementation specific)
+        user_data, jwt_token = handle_user_with_google_data(credentials)
+
+        return {'user': user_data, 'jwt_token': jwt_token}, 200
+    
+    def handle_user_with_google_data(credentials):
+        # ... (user verification/creation, JWT generation)
+        pass
+    
+# class ValidateEmail(Resource):
+#     def post(self):
+#         user_email = str(request.get_json()['user_email']).strip(' ')
+#         user = User.get_by_email(user_email)
+
+#         res_json = {
+#             "valid": False, 
+#             "jwt_token": "",
+#             "message": ""
+#         }
+
+#         if not user:
+#             res_json['message'] = "User not found."
+#             return make_response(res_json, 200)
         
-        if not user.google_token:
-            res_json['message'] = "User had been registered from original system."
-            return make_response(res_json, 200)
+#         if not user.google_token:
+#             res_json['message'] = "User had been registered from original system."
+#             return make_response(res_json, 200)
         
-        jwt_token = create_access_token(identity=user_email)
-        res_json['valid'] = True
-        res_json['jwt_token'] = jwt_token
-        res_json['message'] = "Email from google token is valid."
+#         jwt_token = create_access_token(identity=user_email)
+#         res_json['valid'] = True
+#         res_json['jwt_token'] = jwt_token
+#         res_json['message'] = "Email from google token is valid."
         
-        return make_response(res_json, 200)
+#         return make_response(res_json, 200)
 
-class CreateUser(Resource):
-    def post(self):
-        data = request.get_json()
-        user_email = str(request.get_json()['user_email']).strip(' ')
+# class CreateUser(Resource):
+#     def post(self):
+#         data = request.get_json()
+#         user_email = str(request.get_json()['user_email']).strip(' ')
 
-        if User.get_by_email(user_email):
-            return make_response({'valid': False, 'message': "This email had been taken."}, 200)
+#         if User.get_by_email(user_email):
+#             return make_response({'valid': False, 'message': "This email had been taken."}, 200)
         
-        user_data = {
-            'user_name': data['user_name'],
-            'email': user_email,
-            'hashed_password': 'google',
-            'salt': 'google',
-            'language': 'zh',
-            'questionnaire': False,
-            'user_icon': 0,
-            'google_token': data['google_id']
-        }
+#         user_data = {
+#             'user_name': data['user_name'],
+#             'email': user_email,
+#             'hashed_password': 'google',
+#             'salt': 'google',
+#             'language': 'zh',
+#             'questionnaire': False,
+#             'user_icon': 0,
+#             'google_token': data['google_id']
+#         }
 
-        User.create(user_data)
-        return make_response({'valid': True, 'message': "Register Successfully!!!"}, 200)
+#         User.create(user_data)
+#         return make_response({'valid': True, 'message': "Register Successfully!!!"}, 200)
+    

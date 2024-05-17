@@ -3,7 +3,7 @@ from app.controllers.TripManager import TripManager, AITripGeneration
 from tests.test import Test
 from app.controllers.Base import ExampleController, GetTags
 from app.controllers.PlaceManager import PlaceSearch, PlaceDetail, PlaceInTrip
-from app.controllers.UserManager import SendVerifyEmail, UserVerification, SetUserInfo, LoginCheckUser, LoginCheckPassword, ForgetPassword, ResetPassword, GetUserInfo, ValidateEmail, CreateUser
+from app.controllers.UserManager import SendVerifyEmail, UserVerification, SetUserInfo, LoginCheckUser, LoginCheckPassword, ForgetPassword, ResetPassword, GetUserInfo, HandleGoogleLogin
 from app.controllers.LedgerManager import Currency
 from app.controllers.PostManager import PostManager, HeartManager
 from app.controllers.GroupManager import SetGroupMember
@@ -21,7 +21,7 @@ def initialize_routes(api: Api):
                      f'{BASE_ROUTE}/trip',
                      f'{BASE_ROUTE}/trip/<string:trip_id>',
                      f'{BASE_ROUTE}/trip/<string:trip_id>/<string:lang>')
-    api.add_resource(AITripGeneration, f'{BASE_ROUTE}/trip/ai_generate')
+    #api.add_resource(AITripGeneration, f'{BASE_ROUTE}/trip/ai_generate')
     api.add_resource(PlaceSearch, f'{BASE_ROUTE}/place/search')
     api.add_resource(PlaceDetail, f'{BASE_ROUTE}/place/detail')
     api.add_resource(PlaceInTrip, f'{BASE_ROUTE}/single_place/<string:trip_id>',
@@ -33,8 +33,7 @@ def initialize_routes(api: Api):
     api.add_resource(LoginCheckPassword, f'{BASE_ROUTE}/user/check_password')
     api.add_resource(ForgetPassword, f'{BASE_ROUTE}/user/forget_password')
     api.add_resource(ResetPassword, f'{BASE_ROUTE}/user/reset_password')
-    api.add_resource(ValidateEmail, f'{BASE_ROUTE}/user/validate_email')
-    api.add_resource(CreateUser, f'{BASE_ROUTE}/user/create_user')
+    api.add_resource(HandleGoogleLogin, f'{BASE_ROUTE}/user/google_login')
     api.add_resource(Currency, f'{BASE_ROUTE}/ledger/change_currency')
     api.add_resource(GetTags, f'{BASE_ROUTE}/tag/get_tags')
     api.add_resource(PostManager, f'{BASE_ROUTE}/post/<string:trip_id>',
