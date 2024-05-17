@@ -22,25 +22,37 @@ class SocketTripManager:
     def handle_disconnect():
         print('Client disconnected')
 
-    @socketio.on('join_trip') #加入行程
+    @socketio.on('join_existing_trip')
     @jwt_required()
-    def on_join_trip(data):
+    def on_join_existing_trip(data):
         user_id = varify_user(get_jwt_identity())
         trip_id = data.get('trip_id')
         if user_id is None or trip_id is None:
             emit('error', {'message': 'User or trip not found.'})
             return
-        
-        join_room(trip_id)
-        emit('message', {'msg': f'User {user_id} joined trip {trip_id}'}, room=trip_id)
 
-    @socketio.on('leave_trip') #退出行程
+        # 檢查用戶是否已經有權限參與該行程
+        relation = RelationUserSch.get_by_user_and_schedule(user_id, trip_id)
+        if not relation or not relation.access:
+            emit('error', {'message': 'User does not have access to this trip.'})
+            return
+
+        join_room(trip_id)
+        emit('message', {'msg': f'User {user_id} joined room for trip {trip_id}'}, room=trip_id)
+
+    @socketio.on('leave_trip')
     @jwt_required()
     def on_leave_trip(data):
         user_id = varify_user(get_jwt_identity())
         trip_id = data.get('trip_id')
         if user_id is None or trip_id is None:
             emit('error', {'message': 'User or trip not found.'})
+            return
+
+        # 檢查用戶是否在該行程中
+        relation = RelationUserSch.get_by_user_and_schedule(user_id, trip_id)
+        if not relation or not relation.access:
+            emit('error', {'message': 'User not in trip.'})
             return
         
         leave_room(trip_id)
