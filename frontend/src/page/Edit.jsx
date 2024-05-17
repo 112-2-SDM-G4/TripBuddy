@@ -17,6 +17,7 @@ import ViewSpot from "../component/EditPage/ViewSpot";
 import { useLanguage } from "../hooks/useLanguage";
 import { useAuth } from "../hooks/useAuth";
 import { fetchWithJwt } from "../hooks/fetchWithJwt";
+import io from "socket.io-client";
 
 import CountryData from "../assets/Country.json";
 import { RiMoneyDollarBoxLine } from "react-icons/ri";
@@ -386,6 +387,13 @@ function EditPage({ tripinfo, language, refreshTrip }) {
     const [openDropDown, setOpenDropDown] = useState(false);
     const [openWallet, setOpenWallet] = useState(false);
 
+    const socket = io.connect("https://planar-effect-420508.de.r.appspot.com", {
+        reconnectionAttempts: 5, // 最大重連次數
+        reconnectionDelay: 5000, // 每次重連間隔時間（毫秒）
+        reconnectionDelayMax: 10000, // 最大重連間隔時間（毫秒）
+        timeout: 20000, // 連接超時時間（毫秒）
+    });
+
     useEffect(() => {
         function formatDateAndWeekday(start, end, language) {
             if (!start || !end) {
@@ -450,6 +458,19 @@ function EditPage({ tripinfo, language, refreshTrip }) {
         setSpots(trip[selectedDate] || []);
     }, [selectedDate, trip]);
 
+    useEffect(() => {
+        socket.emit("join_trip", { trip_id: tripinfo["id"] });
+
+        socket.on("render_trip", (data) => {
+            setTrip(data.trip);
+        });
+
+        return () => {
+            socket.emit("leave_trip", { trip_id: tripinfo["id"] });
+            socket.disconnect();
+        };
+    }, [tripinfo, socket]);
+
     const reorderSpots = (newOrder) => {
         const newSpots = newOrder.map((id) =>
             spots.find((s) => s.relation_id === id)
@@ -464,31 +485,37 @@ function EditPage({ tripinfo, language, refreshTrip }) {
         const newTrip = chkempty(trip).map((item, index) =>
             index === selectedDate ? newSpots : item
         );
-        setTrip(newTrip);
+        // setTrip(newTrip);
 
-        fetchWithJwt("/api/v1/trip/" + tripinfo["id"], "PUT", {
+        // fetchWithJwt("/api/v1/trip/" + tripinfo["id"], "PUT", {
+        //     trip: newTrip,
+        // })
+        //     .then((response) => {
+        //         return response.json();
+        //     })
+        //     .then((data) => {
+        //         console.log(data);
+        //     })
+        //     .catch((error) => {
+        //         console.log(
+        //             "There was a problem with the fetch operation:",
+        //             error
+        //         );
+        //         if (error.response) {
+        //             error.response.json().then((errorMessage) => {
+        //                 alert(errorMessage.message);
+        //                 console.log("Error message:", errorMessage.message);
+        //             });
+        //         } else {
+        //             console.log("Network error:", error.message);
+        //         }
+        //     });
+
+        socket.emit("update_trip", {
+            trip_id: tripinfo["id"],
+            langauge: language,
             trip: newTrip,
-        })
-            .then((response) => {
-                return response.json();
-            })
-            .then((data) => {
-                console.log(data);
-            })
-            .catch((error) => {
-                console.log(
-                    "There was a problem with the fetch operation:",
-                    error
-                );
-                if (error.response) {
-                    error.response.json().then((errorMessage) => {
-                        alert(errorMessage.message);
-                        console.log("Error message:", errorMessage.message);
-                    });
-                } else {
-                    console.log("Network error:", error.message);
-                }
-            });
+        });
 
         setSpots(newSpots);
     };
@@ -509,31 +536,37 @@ function EditPage({ tripinfo, language, refreshTrip }) {
         const newTrip = chkempty(trip).map((item, index) =>
             index === selectedDate ? newSpots : item
         );
-        setTrip(newTrip);
+        // setTrip(newTrip);
 
-        fetchWithJwt("/api/v1/trip/" + tripinfo["id"], "PUT", {
+        // fetchWithJwt("/api/v1/trip/" + tripinfo["id"], "PUT", {
+        //     trip: newTrip,
+        // })
+        //     .then((response) => {
+        //         return response.json();
+        //     })
+        //     .then((data) => {
+        //         console.log(data);
+        //     })
+        //     .catch((error) => {
+        //         console.log(
+        //             "There was a problem with the fetch operation:",
+        //             error
+        //         );
+        //         if (error.response) {
+        //             error.response.json().then((errorMessage) => {
+        //                 alert(errorMessage.message);
+        //                 console.log("Error message:", errorMessage.message);
+        //             });
+        //         } else {
+        //             console.log("Network error:", error.message);
+        //         }
+        //     });
+
+        socket.emit("update_trip", {
+            trip_id: tripinfo["id"],
+            langauge: language,
             trip: newTrip,
-        })
-            .then((response) => {
-                return response.json();
-            })
-            .then((data) => {
-                console.log(data);
-            })
-            .catch((error) => {
-                console.log(
-                    "There was a problem with the fetch operation:",
-                    error
-                );
-                if (error.response) {
-                    error.response.json().then((errorMessage) => {
-                        alert(errorMessage.message);
-                        console.log("Error message:", errorMessage.message);
-                    });
-                } else {
-                    console.log("Network error:", error.message);
-                }
-            });
+        });
 
         setSpots(newSpots);
     };
@@ -560,7 +593,11 @@ function EditPage({ tripinfo, language, refreshTrip }) {
 
     return (
         <div className={style.editpagecontainer}>
-            <div className={`${style.editpage} ${(openExplore||openWallet)?style.hidepage:null}`}>
+            <div
+                className={`${style.editpage} ${
+                    openExplore || openWallet ? style.hidepage : null
+                }`}
+            >
                 <div className={`${style.editpageTitle}`}>
                     {tripinfo["name"]}
                     <div className={style.morebtcontianer}>
