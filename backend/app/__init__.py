@@ -1,6 +1,6 @@
 import os
 from dotenv import load_dotenv
-
+from .socket import socketio
 from flask import Flask
 from flask_jwt_extended import JWTManager
 
@@ -21,5 +21,7 @@ def create_app():
 
     jwt = JWTManager()
     jwt.init_app(app)
+
+    socketio.init_app(app, cors_allowed_origins="*")
 
     return app

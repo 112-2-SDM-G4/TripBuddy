@@ -2,7 +2,8 @@ from flask_restful import Api
 # from flask_mail import Mail
 import os
 from dotenv import load_dotenv
-
+from gevent import pywsgi
+from geventwebsocket.handler import WebSocketHandler
 from flask import Flask
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
@@ -10,6 +11,7 @@ from app import create_app
 from app.models.create_db import init_db
 from app.routes import initialize_routes
 from app.services.mail import init_mail
+from app.socket import socketio
 from datetime import timedelta
 
 # app = create_app()
@@ -17,7 +19,6 @@ app = Flask(__name__)
 CORS(app)
 
 api = Api(app)
-
 
 load_dotenv()
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
@@ -47,9 +48,12 @@ db = init_db(app)
 # login_manager = LoginManager(app)
 
 initialize_routes(api)
+socketio.init_app(app)
 
 if __name__ == '__main__':
-    app.run(debug = True)
-
+    # server = pywsgi.WSGIServer(('0.0.0.0', 5000), app, handler_class=WebSocketHandler)
+    # server.serve_forever()
+    # socketio.run(app, debug=True)
+    app.run(debug=True)
 # from app.main import main_blueprint
 # app.register_blueprint(main_blueprint) 

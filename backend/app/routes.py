@@ -8,6 +8,7 @@ from app.controllers.LedgerManager import Currency
 from app.controllers.PostManager import PostManager, HeartManager
 from app.controllers.GroupManager import SetGroupMember
 from app.controllers.LedgerManager import ManageTransaction, CheckBalance
+from app.controllers.SocketTripManager import SocketTripManager
 from flask_restful import Api
 
 BASE_ROUTE = '/api/v1'
@@ -43,3 +44,4 @@ def initialize_routes(api: Api):
     api.add_resource(ManageTransaction, f'{BASE_ROUTE}/ledger/manage_transaction')
     api.add_resource(CheckBalance, f'{BASE_ROUTE}/ledger/check_balance')
     api.add_resource(GetUserInfo, f'{BASE_ROUTE}/user/get_info')
+    # api.add_resource(SocketTripManager, f'{BASE_ROUTE}/socket_trip')
