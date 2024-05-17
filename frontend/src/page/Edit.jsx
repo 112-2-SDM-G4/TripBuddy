@@ -36,9 +36,7 @@ export default function Edit() {
     const [trip, setTrip] = useState({});
     const { language } = useLanguage();
     const navigate = useNavigate();
-    
 
-    
     useEffect(() => {
         if (id !== undefined) {
             fetchWithJwt("/api/v1/trip/" + id + "/" + language, "GET")
@@ -392,19 +390,26 @@ function EditPage({ tripinfo, language, refreshTrip }) {
 
     useEffect(() => {
         const handleClickOutside = (event) => {
-            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+            if (
+                dropdownRef.current &&
+                !dropdownRef.current.contains(event.target)
+            ) {
                 setOpenDropDown(false);
             }
         };
 
-        document.addEventListener('mousedown', handleClickOutside);
+        document.addEventListener("mousedown", handleClickOutside);
         return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
+            document.removeEventListener("mousedown", handleClickOutside);
         };
     }, [dropdownRef]);
 
-
     const socket = io.connect("https://planar-effect-420508.de.r.appspot.com", {
+        query: {
+            ...(sessionStorage.getItem("jwtToken") && {
+                Authorization: `Bearer ${sessionStorage.getItem("jwtToken")}`,
+            }),
+        },
         reconnectionAttempts: 5, // 最大重連次數
         reconnectionDelay: 5000, // 每次重連間隔時間（毫秒）
         reconnectionDelayMax: 10000, // 最大重連間隔時間（毫秒）
