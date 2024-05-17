@@ -17,24 +17,29 @@
     height: 100%;
     overflow-y: scroll;
 }
+
 .initialblock {
     margin-top: 3rem;
     width: 80vw;
     max-width: 28rem;
     margin-bottom: 5rem;
 }
+
 .title {
     font-size: 1.25rem;
     font-weight: bold;
     padding-bottom: 1rem;
 }
+
 .row {
     display: flex;
     justify-content: space-between;
 }
-.selectbar > div:first-child {
+
+.selectbar>div:first-child {
     font-size: 0.75rem;
 }
+
 .pickdate {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -44,6 +49,7 @@
     padding: 1rem 0rem;
     cursor: pointer;
 }
+
 .datepicker {
     color: var(--fontcolor);
     background-color: var(--backgroundcolor);
@@ -54,14 +60,17 @@
     height: 1.5rem;
     cursor: pointer;
 }
+
 input[type="date"]::-webkit-calendar-picker-indicator {
     opacity: 0;
 }
+
 .calendarcontainer {
     height: 20rem;
     overflow: hidden;
     transition: all 1s ease;
 }
+
 .hidecalendar {
     height: 0;
 }
@@ -70,12 +79,14 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     display: flex;
     position: relative;
 }
+
 .explorepage {
     transition: all 1s ease;
     max-width: 45vw;
     overflow: hidden;
     position: relative;
 }
+
 .hidden {
     max-width: 0vw;
 }
@@ -97,36 +108,44 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     justify-content: space-between;
     align-items: center;
 }
+
 .secondRow {
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
+
 .ledger {
     font-size: 1.5rem;
     margin-right: 0.75rem;
     margin-bottom: -1.2rem;
     cursor: pointer;
 }
+
 .selectdate {
     padding-top: 1rem;
     display: flex;
 }
+
 .date {
     cursor: pointer;
     padding: 0.25rem 0.5rem;
 }
+
 .selected {
     border-bottom: 5px solid var(--primarycolor);
 }
+
 .weather {
     font-size: 1.5rem;
     margin-left: 0.5rem;
     color: var(--primarycolor);
 }
+
 .datedetail {
     padding-top: 1rem;
 }
+
 .dateinfos {
     display: flex;
     align-items: center;
@@ -134,6 +153,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     width: 90vw;
     max-width: 28rem;
 }
+
 .addspot {
     font-size: 1.5rem;
     cursor: pointer;
@@ -148,11 +168,13 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     padding-top: 2rem;
     min-width: 45vw;
 }
+
 .backbt {
     font-size: 3rem;
     height: 1.5rem;
     cursor: pointer;
 }
+
 .exploretitle {
     display: flex;
     align-items: flex-end;
@@ -160,6 +182,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     margin-left: 0.5rem;
     padding-top: 0.5rem;
 }
+
 .searchboxcontainer {
     width: 100%;
     padding-left: 1rem;
@@ -175,9 +198,11 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     margin-top: 1.5rem;
     margin-bottom: 4.5rem;
 }
+
 .morebtcontianer {
     position: relative;
 }
+
 .dropdowncontainer {
     z-index: 2;
     width: 10rem;
@@ -186,26 +211,30 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     position: absolute;
     height: 10.5rem;
     overflow: hidden;
-    background-color: color-mix(
-        in srgb,
-        var(--fontcolor) 10%,
-        var(--backgroundcolor)
-    );
-    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    background-color: var(--fieldcolor);
+    box-shadow: 0px 0.05rem 0.1rem 0px color-mix(in srgb, var(--fontcolor) 20%, transparent);
     border-radius: 1rem;
     transition: all 0.5s ease;
 }
+
 .close {
     height: 0;
 }
+
 .dropdownitem {
-    margin-top: 1.25rem;
+    /* margin-top: 1.25rem; */
     padding-left: 1.25rem;
+    padding: 0.8rem;
     display: flex;
     font-size: 0.75rem;
     gap: 0.5rem;
     cursor: pointer;
 }
+
+.dropdownitem:hover {
+    background-color: color-mix(in srgb, var(--fontcolor) 20%, transparent);
+}
+
 .addusermodal {
     display: flex;
     flex-direction: column;
@@ -213,6 +242,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     font-size: 1rem;
     width: 20rem;
 }
+
 .sharedropdown {
     width: 105%;
     position: relative;
@@ -234,13 +264,16 @@ input[type="date"]::-webkit-calendar-picker-indicator {
         display: flex;
         justify-content: center;
     }
-    .hidepage{
+
+    .hidepage {
         height: 0;
         overflow: hidden;
     }
+
     .editpage {
         padding-top: 1.5rem;
     }
+
     .explorepage {
         position: absolute;
         max-width: 100vw;
@@ -251,15 +284,18 @@ input[type="date"]::-webkit-calendar-picker-indicator {
         background-color: var(--backgroundcolor);
         transform: translateX(0%);
     }
+
     .hidden {
         transform: translateX(100%);
     }
+
     .container {
         padding-top: 1rem;
         position: relative;
         overflow-y: scroll;
         max-height: calc(100vh - 2.5rem);
     }
+
     .addusermodal {
         width: 16rem;
     }
@@ -288,6 +324,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
         background-color: var(--backgroundcolor);
         transform: translateX(0%);
     }
+
     .hidden {
         transform: translateX(100%);
         max-width: 0vw;

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import { useAuth } from "../hooks/useAuth";
 import { useLanguage } from "../hooks/useLanguage";
+import { fetchWithJwt } from "../hooks/fetchWithJwt";
 
 import style from "./MyTrips.module.css";
 import TripCard from "../component/TripCard";
@@ -27,6 +28,10 @@ const MyTrips = () => {
                           name={trip["name"]}
                           src={trip["image"]}
                           tripId={trip["id"]}
+                          start_date={trip["start_date"]}
+                          end_date={trip["end_date"]}
+                          location_id={trip["location_id"]}
+                          date_status={trip['date_status']}
                       />
                   ))
                 : null}

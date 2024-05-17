@@ -8,8 +8,8 @@
     margin: 1rem;
     margin-top: 0rem;
     border-radius: 0.5rem;
-    border: 1px solid var(--secondarycolor);
-    box-shadow: 0rem 0.5rem 1rem
+    border: 0.1rem solid color-mix(in srgb, var(--secondarycolor) 60%, transparent);
+    box-shadow: 0rem 0.5rem 0.5rem
         color-mix(in srgb, var(--secondarycolor) 15%, transparent);
     transition: all 1s ease;
 }

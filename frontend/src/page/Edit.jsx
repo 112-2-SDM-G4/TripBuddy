@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import style from "./Edit.module.css";
 
@@ -36,7 +36,9 @@ export default function Edit() {
     const [trip, setTrip] = useState({});
     const { language } = useLanguage();
     const navigate = useNavigate();
+    
 
+    
     useEffect(() => {
         if (id !== undefined) {
             fetchWithJwt("/api/v1/trip/" + id + "/" + language, "GET")
@@ -386,6 +388,21 @@ function EditPage({ tripinfo, language, refreshTrip }) {
     const [openExplore, setOpenExplore] = useState(false);
     const [openDropDown, setOpenDropDown] = useState(false);
     const [openWallet, setOpenWallet] = useState(false);
+    const dropdownRef = useRef(null);
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setOpenDropDown(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [dropdownRef]);
+
 
     const socket = io.connect("https://planar-effect-420508.de.r.appspot.com", {
         reconnectionAttempts: 5, // 最大重連次數
@@ -600,7 +617,7 @@ function EditPage({ tripinfo, language, refreshTrip }) {
             >
                 <div className={`${style.editpageTitle}`}>
                     {tripinfo["name"]}
-                    <div className={style.morebtcontianer}>
+                    <div className={style.morebtcontianer} ref={dropdownRef}>
                         <IoEllipsisHorizontalSharp
                             className={`${style.backbt}`}
                             onClick={() => setOpenDropDown((prev) => !prev)}
@@ -674,6 +691,7 @@ function EditPage({ tripinfo, language, refreshTrip }) {
                     close={() => setOpenWallet(false)}
                     schedule_id={tripinfo["id"]}
                     exchange={tripinfo["exchange"]}
+                    showButton={openWallet}
                 />
             </div>
         </div>

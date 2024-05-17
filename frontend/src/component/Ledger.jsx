@@ -13,7 +13,7 @@ const findCurrencySymbol = (currency) => {
     return CountryData.places.find(place => place.money.en === currency)?.money.symbol || null;
 };
 
-const Ledger = ({ close, schedule_id, exchange }) => {
+const Ledger = ({ close, schedule_id, exchange, showButton }) => {
     const currentUser = JSON.parse(sessionStorage.getItem("user") || "{}").user_name || "defaultUser";
     const [totalCost, setTotalCost] = useState(0);
     const [transactions, setTransactions] = useState([]);
@@ -21,6 +21,7 @@ const Ledger = ({ close, schedule_id, exchange }) => {
     const [balanceDetails, setBalanceDetails] = useState([]);
     const [currency, setCurrency] = useState('');
     const [showAddForm, setShowAddForm] = useState(false);
+    
     const [formAnimationClass, setFormAnimationClass] = useState('');
     const { language } = useLanguage();
 
@@ -40,7 +41,7 @@ const Ledger = ({ close, schedule_id, exchange }) => {
             owe: "您欠",
             owed: "應還您",
             addTransaction: '新增消費'
-            
+
         }
     }
 
@@ -90,11 +91,15 @@ const Ledger = ({ close, schedule_id, exchange }) => {
         if (!showAddForm) {
             setFormAnimationClass(style.addFormEnter);
             setShowAddForm(true);
+
         } else {
             setFormAnimationClass(style.addFormExit);
-            setTimeout(() => setShowAddForm(false), 500);  // Match the animation duration
+            setTimeout(() => {
+                setShowAddForm(false);
+            }, 500);
         }
     };
+
 
 
     const handleDeleteTransaction = async (transactionId) => {
@@ -150,8 +155,15 @@ const Ledger = ({ close, schedule_id, exchange }) => {
                                 findCurrencySymbol={findCurrencySymbol}
                                 language={language}
                             />
-                            <Button txt={words[language]['addTransaction']} func={toggleAddForm} />
+
                         </div>
+                        {showButton && (
+                            <div className={style.buttonContainer}>
+                                <Button txt={words[language]['addTransaction']} func={toggleAddForm} />
+                            </div>
+                        )}
+
+
                     </div>
                 </>
             ) : (

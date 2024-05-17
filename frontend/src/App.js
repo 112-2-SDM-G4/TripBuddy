@@ -58,7 +58,7 @@ function App() {
                 <Route path="*" element={<NotFound />} />
                 {/* </Route> */}
             </Routes>
-            {windowSize.width < constants.MOBILE_SCREEN_WIDTH && <Footer />}
+            {windowSize.width < constants.MOBILE_SCREEN_WIDTH && isLoggedIn && <Footer />}
         </div>
     );
 }

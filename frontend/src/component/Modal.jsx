@@ -5,7 +5,8 @@ import style from "./Modal.module.css";
 
 const Modal = ({ isOpen, onClose, children, showArrow = false }) => {
     return (
-        <div className={style.modaloverlay} onClick={onClose}>
+        
+        <div className={style.modaloverlay} onClick={onClose} >
             <div className={style.modal} onClick={(e) => e.stopPropagation()}>
                 <button
                     className={style.closebt}

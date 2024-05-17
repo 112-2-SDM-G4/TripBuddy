@@ -1,7 +1,6 @@
 import React from "react";
 import { TbRobotFace } from "react-icons/tb";
 import { MdOutlineTravelExplore, MdModeOfTravel } from "react-icons/md";
-import { HiDotsHorizontal } from "react-icons/hi";
 
 export const NavbarItemsData = [
     {

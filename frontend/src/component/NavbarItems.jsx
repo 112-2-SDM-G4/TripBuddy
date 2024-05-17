@@ -24,38 +24,37 @@ function NavbarItem() {
 
     function waitForSessionData(key) {
         return new Promise((resolve, reject) => {
-          const checkData = () => {
-            const dataString = sessionStorage.getItem(key);
-            if (dataString) {
-              const data = JSON.parse(dataString);
-              resolve(data);
-            } else {
-              setTimeout(checkData, 100); // 每100毫秒检查一次
-            }
-          };
-      
-          checkData();
+            const checkData = () => {
+                const dataString = sessionStorage.getItem(key);
+                if (dataString) {
+                    const data = JSON.parse(dataString);
+                    resolve(data);
+                } else {
+                    setTimeout(checkData, 100); // 每100毫秒检查一次
+                }
+            };
+
+            checkData();
         });
-      }
-      
+    }
+
     useEffect(() => {
         if (isLoggedIn) {
             waitForSessionData("user").then(userData => {
-            setUsername(userData["user_name"]);
+                setUsername(userData["user_name"]);
             }).catch(error => {
-            console.error("Error waiting for user data:", error);
+                console.error("Error waiting for user data:", error);
             });
-        
+
             waitForSessionData("avatar").then(avatarData => {
-            setAvatar(avatarData);
+                setAvatar(avatarData);
             }).catch(error => {
-            console.error("Error waiting for avatar data:", error);
+                console.error("Error waiting for avatar data:", error);
             });
         }
     }, [userInfo, isLoggedIn]);
-    
 
-    return (
+    return isLoggedIn ? (
         <div className={style.tabcontainer}>
             {NavbarItemsData.map((item, index) => {
                 return (
@@ -86,16 +85,18 @@ function NavbarItem() {
                 );
             })}
 
-        {windowSize.width < constants.MOBILE_SCREEN_WIDTH && isLoggedIn
-            && 
-            <Avatar 
-                src={`../../${avatar}.png`} 
-                alt={username}
-                username={username}
-                onClick={() => navigate("setting-options")}
-            />}
+            {windowSize.width < constants.MOBILE_SCREEN_WIDTH
+                &&
+                <Avatar
+                    src={`../../${avatar}.png`}
+                    alt={username}
+                    username={username}
+                    onClick={() => navigate("setting-options")}
+                />}
         </div>
-    );
+    ) : null;
+
+
 }
 
 export default NavbarItem;

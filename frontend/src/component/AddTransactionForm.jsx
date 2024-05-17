@@ -14,6 +14,7 @@ const AddTransactionForm = ({ toggleForm, trip_id, refetchData, exchange, langua
     const [error, setError] = useState('');
     const [currency, setCurrency] = useState(exchange);
     const selectedCurrency = CountryData.places.find(place => place.money.en === exchange);
+    const [countryid, setCountryid] = useState(selectedCurrency.country_id);
     const [symbol, setSymbol] = useState(selectedCurrency.money.symbol);
     const [payer, setPayer] = useState('you');
     const [payees, setPayees] = useState([]);
@@ -153,12 +154,20 @@ const AddTransactionForm = ({ toggleForm, trip_id, refetchData, exchange, langua
     };
 
 
-    const handleCurrencyChange = (event) => {
-        event.preventDefault();
-        const selectedCurrency = CountryData.places.find(place => place.money.en === event.target.value);
+    const handleCurrencyChange = (value) => {
+
+        const selectedCurrency = CountryData.places.find(place => place.money.en === value);
         setCurrency(selectedCurrency.money.en);
         setSymbol(selectedCurrency.money.symbol);
+        setCountryid(selectedCurrency.country_id);
         setShowDropdown(false);
+    };
+
+    const handleItemClick = (e, value) => {
+        e.preventDefault();
+        handleCurrencyChange(value);
+        setShowDropdown(false);
+        
     };
 
     const toggleDropdown = () => {
@@ -226,20 +235,24 @@ const AddTransactionForm = ({ toggleForm, trip_id, refetchData, exchange, langua
                                 {symbol} ▼
                             </button>
                             {showDropdown && (
-                                <select
+                                <ul
                                     ref={dropdownRef}
                                     value={currency}
-                                    onChange={(event) => {handleCurrencyChange(event)}}
                                     className={style.currencySelect}
                                     onBlur={() => setShowDropdown(false)}
                                     size={CountryData.places.length}  // This makes it act like a dropdown
                                 >
                                     {CountryData.places.map((place, index) => (
-                                        <option key={index} value={place.money.en} >
+                                        <li key={index} 
+                                            value={place.money.en} 
+                                            onClick={(e) => handleItemClick(e, place.money.en)}
+                                            onKeyDown={(e) => e.key === 'Enter' && handleItemClick(place.money.en)}
+                                            className={`${style.currencyItem} ${countryid === place.country_id ? style.selected : ''}`}
+                                        >
                                             {place.country[language]} ({place.money.symbol})
-                                        </option>
+                                        </li>
                                     ))}
-                                </select>
+                                </ul>
                             )}
                             <div className={style.amountWrapper}>
                                 <InputText

@@ -117,4 +117,10 @@
     .cashIcon {
         width: 0;
     }
+
+    .paidBy {
+        width: 5rem;
+        font-size: 0.6rem; 
+    }
+
 }
