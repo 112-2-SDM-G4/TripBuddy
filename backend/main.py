@@ -51,9 +51,14 @@ initialize_routes(api)
 socketio.init_app(app)
 
 if __name__ == '__main__':
+    socketio.run(app, debug=True)
+    
     # server = pywsgi.WSGIServer(('0.0.0.0', 5000), app, handler_class=WebSocketHandler)
     # server.serve_forever()
-    # socketio.run(app, debug=True)
-    app.run(debug=True)
+    # host ='127.0.0.1'
+    # port = 5000
+    # print(f"Starting server at http://{host}:{port}")
+    # socketio.run(app, host=host, port=port, debug=True)
+    # app.run(debug=True)
 # from app.main import main_blueprint
 # app.register_blueprint(main_blueprint) 

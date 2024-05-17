@@ -4,8 +4,8 @@ from flask_socketio import SocketIO
 # set cors
 if os.environ.get("FLASK_ENV") == "production":
     origins = [
-        "http://tripbuddy-frontend-repx5qxhzq-de.a.run.app",
-        "https://tripbuddy-frontend-repx5qxhzq-de.a.run.app"
+        "http://planar-effect-420508.de.r.appspot.com/",
+        "https://planar-effect-420508.de.r.appspot.com/",
     ]
 else:
     origins = "*" # allow localhost
