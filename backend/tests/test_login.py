@@ -15,7 +15,7 @@ class SettingBase(TestCase):
     def tearDown(self):
         db.session.remove()
 
-    def signup(self):
+    def login(self):
         response = self.client.post(url_for('logincheckpassword'),
                                     follow_redirects = True,
                                     json={
@@ -27,13 +27,13 @@ class SettingBase(TestCase):
     
 
 class CheckUserLogin(SettingBase):
-    def test_signup(self):
-        response = self.signup()
+    def test_login(self):
+        response = self.login()
         self.assert200(response)
 
-    def test_signup_401(self):
+    def test_login_401(self):
         self.password = 'teste'
-        response = self.signup()
+        response = self.login()
         self.assert401(response)
 
 
