@@ -2,8 +2,6 @@ from flask_restful import Api
 # from flask_mail import Mail
 import os
 from dotenv import load_dotenv
-from gevent import pywsgi
-from geventwebsocket.handler import WebSocketHandler
 from flask import Flask
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
@@ -53,13 +51,6 @@ socketio.init_app(app)
 
 if __name__ == '__main__':
     socketio.run(app, debug=True)
-    
-    # server = pywsgi.WSGIServer(('0.0.0.0', 5000), app, handler_class=WebSocketHandler)
-    # server.serve_forever()
-    # host ='127.0.0.1'
-    # port = 5000
-    # print(f"Starting server at http://{host}:{port}")
-    # socketio.run(app, host=host, port=port, debug=True)
     # app.run(debug=True)
 # from app.main import main_blueprint
 # app.register_blueprint(main_blueprint) 
