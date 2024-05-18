@@ -30,6 +30,7 @@ app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
 app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
 app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=6)
+app.config['JWT_TOKEN_LOCATION'] = ['headers','query_string']
 
 INSTANCE_NAME = os.getenv("INSTANCE_NAME")
 PUBLIC_IP_ADDRESS = os.getenv("DB_PUBLIC_IP_ADDRESS")
