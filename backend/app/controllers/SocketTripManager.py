@@ -5,6 +5,7 @@ from app import socketio
 from app.models.schedule import Schedule
 from app.models.relation_user_sch import RelationUserSch
 from app.models.relation_spot_sch import RelationSpotSch
+from app.controllers.TripManager import TripManager
 from app.controllers.utils import *
 
 
@@ -19,7 +20,7 @@ class SocketTripManager:
             return
 
         # 檢查用戶是否已經有權限參與該行程
-        relation = RelationUserSch.get_by_user_and_schedule(user_id, trip_id)
+        relation = RelationUserSch.get_by_user_schedule(user_id, trip_id)
         if not relation or not relation.access:
             emit('error', {'message': 'User does not have access to this trip.'})
             return
@@ -37,7 +38,7 @@ class SocketTripManager:
             return
 
         # 檢查用戶是否在該行程中
-        relation = RelationUserSch.get_by_user_and_schedule(user_id, trip_id)
+        relation = RelationUserSch.get_by_user_schedule(user_id, trip_id)
         if not relation or not relation.access:
             emit('error', {'message': 'User not in trip.'})
             return
@@ -146,10 +147,10 @@ class SocketTripManager:
         response = {
             "id": schedule.schedule_id,
             "name": schedule.schedule_name,
-            "image": schedule.image,  # random photo from places
+            "image": TripManager.get_trip_photo(schedule),  
             "start_date": date_to_array(schedule.start_date),
             "end_date": date_to_array(schedule.end_date),
-            "location_id": schedule.location_id,
+            "location_id": TripManager.get_trip_location_id(schedule),
             "location": [schedule.location_lat, schedule.location_lng],
             "trip": trip_detail,
             "public": schedule.public,
