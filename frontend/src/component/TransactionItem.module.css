@@ -1,0 +1,126 @@
+.transactionItem {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem;
+    margin-bottom: 0;
+    border-bottom: 0.05rem solid color-mix(in srgb, var(--fontcolor) 20%, transparent);
+}
+
+.date {
+    white-space: nowrap;
+    font-size: 0.8rem;
+    color: color-mix(in srgb, var(--fontcolor) 50%, transparent);
+    text-align: left;
+    width: 3rem;
+}
+
+.details {
+    flex-grow: 1;
+    padding-left: 0.7rem;
+    padding-right: 0.7rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.title {
+    font-weight: bold;
+    margin-bottom: 0.26rem;
+}
+
+.paidBy {
+    font-size: 0.8rem;
+    color: color-mix(in srgb, var(--fontcolor) 60%, transparent);
+}
+
+.cashIcon {
+    width: 1.8rem;
+    height: 1.8rem;
+    margin: 0.8rem;
+    fill: var(--fontcolor);
+}
+
+.textContent {
+    display: flex;
+    flex-direction: column;
+}
+
+.amount {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    margin-left: 4rem;
+}
+
+.amountDescription {
+    font-size: 0.8rem;
+}
+
+.amountValue {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.amountRed .amountValue,
+.amountRed .amountDescription {
+    color: var(--color-for-red);
+}
+
+.amountGreen .amountValue,
+.amountGreen .amountDescription {
+    color: var(--color-for-green);
+}
+
+.amountGray .amountValue,
+.amountGray .amountDescription {
+    color: color-mix(in srgb, var(--fontcolor) 50%, transparent);
+}
+
+
+@media (max-width: 1000px) {
+    .paidBy {
+        width: 8rem;
+    }
+}
+
+@media (max-width: 600px) {
+
+    .cashIcon {
+        
+        width: 1.5rem;
+        height: 1.5rem;
+     
+    }
+
+    .amount {
+        
+        margin-left: 0;
+    }
+
+    .amountValue {
+        font-size: 1rem;
+    }
+
+    .paidBy {
+        width: 6rem;
+        font-size: 0.7rem; 
+        overflow: hidden;
+        text-overflow: ellipsis; 
+        white-space: nowrap;
+    }
+
+}
+
+
+@media (max-width: 400px) {
+    .cashIcon {
+        width: 0;
+    }
+
+    .paidBy {
+        width: 5rem;
+        font-size: 0.6rem; 
+    }
+
+}

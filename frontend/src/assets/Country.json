@@ -1,0 +1,578 @@
+{
+    "places": [
+        {
+            "country": {
+                "zh": "台灣",
+                "en": "Taiwan"
+            },
+            "latitude": 25.105497,
+            "longitude": 121.597366,
+            "money": {
+                "zh": "新台幣",
+                "en": "TWD",
+                "symbol": "NT$"
+            },
+            "country_id": 24
+        },
+        {
+            "country": {
+                "zh": "日本",
+                "en": "Japan"
+            },
+            "latitude": 35.652832,
+            "longitude": 139.839478,
+            "money": {
+                "zh": "日圓",
+                "en": "JPY",
+                "symbol": "¥"
+            },
+            "country_id": 25
+        },
+        {
+            "country": {
+                "zh": "南韓",
+                "en": "Korea"
+            },
+            "latitude": 37.5326,
+            "longitude": 127.024612,
+            "money": {
+                "zh": "韓元",
+                "en": "KRW",
+                "symbol": "₩"
+            },
+            "country_id": 26
+        },
+        {
+            "country": {
+                "zh": "泰國",
+                "en": "Thailand"
+            },
+            "latitude": 13.736717,
+            "longitude": 100.523186,
+            "money": {
+                "zh": "泰銖",
+                "en": "THB",
+                "symbol": "฿"
+            },
+            "country_id": 27
+        },
+        {
+            "country": {
+                "zh": "越南",
+                "en": "Vietnam"
+            },
+            "latitude": 10.762622,
+            "longitude": 106.660172,
+            "money": {
+                "zh": "越南盾",
+                "en": "VND",
+                "symbol": "₫"
+            },
+            "country_id": 28
+        },
+        {
+            "country": {
+                "zh": "菲律賓",
+                "en": "Philippines"
+            },
+            "latitude": 14.599512,
+            "longitude": 120.984222,
+            "money": {
+                "zh": "菲律賓披索",
+                "en": "PHP",
+                "symbol": "₱"
+            },
+            "country_id": 29
+        },
+        {
+            "country": {
+                "zh": "印度尼西亞",
+                "en": "Indonesia"
+            },
+            "latitude": -6.2,
+            "longitude": 106.816666,
+            "money": {
+                "zh": "印尼盾",
+                "en": "IDR",
+                "symbol": "Rp"
+            },
+            "country_id": 30
+        },
+        {
+            "country": {
+                "zh": "馬來西亞",
+                "en": "Malaysia"
+            },
+            "latitude": 3.140853,
+            "longitude": 101.693207,
+            "money": {
+                "zh": "馬來西亞令吉",
+                "en": "MYR",
+                "symbol": "RM"
+            },
+            "country_id": 31
+        },
+        {
+            "country": {
+                "zh": "新加坡",
+                "en": "Singapore"
+            },
+            "latitude": 1.29027,
+            "longitude": 103.851959,
+            "money": {
+                "zh": "新加坡元",
+                "en": "SGD",
+                "symbol": "S$"
+            },
+            "country_id": 32
+        },
+        {
+            "country": {
+                "zh": "香港",
+                "en": "Hong Kong"
+            },
+            "latitude": 22.302711,
+            "longitude": 114.177216,
+            "money": {
+                "zh": "港元",
+                "en": "HKD",
+                "symbol": "HK$"
+            },
+            "country_id": 33
+        },
+        {
+            "country": {
+                "zh": "中國",
+                "en": "China"
+            },
+            "latitude": 35.86166,
+            "longitude": 104.195397,
+            "money": {
+                "zh": "人民幣",
+                "en": "CNY",
+                "symbol": "¥"
+            },
+            "country_id": 34
+        },
+        {
+            "country": {
+                "zh": "澳門",
+                "en": "Macao"
+            },
+            "latitude": 22.20056,
+            "longitude": 113.54611,
+            "money": {
+                "zh": "澳門元",
+                "en": "MOP",
+                "symbol": "MOP$"
+            },
+            "country_id": 35
+        },
+        {
+            "country": {
+                "zh": "美國",
+                "en": "USA"
+            },
+            "latitude": 40.73061,
+            "longitude": -73.935242,
+            "money": {
+                "zh": "美元",
+                "en": "USD",
+                "symbol": "$"
+            },
+            "country_id": 36
+        },
+        {
+            "country": {
+                "zh": "法國",
+                "en": "France"
+            },
+            "latitude": 48.864716,
+            "longitude": 2.349014,
+            "money": {
+                "zh": "歐元",
+                "en": "EUR",
+                "symbol": "€"
+            },
+            "country_id": 37
+        },
+        {
+            "country": {
+                "zh": "意大利",
+                "en": "Italy"
+            },
+            "latitude": 41.902782,
+            "longitude": 12.496366,
+            "money": {
+                "zh": "歐元",
+                "en": "EUR",
+                "symbol": "€"
+            },
+            "country_id": 38
+        },
+        {
+            "country": {
+                "zh": "西班牙",
+                "en": "Spain"
+            },
+            "latitude": 40.416775,
+            "longitude": -3.70379,
+            "money": {
+                "zh": "歐元",
+                "en": "EUR",
+                "symbol": "€"
+            },
+            "country_id": 39
+        },
+        {
+            "country": {
+                "zh": "英國",
+                "en": "United Kingdom"
+            },
+            "latitude": 51.509865,
+            "longitude": -0.118092,
+            "money": {
+                "zh": "英鎊",
+                "en": "GBP",
+                "symbol": "£"
+            },
+            "country_id": 40
+        },
+        {
+            "country": {
+                "zh": "德國",
+                "en": "Germany"
+            },
+            "latitude": 52.520008,
+            "longitude": 13.404954,
+            "money": {
+                "zh": "歐元",
+                "en": "EUR",
+                "symbol": "€"
+            },
+            "country_id": 41
+        },
+        {
+            "country": {
+                "zh": "加拿大",
+                "en": "Canada"
+            },
+            "latitude": 43.65107,
+            "longitude": -79.347015,
+            "money": {
+                "zh": "加元",
+                "en": "CAD",
+                "symbol": "CA$"
+            },
+            "country_id": 42
+        },
+        {
+            "country": {
+                "zh": "澳大利亞",
+                "en": "Australia"
+            },
+            "latitude": -33.865143,
+            "longitude": 151.2099,
+            "money": {
+                "zh": "澳幣",
+                "en": "AUD",
+                "symbol": "A$"
+            },
+            "country_id": 43
+        },
+        {
+            "country": {
+                "zh": "巴西",
+                "en": "Brazil"
+            },
+            "latitude": -15.793889,
+            "longitude": -47.882778,
+            "money": {
+                "zh": "巴西雷亞爾",
+                "en": "BRL",
+                "symbol": "R$"
+            },
+            "country_id": 44
+        },
+        {
+            "country": {
+                "zh": "俄羅斯",
+                "en": "Russia"
+            },
+            "latitude": 55.751244,
+            "longitude": 37.618423,
+            "money": {
+                "zh": "盧布",
+                "en": "RUB",
+                "symbol": "₽"
+            },
+            "country_id": 45
+        },
+        {
+            "country": {
+                "zh": "阿根廷",
+                "en": "Argentina"
+            },
+            "latitude": -34.603722,
+            "longitude": -58.381592,
+            "money": {
+                "zh": "阿根廷披索",
+                "en": "ARS",
+                "symbol": "$"
+            },
+            "country_id": 46
+        },
+        {
+            "country": {
+                "zh": "印度",
+                "en": "India"
+            },
+            "latitude": 28.679079,
+            "longitude": 77.06971,
+            "money": {
+                "zh": "印度盧比",
+                "en": "INR",
+                "symbol": "₹"
+            },
+            "country_id": 47
+        },
+        {
+            "country": {
+                "zh": "南非",
+                "en": "South Africa"
+            },
+            "latitude": -33.91886,
+            "longitude": 18.4233,
+            "money": {
+                "zh": "南非蘭特",
+                "en": "ZAR",
+                "symbol": "R"
+            },
+            "country_id": 48
+        },
+        {
+            "country": {
+                "zh": "埃及",
+                "en": "Egypt"
+            },
+            "latitude": 30.033333,
+            "longitude": 31.233334,
+            "money": {
+                "zh": "埃及鎊",
+                "en": "EGP",
+                "symbol": "E£"
+            },
+            "country_id": 49
+        },
+        {
+            "country": {
+                "zh": "紐西蘭",
+                "en": "New Zealand"
+            },
+            "latitude": -36.848461,
+            "longitude": 174.763336,
+            "money": {
+                "zh": "紐西蘭幣",
+                "en": "NZD",
+                "symbol": "NZ$"
+            },
+            "country_id": 50
+        },
+        {
+            "country": {
+                "zh": "瑞士",
+                "en": "Switzerland"
+            },
+            "latitude": 46.204391,
+            "longitude": 6.143158,
+            "money": {
+                "zh": "瑞士法郎",
+                "en": "CHF",
+                "symbol": "CHF"
+            },
+            "country_id": 51
+        },
+        {
+            "country": {
+                "zh": "荷蘭",
+                "en": "Netherlands"
+            },
+            "latitude": 52.370216,
+            "longitude": 4.895168,
+            "money": {
+                "zh": "歐元",
+                "en": "EUR",
+                "symbol": "€"
+            },
+            "country_id": 52
+        },
+        {
+            "country": {
+                "zh": "希臘",
+                "en": "Greece"
+            },
+            "latitude": 37.98381,
+            "longitude": 23.727539,
+            "money": {
+                "zh": "歐元",
+                "en": "EUR",
+                "symbol": "€"
+            },
+            "country_id": 53
+        },
+        {
+            "country": {
+                "zh": "瑞典",
+                "en": "Sweden"
+            },
+            "latitude": 59.334591,
+            "longitude": 18.06324,
+            "money": {
+                "zh": "瑞典克朗",
+                "en": "SEK",
+                "symbol": "kr"
+            },
+            "country_id": 54
+        },
+        {
+            "country": {
+                "zh": "挪威",
+                "en": "Norway"
+            },
+            "latitude": 69.649208,
+            "longitude": 18.955324,
+            "money": {
+                "zh": "挪威克朗",
+                "en": "NOK",
+                "symbol": "kr"
+            },
+            "country_id": 55
+        },
+        {
+            "country": {
+                "zh": "丹麥",
+                "en": "Denmark"
+            },
+            "latitude": 55.676098,
+            "longitude": 12.568337,
+            "money": {
+                "zh": "丹麥克朗",
+                "en": "DKK",
+                "symbol": "kr"
+            },
+            "country_id": 56
+        },
+        {
+            "country": {
+                "zh": "奧地利",
+                "en": "Austria"
+            },
+            "latitude": 48.210033,
+            "longitude": 16.363449,
+            "money": {
+                "zh": "歐元",
+                "en": "EUR",
+                "symbol": "€"
+            },
+            "country_id": 57
+        },
+        {
+            "country": {
+                "zh": "芬蘭",
+                "en": "Finland"
+            },
+            "latitude": 60.192059,
+            "longitude": 24.945831,
+            "money": {
+                "zh": "歐元",
+                "en": "EUR",
+                "symbol": "€"
+            },
+            "country_id": 58
+        },
+        {
+            "country": {
+                "zh": "比利時",
+                "en": "Belgium"
+            },
+            "latitude": 51.260197,
+            "longitude": 4.402771,
+            "money": {
+                "zh": "歐元",
+                "en": "EUR",
+                "symbol": "€"
+            },
+            "country_id": 59
+        },
+        {
+            "country": {
+                "zh": "愛爾蘭",
+                "en": "Ireland"
+            },
+            "latitude": 53.35014,
+            "longitude": -6.266155,
+            "money": {
+                "zh": "歐元",
+                "en": "EUR",
+                "symbol": "€"
+            },
+            "country_id": 60
+        },
+        {
+            "country": {
+                "zh": "捷克",
+                "en": "Czech Republic"
+            },
+            "latitude": 50.073658,
+            "longitude": 14.41854,
+            "money": {
+                "zh": "捷克克朗",
+                "en": "CZK",
+                "symbol": "Kč"
+            },
+            "country_id": 61
+        },
+        {
+            "country": {
+                "zh": "以色列",
+                "en": "Israel"
+            },
+            "latitude": 31.771959,
+            "longitude": 35.217018,
+            "money": {
+                "zh": "以色列新謝克爾",
+                "en": "ILS",
+                "symbol": "₪"
+            },
+            "country_id": 62
+        },
+        {
+            "country": {
+                "zh": "土耳其",
+                "en": "Turkey"
+            },
+            "latitude": 38.630554,
+            "longitude": 27.422222,
+            "money": {
+                "zh": "土耳其里拉",
+                "en": "TRY",
+                "symbol": "₺"
+            },
+            "country_id": 63
+        },
+        {
+            "country": {
+                "zh": "克羅地亞",
+                "en": "Croatia"
+            },
+            "latitude": 45.815399,
+            "longitude": 15.966568,
+            "money": {
+                "zh": "克羅地亞庫納",
+                "en": "HRK",
+                "symbol": "kn"
+            },
+            "country_id": 64
+        }
+    ]
+}

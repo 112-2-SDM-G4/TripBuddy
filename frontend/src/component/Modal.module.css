@@ -1,0 +1,54 @@
+.modaloverlay {
+    background-color: color-mix(
+        in srgb,
+        var(--backgroundcolor) 80%,
+        transparent
+    );
+    width: 100vw;
+    height: 100vh;
+    max-width: 100dvw;
+    max-height: 100dvh;
+    position: fixed;
+    top: 2rem;
+    left: 0;
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.modal {
+    background-color: var(--backgroundcolor);
+    border: 1px solid var(--primarycolor);
+    border-radius: 0.2rem;
+    max-width: 80vw;
+    max-height: 90vh;
+    position: relative;
+}
+
+.modalcontent {
+    margin-top: 1rem;
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: stretch;
+    flex-direction: column;
+    overflow-y: scroll;
+    max-height: 80vh;
+    max-width: 100%;
+    padding-bottom: 2rem;
+    overflow-x: hidden;
+}
+
+.closebt {
+    position: absolute;
+    top: 0.25rem;
+    right: 0.25rem;
+}
+
+@media (max-width: 500px) {
+    .modal {
+        max-width: 90dvw;
+        max-height: 90dvh;
+    }
+}

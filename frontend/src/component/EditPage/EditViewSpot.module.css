@@ -1,0 +1,124 @@
+.main {
+    padding-top: 1rem;
+    display: flex;
+}
+
+.img {
+    border-radius: 0.2rem;
+    width: 35%;
+    max-width: 30rem;
+    height: auto;
+    object-fit: cover;
+    box-shadow: 0rem 0.5rem 1rem
+        color-mix(in srgb, var(--secondarycolor) 15%, transparent);
+    user-select: none;
+}
+
+.textbox {
+    width: 100%;
+    padding: 0rem;
+    position: relative;
+    padding-left: 1rem;
+    max-height: 100%;
+    overflow-y: auto;
+}
+
+.title {
+    padding-bottom: 0.5rem;
+    font-weight: bold;
+    font-size: 1.25rem;
+    padding-top: 1rem;
+    border-bottom: 1px solid var(--secondarycolor);
+}
+
+.row {
+    display: flex;
+    padding-top: 1rem;
+}
+
+.rowname {
+    width: 6rem;
+    min-width: 6rem;
+}
+
+.rating {
+    display: flex;
+    flex-direction: row;
+    font-size: 0.8rem;
+    align-items: center;
+}
+
+.ratingtext {
+    display: flex;
+    padding-right: 0.2rem;
+    color: var(--secondarycolor);
+}
+
+.item {
+    display: flex;
+    padding-right: 0.2rem;
+}
+
+.info {
+    padding-top: 0.5rem;
+    font-size: 0.8rem;
+    line-height: 1.5rem;
+    width: 100%;
+}
+
+.openhrblock {
+    width: 10rem;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.openhrrow {
+    width: 12rem;
+    font-size: 0.75rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+
+.submit {
+    position: absolute;
+    right: 1rem;
+    bottom: 1rem;
+    width: 8rem;
+}
+@media (max-width: 735px) {
+    .main {
+        padding: 1rem;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .img {
+        width: 100%;
+        margin-bottom: 1rem;
+        max-height: 50vh;
+    }
+    .textbox {
+        padding-bottom: 5rem;
+        margin-bottom: 5rem;
+    }
+}
+
+.editblock {
+    margin-top: 2rem;
+    max-width: 90%;
+}
+.inputcontainer {
+    margin-top: 1.5rem;
+    position: relative;
+    height: 3rem;
+}
+.inputcontainer label {
+    position: absolute;
+    left: 0px;
+    top: -1.5rem;
+    font-size: 0.75rem;
+    opacity: 1;
+}

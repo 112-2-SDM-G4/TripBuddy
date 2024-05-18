@@ -1,0 +1,35 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    padding-top: 1rem;
+    margin-bottom: 5rem;
+    margin-top: 4.5rem;
+    align-items: center;
+    width: auto;
+}
+
+.buttoncontainer {
+    position: sticky;
+    width: 30rem;
+    bottom: 1.5rem;
+    /* margin-left: 1rem; */
+    padding-left: 0;
+}
+
+.button {
+    width: 100%;
+}
+
+@media (max-width: 735px) {
+    .buttoncontainer {
+        position: sticky;
+        width: 90%;
+        bottom: 3.5rem;
+        margin-left: 1rem;
+        padding-left: 0;
+        padding-right: 1rem;
+    }
+    .buttoncontainer {
+    }
+    
+}

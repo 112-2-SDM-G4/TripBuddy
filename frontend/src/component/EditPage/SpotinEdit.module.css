@@ -1,0 +1,52 @@
+.block {
+    width: 80vw;
+    max-width: 25.5rem;
+    cursor: grab;
+    touch-action: none;
+    user-select: none;
+    background-color: var(--backgroundcolor);
+    border: color-mix(in srgb, var(--fontcolor) 40%, transparent) 1px solid;
+    margin: 1rem;
+    border-radius: 0.5rem;
+    display: flex;
+    position: relative;
+    box-shadow: 0rem 0rem 0.2rem 0rem
+        color-mix(in srgb, var(--fontcolor) 40%, transparent);
+}
+.block::after {
+    position: absolute;
+}
+.pic {
+    width: 25%;
+    background-color: var(--fontcolor);
+    aspect-ratio: 1 / 1;
+    margin: 1rem;
+}
+.info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.time {
+    color: var(--accentcolor);
+}
+.title {
+    max-width: clamp(5rem, 45vw, 14rem);
+    overflow: hidden;
+    font-size: 1.25rem;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+.stay {
+    opacity: 0.9;
+    font-size: 0.75rem;
+}
+.comment {
+    font-size: 0.75rem;
+    opacity: 0.9;
+}
+.closebt {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+}

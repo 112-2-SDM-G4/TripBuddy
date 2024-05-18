@@ -1,0 +1,53 @@
+.main {
+    position: relative;
+    width: 7rem;
+}
+
+.container {
+    display: flex;
+
+    height: 1.5rem;
+    cursor: pointer;
+}
+
+.selected {
+    margin-right: 1rem;
+    width: 6rem;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.menu {
+    position: absolute;
+    top: 2rem;
+    z-index: 2;
+    background-color: var(--backgroundcolor);
+    border: var(--secondarycolor) 1px solid;
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+}
+.input {
+    height: 1.5rem;
+    padding-left: 0rem;
+    font-size: 1rem;
+    border: none;
+    border-bottom: 1px solid var(--secondarycolor);
+    margin-bottom: 0.5rem;
+    padding: 0.25rem;
+    padding-left: 0;
+    outline: none;
+    background-color: var(--backgroundcolor);
+}
+.options {
+    display: flex;
+    flex-direction: column;
+    overflow-y: scroll;
+    max-height: 40vh;
+}
+.option {
+    all: unset;
+    padding-bottom: 0.25rem;
+    font-size: 1rem;
+    cursor: pointer;
+}

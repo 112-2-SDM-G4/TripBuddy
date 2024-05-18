@@ -1,0 +1,56 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.circle {
+	line-height: 0;
+    height: 2rem;
+    width: 2rem;
+    margin-top: 0.2rem;
+	margin-bottom: 0.1rem;
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    border: 0.08rem solid color-mix(
+        in srgb,
+        var(--fontcolor) 20%,
+        transparent
+    );
+    border-radius: 50%;
+    transition: linear 0.25s;
+    cursor: pointer;
+    
+}
+.circle img {
+	border-radius: 50%;
+    min-width: 100%;
+    min-height: 100%
+}
+
+.circle:hover {
+	transition: ease-out 0.2s;
+    border: 0.2rem solid color-mix(
+        in srgb,
+        var(--fontcolor) 30%,
+        transparent
+    );;
+    -webkit-transition: ease-out 0.2s;
+}
+
+.username {
+    font-size: 0.6rem;
+    font-weight: bold;
+    fontcolor: var(--fontcolor);
+}
+
+@media (max-width: 735px) {
+    .circle {
+        height: 1.7rem;
+        width: 1.7rem;
+    }
+}

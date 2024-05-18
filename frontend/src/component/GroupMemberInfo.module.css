@@ -1,0 +1,50 @@
+.memberContainer {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+
+.memberButton {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 5rem;
+    height: 5rem;
+    border: none;
+    border-radius: 1rem;
+    background-size: cover;
+    background-position: center;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    margin: 0.5rem;
+}
+
+.memberButton:hover, .memberButton:focus {
+    transform: scale(1.1);
+    outline: none;
+}
+
+.memberName {
+    margin-top: 0.2rem;
+    font-size: 0.8rem;
+    color: var(--fontcolor);
+    text-align: center;
+}
+
+.avatar {
+    width: 2rem;
+    height: 2rem;
+}
+.selected {
+    background-color: color-mix(in srgb, var(--primarycolor) 25%, transparent);
+    border: 2px solid color-mix(in srgb, var(--primarycolor) 50%, transparent);
+}
+
+@media (max-width: 1070px) {
+    .memberContainer {  
+        flex-wrap: wrap;
+    }
+
+}

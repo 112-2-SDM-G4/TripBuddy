@@ -1,0 +1,185 @@
+.main {
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+    align-items: center;
+    padding-top: 2rem;
+}
+
+.container {
+    background-color: var(--fieldcolor);
+    padding: 1rem 2rem 1.5rem 2rem;
+    border-radius: 1rem;
+    box-shadow: 0 0.5rem 1rem color-mix(in srgb, var(--fontcolor) 15%, transparent);
+    width: 90%; 
+    margin: 3rem;
+    justify-content: center;
+    align-items: center;
+}
+
+.ProgressBarStyle {
+    height: 1.4rem;
+    width: 100%;
+    background-color: color-mix(in srgb, var(--fontcolor) 15%, transparent);
+    border-radius: 1rem;
+    margin: 1.5rem 0;
+}
+
+.FillerStyle {
+    height: 100%;
+    background-color: var(--accentcolor);
+    border-radius: inherit;
+    text-align: right;
+    transition: width 0.5s ease-in-out;
+}
+
+
+.LabelStyle {
+    color: var(--fontcolor);
+    font-weight: bold;
+}
+
+.questionnaireIntro {
+    margin-bottom: 2rem;
+    color: var(--fontcolor);
+}
+
+.questionnaire {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
+    margin: auto;
+
+}
+
+.pageButtons {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+
+.btn {
+    color: var(--fontcolor);
+    cursor: pointer;
+    font-size: 2rem;
+    font-weight: 300;
+    line-height: 45px;
+    margin: 0 0 2rem;
+    width: fit-content;
+    position: relative;
+    overflow: hidden;
+    background-color: transparent;
+    text-decoration: none;
+    transition: background-color 0.3s, color 0.3s, letter-spacing 0.3s;
+}
+
+.btn::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 0;
+    height: 0.1rem;
+    background-color: var(--primarycolor);
+
+    transition: width 0.28s ease-in-out;
+}
+
+.btn:hover,
+.btn.activeButton {
+    color: var(--primarycolor);
+}
+
+.btn:hover::after,
+.btn.activeButton::after {
+    width: 100%;
+}
+
+.languagePreference {
+    margin: auto;
+    align-items: center;
+    justify-content: center;
+
+}
+
+.avatarSelector {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    justify-content: center;
+    padding-bottom: 0.7rem;
+}
+
+.avatar {
+    width: 5rem;
+    height: 5rem;
+    border-radius: 50%;
+    border: 0.2rem solid color-mix(in srgb, var(--fontcolor) 15%, transparent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    cursor: pointer;
+    background: color-mix(in srgb, var(--fontcolor) 15%, transparent);
+    text-decoration-color: var(--fontcolor);
+
+}
+
+.avatar:hover {
+    border-color: var(--fontcolor);
+    /* Example hover effect */
+}
+
+.selectedAvatar {
+    border-radius: 50%;
+    width: 5rem;
+    height: 5rem;
+    border: 0.2rem solid var(--fontcolor);
+}
+
+.options {
+    align-items: center;
+    justify-content: center;
+    display: flex;
+}
+
+.field {
+    width: fit-content;
+    margin: auto;
+}
+
+.errorMessage {
+    color: var(--color-for-red);
+    font-size: 1rem;
+    margin-bottom: 0.6rem;
+}
+
+.logoContainer {
+    text-align: center;
+    margin: 2rem;
+}
+
+.logo {
+    width: 10rem;
+}
+
+.introText {
+    text-align: center;
+}
+
+.sharedropdown {
+    width: 105%;
+    position: relative;
+    height: fit-content;
+}
+
+@media (max-width: 735px) {
+    
+    .btn {
+        font-size: 1.5rem;
+    }
+}

@@ -1,0 +1,156 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    padding-top: 2rem;
+    min-width: 45vw;
+}
+
+.centerBlock {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    margin: 1rem;
+
+}
+
+.button {
+    margin: 1rem;
+}
+
+.title {
+    font-size: 1.25rem;
+    font-weight: bold;
+    padding-bottom: 1rem;
+}
+
+.ledgertitle {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.5rem;
+    margin-left: 0.5rem;
+    padding-top: 0.5rem;
+}
+
+.backbt {
+    font-size: 3rem;
+    height: 1.5rem;
+    cursor: pointer;
+}
+
+.container ul {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 1.5rem;
+    /* Removes default margin to keep custom settings consistent */
+}
+
+.container li {
+    margin-bottom: 0.2rem;
+}
+
+.container .totalCost {
+    font-size: 1rem;
+    font-weight: bolder;
+    margin-bottom: 1rem;
+    display: block;
+
+
+}
+
+.detailItem {
+    margin-bottom: 1rem;
+
+
+}
+
+.owe {
+    color: var(--color-for-red);
+}
+
+.owed {
+    color: var(--color-for-green);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    to {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+}
+
+.addFormEnter {
+    animation: fadeIn 0.5s forwards;
+}
+
+.addFormExit {
+    animation: fadeOut 0.5s forwards;
+}
+
+.transactionField {
+    width: 100%;
+    padding-bottom: 3rem;
+}
+
+.hidden {
+    display: none;
+}
+
+
+.buttonContainer {
+    position: fixed;
+    bottom: 0.7rem;
+    width: 42%;
+    
+    
+}
+
+
+
+
+@media (max-width: 1070px) {
+    .container {
+        padding-top: 1rem;
+        position: relative;
+        overflow-y: scroll;
+        max-height: calc(100vh - 2.5rem);
+        height: 100vh;
+    }
+
+    .centerBlock {
+        margin-bottom: 4rem;
+    }
+
+    .transactionField {
+        width: fit-content;
+    }
+
+    .buttonContainer {
+        width: 50%;
+        bottom: 1.5rem;
+    }
+}
+
+@media (max-width: 735px) {
+
+    .buttonContainer {
+        bottom: 4.5rem;
+        width: 80%;
+    }
+}
