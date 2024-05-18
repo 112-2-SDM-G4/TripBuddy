@@ -407,7 +407,7 @@ function EditPage({ tripinfo, language, refreshTrip }) {
     const socket = io.connect("https://planar-effect-420508.de.r.appspot.com", {
         query: {
             ...(sessionStorage.getItem("jwtToken") && {
-                Authorization: `Bearer ${sessionStorage.getItem("jwtToken")}`,
+                jwt: `${sessionStorage.getItem("jwtToken")}`,
             }),
         },
         reconnectionAttempts: 5, // 最大重連次數
