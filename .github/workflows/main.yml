@@ -65,4 +65,4 @@ jobs:
     - name: Run Tests
       run: |
         cd backend
-        bash "pytest"
+        pytest
