@@ -1,0 +1,4 @@
+runtime: python39
+
+env_variables:
+  MAIL_DEFAULT_SENDER : ('admin', 'tripbuddy4sdm@gmail.com')
