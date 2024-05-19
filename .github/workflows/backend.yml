@@ -6,6 +6,7 @@ on:
     branches: 
       - backend-main
   pull_request:
+    types: [ closed ]
     branches: 
       - backend-main
 
