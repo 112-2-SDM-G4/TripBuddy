@@ -96,7 +96,7 @@ jobs:
       uses: 'google-github-actions/deploy-appengine@v2'
       with:
         working_directory: './backend'
-        build_env_vars: |-
+        env_vars: |-
           SECRET_KEY = ${{ secrets.SECRET_KEY }}
           JWT_SECRET_KEY = ${{ secrets.JWT_SECRET_KEY }}
   
