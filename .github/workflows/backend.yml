@@ -100,21 +100,21 @@ jobs:
           SECRET_KEY = ${{ secrets.SECRET_KEY }}
           JWT_SECRET_KEY = ${{ secrets.JWT_SECRET_KEY }}
   
-          INSTANCE_NAME = "loyal-curve-418602:asia-east1:sdm-g4-db"
-          DB_NAME = "tripbuddy"
-          DB_USER = "root"
+          INSTANCE_NAME = loyal-curve-418602:asia-east1:sdm-g4-db
+          DB_NAME = tripbuddy
+          DB_USER = root
           DB_PASSWORD = ${{ secrets.DB_PASSWORD }}
           GOOGLE_MAPS_API_KEY = ${{ secrets.GOOGLE_MAPS_API_KEY }}
   
-          MAIL_SERVER = "smtp.gmail.com"
+          MAIL_SERVER = smtp.gmail.com
           MAIL_PORT = 587
           MAIL_USE_TLS = True
-          MAIL_USERNAME = "tripbuddy4sdm@gmail.com"
+          MAIL_USERNAME = tripbuddy4sdm@gmail.com
           MAIL_PASSWORD = ${{ secrets.MAIL_PASSWORD }}
   
-          APP_ENGINE_PROJECT_ID = "planar-effect-420508"
+          APP_ENGINE_PROJECT_ID = planar-effect-420508
   
-          CLIENT_ID = "688645866898-1mdotjk1gn8on9kf74b7gudinurcarui.apps.googleusercontent.com"
-          PROJECT_ID = "loyal-curve-418602"
+          CLIENT_ID = 688645866898-1mdotjk1gn8on9kf74b7gudinurcarui.apps.googleusercontent.com
+          PROJECT_ID = loyal-curve-418602
           CLIENT_SECRET = ${{ secrets.CLIENT_SECRET }}
           REDIRECT_URIS = ${{ vars.REDIRECT_URIS }}
