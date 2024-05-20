@@ -14,6 +14,7 @@ on:
 jobs:
   build_and_deploy:
     name: build_and_deploy
+    if: github.event.pull_request.merged == true
     runs-on: windows-latest
     strategy:
       max-parallel: 4
@@ -47,6 +48,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r ./backend/requirements.txt
+
     - name: Create .env file
       # You may pin to the exact commit or the version.
       # uses: SpicyPizza/create-envfile@ace6d4f5d7802b600276c23ca417e669f1a06f6f
