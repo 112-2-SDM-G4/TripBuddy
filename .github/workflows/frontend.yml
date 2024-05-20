@@ -1,0 +1,75 @@
+name: Frontend CICD
+
+# Trigger Condition
+on:
+  push:
+    branches: 
+      - frontend-main
+  pull_request:
+    types: [ closed ]
+    branches: 
+      - frontend-main
+
+env:
+  CLOUD_RUN_PROJECT_ID: ${{ secrets.CLOUD_RUN_PROJECT_NAME }}
+  CLOUD_RUN_REGION: asia-east1
+  REPO_NAME: tripbuddy_frontend
+  RESOURCE_NAME: tripbuddy-frontend
+  
+jobs:
+  build_and_deploy:
+    name: build_and_deploy
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # set up environment
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+
+      - name: Install Dependencies and Test
+        run: |
+          cd frontend
+          npm install
+          npm test
+
+      # gcloud auth
+      - name: Set Up gcloud Auth
+        uses: 'google-github-actions/auth@v2'
+        with:
+          credentials_json: ${{ secrets.GCP_DB_CREDENTIALS }}
+  
+      - name: 'Set up Cloud SDK'
+        uses: 'google-github-actions/setup-gcloud@v2'
+        with:
+          version: '>= 363.0.0'
+  
+      - name: 'Enable API'
+        run: |
+          gcloud services enable containerregistry.googleapis.com
+          gcloud services enable run.googleapis.com
+          gcloud --quiet auth configure-docker
+
+      # build and deploy
+      - name: Build and tag image
+        run: |-
+          cd frontend
+          docker build . --tag "asia.gcr.io/$CLOUD_RUN_PROJECT_ID/$REPO_NAME"
+
+      - name: Push image to GCR
+        run: |-
+          docker push asia.gcr.io/$CLOUD_RUN_PROJECT_ID/$REPO_NAME:latest
+
+      - name: Deploy
+        run: |-
+          gcloud components install beta --quiet
+          gcloud beta run deploy $RESOURCE_NAME --image asia.gcr.io/$CLOUD_RUN_PROJECT_ID/$REPO_NAME:latest \
+            --project $CLOUD_RUN_PROJECT_ID \
+            --platform managed \
+            --region $CLOUD_RUN_REGION \
+            --allow-unauthenticated \
+            --quiet
