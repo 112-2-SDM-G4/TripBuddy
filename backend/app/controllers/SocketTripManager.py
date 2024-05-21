@@ -11,7 +11,7 @@ from app.controllers.utils import *
 
 class SocketTripManager:
     @socketio.on('join_trip')
-    # @jwt_required()
+    @jwt_required()
     def on_join_trip(data):
         user_id = varify_user(get_jwt_identity())
         trip_id = data.get('trip_id')
@@ -29,7 +29,7 @@ class SocketTripManager:
         emit('message', {'msg': f'User {user_id} joined room for trip {trip_id}'}, room=trip_id)
 
     @socketio.on('leave_trip')
-    # @jwt_required()
+    @jwt_required()
     def on_leave_trip(data):
         user_id = varify_user(get_jwt_identity())
         trip_id = data.get('trip_id')
@@ -47,7 +47,7 @@ class SocketTripManager:
         emit('message', {'msg': f'User {user_id} left trip {trip_id}'}, room=trip_id)
 
     @socketio.on('insert_place') #加景點進行程
-    # @jwt_required()
+    @jwt_required()
     def on_insert_place(place_info):
         user_id = varify_user(get_jwt_identity())
         trip_id = place_info.get('trip_id')
