@@ -394,14 +394,12 @@ function EditPage({ tripinfo, language, refreshTrip }) {
             query: {
                 ...(jwtToken && { jwt: jwtToken }),
             },
-            reconnectionAttempts: 5, // 最大重连次数
-            reconnectionDelay: 5000, // 每次重连间隔时间（毫秒）
-            reconnectionDelayMax: 10000, // 最大重连间隔时间（毫秒）
-            timeout: 20000, // 连接超时时间（毫秒）
+            autoConnect: false,
         });
     }, [jwtToken]);
 
     useEffect(() => {
+        socket.connect();
         socket.on("connect", () => {
             console.log("WebSocket 连接成功");
         });
