@@ -388,7 +388,7 @@ function EditPage({ tripinfo, language, refreshTrip }) {
     const [openWallet, setOpenWallet] = useState(false);
     const dropdownRef = useRef(null);
 
-    console.log("我是新的喔");
+    console.log("我是新的喔+2");
 
     const jwtToken = sessionStorage.getItem("jwtToken");
     const socket = useMemo(() => {
