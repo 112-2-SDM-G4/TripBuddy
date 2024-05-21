@@ -433,7 +433,7 @@ function EditPage({ id, tripinfo, language, refreshTrip }) {
             socket.emit("leave_trip", { trip_id: id });
             socket.disconnect();
         };
-    }, [socket, id]);
+    }, [id]);
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -554,7 +554,7 @@ function EditPage({ id, tripinfo, language, refreshTrip }) {
         //             console.log("Network error:", error.message);
         //         }
         //     });
-
+        console.log("我自己動");
         socket.emit("update_trip", {
             trip_id: id,
             langauge: language,
