@@ -152,13 +152,14 @@ class SocketTripManager:
             place_info['stay_time'] = [relation_spot_sch.period_hours, relation_spot_sch.period_minutes]
             trip_detail[relation_spot_sch.date - 1].append(place_info)
 
+        trip_manager = TripManager()
         response = {
             "id": schedule.schedule_id,
             "name": schedule.schedule_name,
-            "image": TripManager.get_trip_photo(schedule),  
+            "image": trip_manager.get_trip_photo(schedule),  
             "start_date": date_to_array(schedule.start_date),
             "end_date": date_to_array(schedule.end_date),
-            "location_id": TripManager.get_trip_location_id(schedule),
+            "location_id": trip_manager.get_trip_location_id(schedule),
             "location": [schedule.location_lat, schedule.location_lng],
             "trip": trip_detail,
             "public": schedule.public,
