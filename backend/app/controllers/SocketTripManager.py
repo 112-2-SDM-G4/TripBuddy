@@ -15,8 +15,12 @@ class SocketTripManager:
     def on_join_trip(data):
         user_id = varify_user(get_jwt_identity())
         trip_id = data.get('trip_id')
-        if user_id is None or trip_id is None:
-            emit('error', {'message': 'User or trip not found.'})
+        if user_id is None:
+            emit('error', {'message': 'User not found.'})
+            return
+        
+        if trip_id is None:
+            emit('error', {'message': 'Trip not found.'})
             return
 
         # 檢查用戶是否已經有權限參與該行程
@@ -33,8 +37,12 @@ class SocketTripManager:
     def on_leave_trip(data):
         user_id = varify_user(get_jwt_identity())
         trip_id = data.get('trip_id')
-        if user_id is None or trip_id is None:
-            emit('error', {'message': 'User or trip not found.'})
+        if user_id is None:
+            emit('error', {'message': 'User not found.'})
+            return
+        
+        if trip_id is None:
+            emit('error', {'message': 'Trip not found.'})
             return
 
         # 檢查用戶是否在該行程中
@@ -84,10 +92,10 @@ class SocketTripManager:
         
 
     @socketio.on('update_trip') #儲存更新行程
-    @jwt_required()
+    # @jwt_required()
     def on_update_trip(data):
         trip_id = data.get('trip_id')
-        langauge = data.get('langauge')
+        language = data.get('language')
         user_id = varify_user(get_jwt_identity())
         if user_id is None:
             emit('error', {'message': 'User not found.'})
@@ -123,9 +131,9 @@ class SocketTripManager:
                 place_info['period_minutes'] = place_info['stay_time'][1]
                 RelationSpotSch.create(place_info)
 
-        SocketTripManager.emit_trip_update(trip_id, langauge,broadcast=True)
+        SocketTripManager.emit_trip_update(trip_id, language,broadcast=True)
 
-    def emit_trip_update(trip_id, langauge='zh', broadcast=True):
+    def emit_trip_update(trip_id, language='zh', broadcast=True):
         schedule = Schedule.get_by_id(trip_id)
         if not schedule:
             emit('error', {'message': 'Trip not found.'})
@@ -135,7 +143,7 @@ class SocketTripManager:
         trip_detail = [[] for _ in range((schedule.end_date - schedule.start_date).days + 1)]
         places_in_trip.sort(key=lambda x: (x.date, x.order))
         for relation_spot_sch in places_in_trip:
-            res_code, place_info = fetch_and_save_place(relation_spot_sch.place_id, langauge)
+            res_code, place_info = fetch_and_save_place(relation_spot_sch.place_id, language)
             if res_code != 200:
                 continue
             place_info['relation_id'] = relation_spot_sch.rss_id
