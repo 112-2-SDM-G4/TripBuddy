@@ -88,11 +88,11 @@ class SocketTripManager:
         place_info['period_minutes'] = place_info['stay_time'][1]
         relation = RelationSpotSch.create(place_info)
         
-        SocketTripManager.emit_trip_update(trip_id, language, broadcast=True)
+        SocketTripManager.emit_trip_update(trip_id, language)
         
 
     @socketio.on('update_trip') #儲存更新行程
-    # @jwt_required()
+    @jwt_required()
     def on_update_trip(data):
         trip_id = data.get('trip_id')
         language = data.get('language')
@@ -133,7 +133,7 @@ class SocketTripManager:
 
         SocketTripManager.emit_trip_update(trip_id, language,broadcast=True)
 
-    def emit_trip_update(trip_id, language='zh', broadcast=True):
+    def emit_trip_update(trip_id, language='zh'):
         schedule = Schedule.get_by_id(trip_id)
         if not schedule:
             emit('error', {'message': 'Trip not found.'})
@@ -166,4 +166,4 @@ class SocketTripManager:
             "exchange": schedule.exchange,
         }
 
-        emit('render_trip', response, room=trip_id, broadcast=broadcast)
+        socketio.emit('render_trip', response, room=trip_id)
