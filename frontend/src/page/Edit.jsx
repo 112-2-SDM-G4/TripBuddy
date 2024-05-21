@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import style from "./Edit.module.css";
 
@@ -388,6 +388,46 @@ function EditPage({ tripinfo, language, refreshTrip }) {
     const [openWallet, setOpenWallet] = useState(false);
     const dropdownRef = useRef(null);
 
+    const jwtToken = sessionStorage.getItem("jwtToken");
+    const socket = useMemo(() => {
+        return io.connect("https://planar-effect-420508.de.r.appspot.com", {
+            query: {
+                ...(jwtToken && { jwt: jwtToken }),
+            },
+            autoConnect: false,
+        });
+    }, [jwtToken]);
+
+    useEffect(() => {
+        socket.connect();
+        socket.on("connect", () => {
+            console.log("WebSocket 连接成功");
+        });
+
+        socket.on("reconnect_attempt", (attemptNumber) => {
+            console.log(`尝试重新连接，第 ${attemptNumber} 次`);
+        });
+
+        socket.on("error", (error) => {
+            console.error("WebSocket 连接错误:", error);
+        });
+
+        socket.on("connect_timeout", (timeout) => {
+            console.error("WebSocket 连接超时:", timeout);
+        });
+
+        socket.on("disconnect", (reason) => {
+            console.log("WebSocket 连接断开:", reason);
+            if (reason === "transport error") {
+                console.error("传输层错误导致连接断开");
+            }
+        });
+
+        return () => {
+            socket.disconnect();
+        };
+    }, [socket]);
+
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (
@@ -403,18 +443,6 @@ function EditPage({ tripinfo, language, refreshTrip }) {
             document.removeEventListener("mousedown", handleClickOutside);
         };
     }, [dropdownRef]);
-
-    const socket = io.connect("https://planar-effect-420508.de.r.appspot.com", {
-        query: {
-            ...(sessionStorage.getItem("jwtToken") && {
-                Authorization: `Bearer ${sessionStorage.getItem("jwtToken")}`,
-            }),
-        },
-        reconnectionAttempts: 5, // 最大重連次數
-        reconnectionDelay: 5000, // 每次重連間隔時間（毫秒）
-        reconnectionDelayMax: 10000, // 最大重連間隔時間（毫秒）
-        timeout: 20000, // 連接超時時間（毫秒）
-    });
 
     useEffect(() => {
         function formatDateAndWeekday(start, end, language) {
@@ -491,7 +519,7 @@ function EditPage({ tripinfo, language, refreshTrip }) {
             socket.emit("leave_trip", { trip_id: tripinfo["id"] });
             socket.disconnect();
         };
-    }, [tripinfo, socket]);
+    }, [socket]);
 
     const reorderSpots = (newOrder) => {
         const newSpots = newOrder.map((id) =>
