@@ -74,6 +74,7 @@ jobs:
 
         # gemini setting
         envkey_APP_ENGINE_PROJECT_ID: "planar-effect-420508"
+        envkey_GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
 
         # Google Login setting
         envkey_CLIENT_ID: "688645866898-1mdotjk1gn8on9kf74b7gudinurcarui.apps.googleusercontent.com"
@@ -115,6 +116,7 @@ jobs:
           MAIL_PASSWORD = ${{ secrets.MAIL_PASSWORD }}
   
           APP_ENGINE_PROJECT_ID = planar-effect-420508
+          GEMINI_API_KEY = ${{ secrets.GEMINI_API_KEY }}
   
           CLIENT_ID = 688645866898-1mdotjk1gn8on9kf74b7gudinurcarui.apps.googleusercontent.com
           PROJECT_ID = loyal-curve-418602
