@@ -433,7 +433,7 @@ function EditPage({ id, tripinfo, language, refreshTrip }) {
             socket.emit("leave_trip", { trip_id: id });
             socket.disconnect();
         };
-    }, [socket]);
+    }, [socket, id]);
 
     useEffect(() => {
         const handleClickOutside = (event) => {
