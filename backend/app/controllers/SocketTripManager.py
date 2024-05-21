@@ -15,8 +15,12 @@ class SocketTripManager:
     def on_join_trip(data):
         user_id = varify_user(get_jwt_identity())
         trip_id = data.get('trip_id')
-        if user_id is None or trip_id is None:
-            emit('error', {'message': 'User or trip not found.'})
+        if user_id is None:
+            emit('error', {'message': 'User not found.'})
+            return
+        
+        if trip_id is None:
+            emit('error', {'message': 'Trip not found.'})
             return
 
         # 檢查用戶是否已經有權限參與該行程
@@ -33,8 +37,12 @@ class SocketTripManager:
     def on_leave_trip(data):
         user_id = varify_user(get_jwt_identity())
         trip_id = data.get('trip_id')
-        if user_id is None or trip_id is None:
-            emit('error', {'message': 'User or trip not found.'})
+        if user_id is None:
+            emit('error', {'message': 'User not found.'})
+            return
+        
+        if trip_id is None:
+            emit('error', {'message': 'Trip not found.'})
             return
 
         # 檢查用戶是否在該行程中
