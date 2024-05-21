@@ -413,6 +413,11 @@ function EditPage({ id, tripinfo, language, refreshTrip }) {
             console.error("WebSocket 连接错误:", error);
         });
 
+        socket.on("render_trip", (data) => {
+            console.log("ㄝㄝㄝㄝ動了");
+            setTrip(data.trip);
+        });
+
         socket.on("message", (message) => {
             console.log("WebSocket 通知:", message);
         });
@@ -422,10 +427,6 @@ function EditPage({ id, tripinfo, language, refreshTrip }) {
             if (reason === "transport error") {
                 console.error("传输层错误导致连接断开");
             }
-        });
-
-        socket.on("render_trip", (data) => {
-            setTrip(data.trip);
         });
 
         return () => {
