@@ -88,6 +88,7 @@ export default function Edit() {
             )}
             {stage === 1 && (
                 <EditPage
+                    id={id}
                     tripinfo={trip}
                     language={language}
                     refreshTrip={refreshTrip}
@@ -376,7 +377,7 @@ function InitialPage({ setStage, language }) {
     );
 }
 
-function EditPage({ tripinfo, language, refreshTrip }) {
+function EditPage({ id, tripinfo, language, refreshTrip }) {
     const [dates, setDates] = useState([]);
     const [selectedDate, setSelectedDate] = useState(0);
     const [trip, setTrip] = useState(tripinfo["trip"] ? tripinfo["trip"] : []);
@@ -388,15 +389,12 @@ function EditPage({ tripinfo, language, refreshTrip }) {
     const [openWallet, setOpenWallet] = useState(false);
     const dropdownRef = useRef(null);
 
-    console.log("我是新的喔+2");
-
     const jwtToken = sessionStorage.getItem("jwtToken");
     const socket = useMemo(() => {
         return io.connect("https://planar-effect-420508.de.r.appspot.com", {
             query: {
                 ...(jwtToken && { jwt: jwtToken }),
             },
-            autoConnect: false,
         });
     }, [jwtToken]);
 
@@ -404,6 +402,7 @@ function EditPage({ tripinfo, language, refreshTrip }) {
         socket.connect();
         socket.on("connect", () => {
             console.log("WebSocket 连接成功");
+            socket.emit("join_trip", { trip_id: id });
         });
 
         socket.on("reconnect_attempt", (attemptNumber) => {
@@ -414,8 +413,8 @@ function EditPage({ tripinfo, language, refreshTrip }) {
             console.error("WebSocket 连接错误:", error);
         });
 
-        socket.on("connect_timeout", (timeout) => {
-            console.error("WebSocket 连接超时:", timeout);
+        socket.on("message", (message) => {
+            console.log("WebSocket 通知:", message);
         });
 
         socket.on("disconnect", (reason) => {
@@ -425,7 +424,12 @@ function EditPage({ tripinfo, language, refreshTrip }) {
             }
         });
 
+        socket.on("render_trip", (data) => {
+            setTrip(data.trip);
+        });
+
         return () => {
+            socket.emit("leave_trip", { trip_id: id });
             socket.disconnect();
         };
     }, [socket]);
@@ -510,19 +514,6 @@ function EditPage({ tripinfo, language, refreshTrip }) {
         setSpots(trip[selectedDate] || []);
     }, [selectedDate, trip]);
 
-    useEffect(() => {
-        socket.emit("join_trip", { trip_id: tripinfo["id"] });
-
-        socket.on("render_trip", (data) => {
-            setTrip(data.trip);
-        });
-
-        return () => {
-            socket.emit("leave_trip", { trip_id: tripinfo["id"] });
-            socket.disconnect();
-        };
-    }, [socket]);
-
     const reorderSpots = (newOrder) => {
         const newSpots = newOrder.map((id) =>
             spots.find((s) => s.relation_id === id)
@@ -564,7 +555,7 @@ function EditPage({ tripinfo, language, refreshTrip }) {
         //     });
 
         socket.emit("update_trip", {
-            trip_id: tripinfo["id"],
+            trip_id: id,
             langauge: language,
             trip: newTrip,
         });
@@ -615,7 +606,7 @@ function EditPage({ tripinfo, language, refreshTrip }) {
         //     });
 
         socket.emit("update_trip", {
-            trip_id: tripinfo["id"],
+            trip_id: id,
             langauge: language,
             trip: newTrip,
         });
