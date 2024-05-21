@@ -1,6 +1,7 @@
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_restful import Resource
 from flask import request, make_response, jsonify
+import random
 import json
 import ast
 
@@ -9,6 +10,7 @@ from app.models.schedule import Schedule
 from app.models.post import Post
 from app.models.place import Place
 from app.models.tags import Tags
+from app.models.country import Country
 from app.models.relation_user_sch import RelationUserSch
 from app.models.relation_spot_sch import RelationSpotSch
 from app.models.relation_sch_tag import RelationSchTag
@@ -235,10 +237,16 @@ class AITripGeneration(Resource):
             return make_response({'message': 'User not found.'}, 400)
         data = request.get_json()
         text = data['text']
-        country = Tags.get_name_en(data['location_id'])
-        location_lat, location_lng = data['location']
-        exchange = data['exchange'] if 'exchange' in data else None
-        standard = data['standard'] 
+        if data['location_id']:
+            country_id = data['location_id']
+            country = Country.get_name_zh(country_id)
+            location_lat, location_lng = data['location']
+        else:
+            country_id = random.randint(24, 64)
+            country = Country.get_name_zh(country_id)
+            location_lat, location_lng = Country.get_lat_lng(country_id)
+        exchange = Country.get_currency(country_id)
+        standard = "TWD"
         try:
             start_date = array_to_date(data['start_date'])
             end_date = array_to_date(data['end_date'])
@@ -247,7 +255,10 @@ class AITripGeneration(Resource):
             return make_response({'message': 'Invalid date.'}, 400)
         
         trip_name = self._generate_schedule_name(text, country, start_date, end_date)
-        raw_schedule = self._generate_raw_schedule(text, country, start_date, end_date)
+        content = self._generate_raw_schedule(text, country, start_date, end_date)
+        if content['valid'] == 0:
+            return make_response(content, 200)
+        raw_schedule = content['trip']
         schedule_info = {
             'location_id': data['location_id'],
             'location_lng': location_lng,
@@ -255,7 +266,7 @@ class AITripGeneration(Resource):
             'exchange': exchange,
             'standard': standard,
             'schedule_name': trip_name,
-            'places': self.search_places_id(raw_schedule, location_lat, location_lng),
+            'places': self._search_places_id(raw_schedule, location_lat, location_lng),
             'start_date': start_date,
             'end_date': end_date,
         }
@@ -269,13 +280,17 @@ class AITripGeneration(Resource):
     
         return make_response(respose, 201)
     
-    def search_places_id(self, raw_schedule: list[dict], location_lat, location_lng, lang='en') -> list[dict]:
+    def _search_places_id(self, raw_schedule: List[dict], location_lat, location_lng, lang='zh') -> List[dict]:
         """Search places in the raw schedule"""
         google_maps = GoogleMapApi(GOOGLE_MAPS_API_KEY)
         
         for place in raw_schedule:
             search_res, search_places = google_maps.get_search_info(place['place_name'], lang, location_lat, location_lng)
-            place['place_id'] = search_places[0]['place_id']
+            if search_res.ok:
+                place['place_id'] = search_places[0]['place_id']
+                _, _ = fetch_and_save_place(place['place_id'], lang)
+            else:
+                raw_schedule.remove(place)
         return raw_schedule
     
     def _generate_schedule_name(self, user_input: str, country: str, start_date: date, end_date: date) -> str:
@@ -301,8 +316,7 @@ class AITripGeneration(Resource):
         print(trip_name)
         return trip_name
 
-
-    def _generate_raw_schedule(self, user_input: str, country: str, start_date: date, end_date: date):
+    def _generate_raw_schedule(self, user_input: str, country: str, start_date: date, end_date: date) -> Dict:
         """Use Google Gemini to generate raw schedule"""
         travel_days = (end_date - start_date).days + 1
         response_schema = {
@@ -327,13 +341,25 @@ class AITripGeneration(Resource):
                     'date': 2,
                     'order': 2,
                 }
-            ]
+            ],
+            'valid': 1
         }
+        bad_response = {'msg': 'your response', 'valid': 0}
         gpt_input = f"""
-        You are a local expert in {country}, 
-        you must plan a {travel_days}-day itinerary list for the user, 
-        and have some user preferences: {user_input}.
-        Your responce must follow JSON schema.<JSONSchema>{json.dumps(response_schema)}</JSONSchema>
+        You are a local guide in {country} who gives advice to tourists.
+        Please read the request from a tourist in the 『』 sign, 
+        and follow the instructions step by step listed below:
+        1. Verify if this text is an unreasonable custom itinerary preference.
+            If it is unreasonable, please explain the reasons why it is inappropriate and respond politely.
+            Your explanation must follow this JSON schema.<JSONSchema>{json.dumps(bad_response)}</JSONSchema>
+            If not, go to step 2
+        
+        2. For verified request, you must customize a {travel_days}-day itinerary plan according to the user preferences.
+            For each day, give at least three tourist spots to visit.
+            Your responce must follow JSON schema.<JSONSchema>{json.dumps(response_schema)}</JSONSchema>
+
+        The request from a tourist:
+        『{user_input}』
         """
 
         model_config = { 
@@ -342,8 +368,10 @@ class AITripGeneration(Resource):
         }
         gemini = Gemini(configs=model_config)
         response = gemini.generate_content(gpt_input)
-        raw_schedule = ast.literal_eval(response.candidates[0].content.parts[0].text)['trip']
-        return raw_schedule
+        print(response.candidates[0].content.parts[0].text)
+        res_dict = ast.literal_eval(response.candidates[0].content.parts[0].text)
+        
+        return res_dict
     
     def _create_schedule(self, schedule_info: Dict, user_id: int) -> int:
         """Create schedule from post-processed schedule_info"""
