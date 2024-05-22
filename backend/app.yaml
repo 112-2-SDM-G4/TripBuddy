@@ -5,3 +5,5 @@ env_variables:
 
 network:
   session_affinity: true
+
+entrypoint: gunicorn -b :5000 --worker-class eventler -w 1 server:app
