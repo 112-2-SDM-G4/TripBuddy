@@ -50,7 +50,7 @@ initialize_routes(api)
 socketio.init_app(app)
 
 if __name__ == '__main__':
-    socketio.run(app, port=5000, debug=True)
+    socketio.run(app, debug=True)
     # app.run(debug=True)
 # from app.main import main_blueprint
 # app.register_blueprint(main_blueprint) 
