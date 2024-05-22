@@ -1,9 +1,11 @@
 runtime: python39
-# env: flex
-env_variables:
-  MAIL_DEFAULT_SENDER : ('admin', 'tripbuddy4sdm@gmail.com')
-
+env: flex
+automatic_scaling:
+  min_num_instances: 1
+  max_num_instances: 2
 network:
   session_affinity: true
-
 entrypoint: gunicorn -b :5000 main:app
+
+env_variables:
+  MAIL_DEFAULT_SENDER : ('admin', 'tripbuddy4sdm@gmail.com')
