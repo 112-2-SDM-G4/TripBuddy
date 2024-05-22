@@ -1,9 +1,9 @@
 runtime: python39
-env: flex
+# env: flex
 env_variables:
   MAIL_DEFAULT_SENDER : ('admin', 'tripbuddy4sdm@gmail.com')
 
 network:
   session_affinity: true
 
-entrypoint: gunicorn -b :5000 --worker-class eventlet -w 1 main:app
+entrypoint: gunicorn -b :5000 main:app
