@@ -131,7 +131,7 @@ class SocketTripManager:
                 place_info['period_minutes'] = place_info['stay_time'][1]
                 RelationSpotSch.create(place_info)
 
-        SocketTripManager.emit_trip_update(trip_id, language,broadcast=True)
+        SocketTripManager.emit_trip_update(trip_id, language)
 
     def emit_trip_update(trip_id, language='zh'):
         schedule = Schedule.get_by_id(trip_id)
