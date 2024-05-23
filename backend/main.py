@@ -19,7 +19,7 @@ CORS(app)
 api = Api(app)
 
 load_dotenv()
-set_env_vars()
+FLASK_ENV = set_env_vars()
 
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER')
@@ -49,10 +49,13 @@ db = init_db(app)
 # login_manager = LoginManager(app)
 
 initialize_routes(api)
-socketio.init_app(app)
+socketio.init_app(app, transports = ["websocket","polling"])
 
 if __name__ == '__main__':
-    socketio.run(app, host="0.0.0.0", port=int(os.environ.get("PORT", 8080)), debug=True)
+    if FLASK_ENV == 'DEPLOY':
+        socketio.run(app, host="0.0.0.0", port=int(os.environ.get("PORT", 8080), pingInterval = 3000, pingTimeout= 5000))
+    elif FLASK_ENV == 'LOCAL':
+        socketio.run(app, debug=True)
     # app.run(debug=True)
 # from app.main import main_blueprint
 # app.register_blueprint(main_blueprint) 
