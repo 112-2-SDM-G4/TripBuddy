@@ -14,11 +14,12 @@ class SetGroupMember(Resource):
     @jwt_required()
     def post(self):
         user_email = varify_user(get_jwt_identity())
+        user = User.get_by_email(user_email)
         data = request.get_json()
         trip_id = data.get('trip_id', None)
         invited_id = data.get('invited_id', None)
 
-        if not user_owns_schedule(user_email, trip_id):
+        if not user_owns_schedule(user.user_id, trip_id):
             return make_response({'message': 'User access forbidden'}, 403)
 
         now_schdule = Schedule.get_by_id(trip_id)
@@ -80,7 +81,7 @@ class SetGroupMember(Resource):
         user = User.get_by_email(user_email)
         trip_id = data.get('trip_id', None)
 
-        if not user_owns_schedule(user_email, trip_id):
+        if not user_owns_schedule(user.user_id, trip_id):
             return make_response({'message': 'User access forbidden'}, 403)
 
         RelationUserSch.delete(user.user_id, trip_id)
@@ -110,9 +111,10 @@ class SetGroupMember(Resource):
     @jwt_required()
     def get(self):
         user_email = varify_user(get_jwt_identity())
+        user = User.get_by_email(user_email)
         trip_id = request.args.get('trip_id')
 
-        if not user_owns_schedule(user_email, trip_id):
+        if not user_owns_schedule(user.user_id, trip_id):
             return make_response({'message': 'User access forbidden'}, 403)
         
         schedule = RelationUserSch.get_by_schedule(trip_id)
