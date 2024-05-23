@@ -91,8 +91,9 @@ class SetGroupMember(Resource):
             # 刪 Relation_Spot_Sch
             RelationSpotSch.delete_by_trip(trip_id)
             # 刪 Relation_user_Transaction
-            trade = Transaction.get_by_schedule(trip_id)
-            RelationUserTransaction.delete_by_transaction(trade.transaction_id)
+            all_trades = Transaction.get_by_schedule(trip_id)
+            for trade in all_trades:
+                RelationUserTransaction.delete_by_transaction(trade.transaction_id)
             # 刪 Transaction
             Transaction.delete_by_schedule(trip_id)
             # 刪 Schedule
