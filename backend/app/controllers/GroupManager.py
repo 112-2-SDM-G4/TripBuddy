@@ -8,18 +8,17 @@ from app.models.relation_spot_sch import RelationSpotSch
 from app.models.user import User
 from app.models.schedule import Schedule
 from app.models.create_db import db
-from app.controllers.utils import user_owns_schedule
+from app.controllers.utils import user_owns_schedule, varify_user
 
 class SetGroupMember(Resource):
     @jwt_required()
     def post(self):
-        user_email = varify_user(get_jwt_identity())
-        user = User.get_by_email(user_email)
+        user_id = varify_user(get_jwt_identity())
         data = request.get_json()
         trip_id = data.get('trip_id', None)
         invited_id = data.get('invited_id', None)
 
-        if not user_owns_schedule(user.user_id, trip_id):
+        if not user_owns_schedule(user_id, trip_id):
             return make_response({'message': 'User access forbidden'}, 403)
 
         now_schdule = Schedule.get_by_id(trip_id)
@@ -76,15 +75,13 @@ class SetGroupMember(Resource):
     @jwt_required()
     def delete(self):
         data = request.get_json()
-        user_email = get_jwt_identity()
-        # user_email = "r12725049@ntu.edu.tw"
-        user = User.get_by_email(user_email)
+        user_id = varify_user(get_jwt_identity())
         trip_id = data.get('trip_id', None)
 
-        if not user_owns_schedule(user.user_id, trip_id):
+        if not user_owns_schedule(user_id, trip_id):
             return make_response({'message': 'User access forbidden'}, 403)
 
-        RelationUserSch.delete(user.user_id, trip_id)
+        RelationUserSch.delete(user_id, trip_id)
 
         remain = RelationUserSch.get_by_schedule(trip_id)
 
@@ -110,11 +107,10 @@ class SetGroupMember(Resource):
     
     @jwt_required()
     def get(self):
-        user_email = varify_user(get_jwt_identity())
-        user = User.get_by_email(user_email)
+        request_user_id = varify_user(get_jwt_identity())
         trip_id = request.args.get('trip_id')
 
-        if not user_owns_schedule(user.user_id, trip_id):
+        if not user_owns_schedule(request_user_id, trip_id):
             return make_response({'message': 'User access forbidden'}, 403)
         
         schedule = RelationUserSch.get_by_schedule(trip_id)
