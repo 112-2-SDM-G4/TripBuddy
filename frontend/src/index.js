@@ -10,17 +10,15 @@ import { LanguageProvider } from "./hooks/useLanguage";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-    <React.StrictMode>
-        <BrowserRouter>
-            <LanguageProvider>
-                <AuthProvider>
-                    <ThemeProvider>
-                        <App />
-                    </ThemeProvider>
-                </AuthProvider>
-            </LanguageProvider>
-        </BrowserRouter>
-    </React.StrictMode>
+    <BrowserRouter>
+        <LanguageProvider>
+            <AuthProvider>
+                <ThemeProvider>
+                    <App />
+                </ThemeProvider>
+            </AuthProvider>
+        </LanguageProvider>
+    </BrowserRouter>
 );
 
 // If you want to start measuring performance in your app, pass a function
