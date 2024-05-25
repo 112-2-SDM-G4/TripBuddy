@@ -1,21 +1,15 @@
 .card {
-    /* break-inside: avoid; 避免卡片被分割到兩列 */
     display: flex;
     width: 30rem;
     height: 8rem;
     background-color: var(--backgroundcolor);
-    /* padding: 0.5rem; */
     margin: 1rem;
     margin-top: 0rem;
     border-radius: 0.5rem;
     border: 0.1rem solid color-mix(in srgb, var(--secondarycolor) 60%, transparent);
-    box-shadow: 0rem 0.5rem 0.5rem
-        color-mix(in srgb, var(--secondarycolor) 15%, transparent);
-    transition: all 1s ease;
-}
-
-.cardpost {
-    width: auto;
+    box-shadow: 0rem 0.5rem 0.5rem color-mix(in srgb, var(--secondarycolor) 15%, transparent);
+    transition: all 0.3s ease;
+    position: relative;
 }
 
 .card:hover {
@@ -30,13 +24,32 @@
     height: 100%;
     overflow: hidden;
     border-radius: 0.5rem 0 0 0.5rem;
+    position: relative;
 }
 
-.imgpost {
-    /* object-fit: none; */
-    width: 100%;
+.status {
+    position: absolute;
+    top: 0.8rem;
+    left: 0.8rem;
+    color: var(--fieldcolor);
+    padding: 0.2rem 0.5rem;
+    border-radius: 0.5rem;
+    font-size: 0.8rem;
+    font-weight: bold;
+    z-index: 2;
 }
 
+.status-1 {
+    background-color: color-mix(in srgb, var(--fontcolor) 60%, transparent);
+}
+
+.status1 {
+    background-color: var(--color-for-red);
+}
+
+.status2 {
+    background-color: var(--color-for-green);
+}
 
 .info {
     display: flex;
@@ -45,6 +58,7 @@
     padding-top: 0.2rem;
     padding-left: 0.5rem;
     justify-content: center;
+    position: relative;
 }
 
 .title {
@@ -54,21 +68,93 @@
     flex-direction: row;
     justify-content: space-between;
     padding-left: 0.5rem;
-    font-size: 0.8rem;
+    font-size: 1rem;
     font-weight: bold;
     align-items: center;
 }
 
+.countryIcon {
+    width: 1.5rem;
+    height: 1rem;
+    margin-left: 1rem;
+}
 
-.rows {
+.dates div {
+    margin-top: 0.5rem;
+    padding-left: 0.5rem;
+    font-size: 0.6rem;
+    color: color-mix(in srgb, var(--fontcolor) 45%, transparent);;
     display: flex;
     flex-direction: column;
+    gap: 0.2rem;
+}
+
+.members {
+    display: flex;
+    align-items: center;
+    position: absolute;
+    bottom: 0.7rem;
+    right: 1rem;
+}
+
+.memberAvatars {
+    display: flex;
+    align-items: center;
+}
+
+.memberContainer {
+    position: relative;
+    display: inline-block;
+}
+
+.memberAvatar {
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    border: 2px solid var(--secondarycolor);
+    position: relative;
+    z-index: 1;
+    margin-left: -0.5rem;
+    transition: all 0.3s ease;
+}
+
+.memberAvatar:hover {
+    transform: scale(1.1);
+    z-index: 2;
+}
+
+.tooltip {
+    visibility: hidden;
+    background-color: color-mix(in srgb, var(--fontcolor) 60%, transparent);
+    color: var(--fieldcolor);
+    border-radius: 0.5rem;
+    padding: 0.2rem 0.5rem;
+    position: absolute;
+    z-index: 8;
+    bottom: 125%; /* Position above the avatar */
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 0.3s;
+    white-space: nowrap;
+    font-size: 0.8rem;
+    text-align: center;
+}
+
+.memberContainer:hover .tooltip {
+    visibility: visible;
+    opacity: 1;
+}
+
+.moreMembers {
+    font-size: 0.6rem;
+    color: color-mix(in srgb, var(--fontcolor) 60%, transparent);
+    margin-left: 0.2rem;
 }
 
 .tags {
     display: flex;
     flex-direction: row;
-    /* padding: 0.5rem; */
     font-size: 0.8rem;
     height: 2.3rem;
     margin-left: 0.5rem;
@@ -86,12 +172,10 @@
     background-color: color-mix(in srgb, var(--fontcolor) 15%, transparent);
     color: color-mix(in srgb, var(--fontcolor) 75%, transparent);
     opacity: 0.9;
-    padding: 0 0.7rem 0 0.7rem;
+    padding: 0 0.7rem;
     align-items: center;
     margin-right: 0.3rem;
-    /* box-shadow: 0 0.1rem 0.2rem color-mix(in srgb, var(--fontcolor) 75%, transparent); */
     box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 8px;
-    /* box-shadow: var(--fontcolor) 0px 2px 5px -1px, var(--fontcolor) 0px 1px 3px -1px; */
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -112,46 +196,44 @@
     transform: scale(1.1);
 }
 
+.memberCountText {
+    display: none;
+}
+
 @media (max-width: 735px) {
     .card {
         width: 90%;
-    }
-
-    .cardpost {
-        width: auto;
     }
 
     .img {
         width: 12rem;
     }
 
-    .imgpost {
-        width: auto;
+    .info {
+        width: calc(100% - 12rem);
     }
 
-    .info {
-        width: 11rem;
-    }
+    
 }
 
 @media (max-width: 580px) {
     .card {
-        width: 20rem;
-    }
-
-    .cardpost {
-        height: auto;
+        width: 90%;
     }
 
     .img {
         width: 10rem;
     }
 
-    .imgpost {
-        width: auto;
+    .info {
+        width: calc(100% - 10rem);
+    }
+    .memberCountText {
+        display: inline;
+        font-size: 0.5rem;
     }
 
-    .info {
-        width: 9rem;
+    .memberAvatars {
+        display: none;
     }
 }
