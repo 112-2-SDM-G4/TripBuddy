@@ -41,8 +41,8 @@ export default function EditViewSpot({
     };
     const { language } = useLanguage();
     const [selectTime, setSelectTime] = useState([]);
-    const [Comment, setComment] = useState("");
-    const [Budget, setBudget] = useState("");
+    const [Comment, setComment] = useState(spot.comment ? spot.comment : "");
+    const [Budget, setBudget] = useState(spot.money ? spot.money : "0");
 
     const handleRedirect = () => {
         window.open(spot["google_map_uri"], "_blank", "noreferrer");
@@ -58,9 +58,7 @@ export default function EditViewSpot({
     };
 
     return (
-        
-        <Modal onClose={onClose} >
-            
+        <Modal onClose={onClose}>
             <div className={style.main}>
                 <img src={spot["image"]} alt="Logo" className={style.img} />
 
