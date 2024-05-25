@@ -235,6 +235,68 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     background-color: color-mix(in srgb, var(--fontcolor) 20%, transparent);
 }
 
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: color-mix(in srgb, var(--backgroundcolor) 80%, transparent);
+    z-index: 999; 
+}
+
+.groupMemberContainer {
+    background-color: var(--fieldcolor);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 35rem;
+    z-index: 1050;
+    display: flex;
+    flex-direction: column;
+    max-height: 50vh;
+    overflow-y: scroll;
+}
+
+
+.memberList {
+    list-style-type: none;
+    padding: 0;
+    margin-top: 1rem;
+    border-top: 2px solid color-mix(in srgb, var(--fontcolor) 20%, transparent);
+}
+
+.memberDetail {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.8rem;
+    padding-top: 0.8rem;
+}
+
+.memberDetail .avatar {
+    width: 2rem;
+    height: 2rem;
+}
+
+.memberEmail {
+    color: color-mix(in srgb, var(--fontcolor) 40%, transparent);;; 
+    text-align: right;
+    font-weight: bold;
+    font-size: 1rem;
+}
+
+.memberName {
+    flex-grow: 1;
+    font-size: 1rem;
+    margin-right: 0.5rem;
+    margin-left: 0.5rem;
+}
+
+
 .addusermodal {
     display: flex;
     flex-direction: column;
@@ -298,6 +360,28 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
     .addusermodal {
         width: 16rem;
+    }
+}
+
+@media (max-width: 570px) {
+    .memberDetail {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .avatar {
+        margin-right: 0.5rem;
+        margin-bottom: 0.3rem;
+    }
+
+    .memberName {
+        margin: 0;
+        margin-bottom: 0.3rem;
+    }
+
+    .memberEmail {
+        text-align: left;
+        margin: 0;
     }
 }
 
