@@ -4,7 +4,7 @@ class Place(db.Model):
     __tablename__ = 'Place'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     place_id = db.Column(db.String(255), nullable=False)
-    name = db.Column(db.String(50), nullable=False)
+    name = db.Column(db.String(200), nullable=False)
     formatted_address = db.Column(db.String(500), nullable=False)
     google_map_uri = db.Column(db.String(500), nullable=False)
     place_summary = db.Column(db.String(500), nullable=True)
