@@ -5,6 +5,7 @@ from google.auth.transport.requests import Request
 import os
 from flask import Flask, redirect, url_for, session, request
 
+frontend_url = "https://tripbuddy-frontend-repx5qxhzq-de.a.run.app/login"
 client_config = {
     "web": {
         "client_id": os.getenv('GOOGLE_OAUTH2_CLIENT_ID'),
@@ -16,8 +17,8 @@ client_config = {
         "redirect_uris": [
             "http://localhost:3000",
             "https://tripbuddy-frontend-repx5qxhzq-de.a.run.app/explore",
-            "http://127.0.0.1:5000/api/v1/user/google_login/callback",
-            "http://localhost:5000/api/v1/user/google_login/callback"
+            "http://localhost:5000/api/v1/user/google_login/callback",
+            "https://planar-effect-420508.de.r.appspot.com/google_login/callback"
         ],
         "javascript_origins": [
             "http://localhost:3000",
@@ -36,7 +37,8 @@ class GoogleLogin:
                 "openid",
             ],
         )
-        self.flow.redirect_uri = "http://localhost:5000/api/v1/user/google_login/callback" 
+        self.flow.redirect_uri = "http://localhost:5000/api/v1/user/google_login/callback" # dev env
+        # self.flow.redirect_uri = "https://planar-effect-420508.de.r.appspot.com/google_login/callback" # prod env
 
     def login(self):
         authorization_url, state = self.flow.authorization_url(
@@ -52,7 +54,7 @@ class GoogleLogin:
         request_state = request.args.get('state')
 
         if not state or not request_state or state != request_state:
-            return redirect("https://tripbuddy-frontend-repx5qxhzq-de.a.run.app/login")
+            return redirect(frontend_url)
 
         session.pop('state', None)
 
@@ -67,12 +69,12 @@ class GoogleLogin:
         )
 
         if id_info.get('error'):
-            return redirect(os.getenv['REDIRECT_URIS'], error=id_info['error'])
+            return redirect(frontend_url)
         
         user_info ={
-            "email": id_info.get('email'),
-            "name": id_info.get('name'),
-            "picture": id_info.get('picture')
+            "email": str(id_info.get('email')),
+            "name": str(id_info.get('name')),
+            "picture": str(id_info.get('picture'))
         }
 
         session['credentials'] = self.credentials_to_dict(credentials)
