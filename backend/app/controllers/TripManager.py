@@ -312,7 +312,7 @@ class AITripGeneration(Resource):
         }
         gemini = Gemini(configs=model_config)
         response = gemini.generate_content(gpt_input)
-        trip_name = ast.literal_eval(response.candidates[0].content.parts[0].text)['trip_name']
+        trip_name = ast.literal_eval(str(response.candidates[0].content.parts[0].text))['trip_name']
         print(trip_name)
         return trip_name
 
@@ -369,7 +369,8 @@ class AITripGeneration(Resource):
         gemini = Gemini(configs=model_config)
         response = gemini.generate_content(gpt_input)
         print(response.candidates[0].content.parts[0].text)
-        res_dict = ast.literal_eval(response.candidates[0].content.parts[0].text)
+        print("type :", type(response.candidates[0].content.parts[0].text))
+        res_dict = ast.literal_eval(str(response.candidates[0].content.parts[0].text))
         
         return res_dict
     

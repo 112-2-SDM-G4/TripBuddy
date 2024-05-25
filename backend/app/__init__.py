@@ -1,4 +1,5 @@
 import os
+import json
 from dotenv import load_dotenv
 # from .socket import socketio
 from flask_socketio import SocketIO
@@ -28,3 +29,17 @@ def create_app():
     socketio.init_app(app, cors_allowed_origins="*")
 
     return app
+
+def set_env_vars():
+    FLASK_ENV = 'LOCAL'
+    secret = os.environ.get("CLOUD_SQL_CREDENTIALS_SECRET")
+    if secret:
+        creds = json.loads(secret)
+        for key, value in creds.items():
+            os.environ[key] = value
+            print(f"Setting {key} environment variable")
+        FLASK_ENV = 'DEPLOY'
+    else:
+        print("No secret found")
+    
+    return FLASK_ENV

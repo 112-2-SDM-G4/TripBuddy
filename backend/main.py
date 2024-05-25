@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 from flask import Flask
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
-from app import create_app
+from app import create_app, set_env_vars
 from app.models.create_db import init_db
 from app.routes import initialize_routes
 from app.services.mail import init_mail
@@ -20,6 +20,8 @@ CORS(app)
 api = Api(app)
 
 load_dotenv()
+FLASK_ENV = set_env_vars()
+
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER')
 app.config['MAIL_PORT'] = os.getenv('MAIL_PORT')
@@ -48,10 +50,13 @@ db = init_db(app)
 # login_manager = LoginManager(app)
 
 initialize_routes(api)
-socketio.init_app(app)
+socketio.init_app(app, transports = ["websocket","polling"])
 
 if __name__ == '__main__':
-    socketio.run(app, port=5000, debug=True)
+    if FLASK_ENV == 'DEPLOY':
+        socketio.run(app, host="0.0.0.0", port=int(os.environ.get("PORT", 8080), pingInterval = 3000, pingTimeout= 5000))
+    elif FLASK_ENV == 'LOCAL':
+        socketio.run(app, debug=True)
     # app.run(debug=True)
 # from app.main import main_blueprint
 # app.register_blueprint(main_blueprint) 
