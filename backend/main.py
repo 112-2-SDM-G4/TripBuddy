@@ -20,7 +20,7 @@ CORS(app)
 api = Api(app)
 
 load_dotenv()
-FLASK_ENV = set_env_vars()
+set_env_vars()
 
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER')
@@ -33,6 +33,7 @@ app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=6)
 app.config['JWT_TOKEN_LOCATION'] = ['headers','query_string']
 
+FLASK_ENV = os.getenv('FLASK_ENV', 'LOCAL')
 INSTANCE_NAME = os.getenv("INSTANCE_NAME")
 PUBLIC_IP_ADDRESS = os.getenv("DB_PUBLIC_IP_ADDRESS")
 USER = os.getenv("DB_USER")
@@ -57,6 +58,6 @@ if __name__ == '__main__':
         socketio.run(app, host="0.0.0.0", port=int(os.environ.get("PORT", 8080), pingInterval = 3000, pingTimeout= 5000))
     elif FLASK_ENV == 'LOCAL':
         socketio.run(app, debug=True)
-    # app.run(debug=True)
+
 # from app.main import main_blueprint
 # app.register_blueprint(main_blueprint) 

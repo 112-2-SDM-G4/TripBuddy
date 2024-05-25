@@ -3,8 +3,16 @@ import google.oauth2.credentials
 from google_auth_oauthlib.flow import Flow
 from google.auth.transport.requests import Request
 import os
-from flask import Flask, redirect, url_for, session, request
+from flask import redirect, url_for, session, request
 
+FLASK_ENV = os.getenv('FLASK_ENV', 'LOCAL')
+
+if FLASK_ENV == 'DEPLOY':
+    backend_host = 'https://tripbuddy-h5d6vsljfa-de.a.run.app'
+elif FLASK_ENV == 'LOCAL':
+    backend_host = 'http://localhost:5000'
+
+frontend_url = "https://tripbuddy-frontend-repx5qxhzq-de.a.run.app/login"
 client_config = {
     "web": {
         "client_id": os.getenv('GOOGLE_OAUTH2_CLIENT_ID'),
@@ -16,8 +24,8 @@ client_config = {
         "redirect_uris": [
             "http://localhost:3000",
             "https://tripbuddy-frontend-repx5qxhzq-de.a.run.app/explore",
-            "http://127.0.0.1:5000/api/v1/user/google_login/callback",
-            "http://localhost:5000/api/v1/user/google_login/callback"
+            "http://localhost:5000/api/v1/user/google_login/callback",
+            "https://tripbuddy-h5d6vsljfa-de.a.run.app/api/v1/user/google_login/callback"
         ],
         "javascript_origins": [
             "http://localhost:3000",
@@ -36,8 +44,9 @@ class GoogleLogin:
                 "openid",
             ],
         )
-        self.flow.redirect_uri = "http://localhost:5000/api/v1/user/google_login/callback" 
 
+        self.flow.redirect_uri = f"{backend_host}/api/v1/user/google_login/callback"
+        
     def login(self):
         authorization_url, state = self.flow.authorization_url(
                 access_type='offline',
@@ -52,7 +61,7 @@ class GoogleLogin:
         request_state = request.args.get('state')
 
         if not state or not request_state or state != request_state:
-            return redirect("https://tripbuddy-frontend-repx5qxhzq-de.a.run.app/login")
+            return redirect(frontend_url)
 
         session.pop('state', None)
 
@@ -67,12 +76,12 @@ class GoogleLogin:
         )
 
         if id_info.get('error'):
-            return redirect(os.getenv['REDIRECT_URIS'], error=id_info['error'])
+            return redirect(frontend_url)
         
         user_info ={
-            "email": id_info.get('email'),
-            "name": id_info.get('name'),
-            "picture": id_info.get('picture')
+            "email": str(id_info.get('email')),
+            "name": str(id_info.get('name')),
+            "picture": str(id_info.get('picture'))
         }
 
         session['credentials'] = self.credentials_to_dict(credentials)

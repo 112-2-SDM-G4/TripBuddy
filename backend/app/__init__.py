@@ -31,15 +31,11 @@ def create_app():
     return app
 
 def set_env_vars():
-    FLASK_ENV = 'LOCAL'
     secret = os.environ.get("CLOUD_SQL_CREDENTIALS_SECRET")
     if secret:
         creds = json.loads(secret)
         for key, value in creds.items():
             os.environ[key] = value
             print(f"Setting {key} environment variable")
-        FLASK_ENV = 'DEPLOY'
     else:
         print("No secret found")
-    
-    return FLASK_ENV

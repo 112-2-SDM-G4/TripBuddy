@@ -1,14 +1,10 @@
 import os
 import random
 from datetime import datetime, timedelta
-from flask_restful import Resource, reqparse
+from flask_restful import Resource
 from flask import request, make_response, jsonify, redirect
 from flask_mail import Message
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
-# from google.oauth2 import id_token
-# from google.auth.transport import requests
-# import google.auth.oauthlib.flow
-# from googleapiclient.discovery import build
 
 from app.models.user import User, UserVerify
 from app.models.relation_user_tag import RelationUserTag
@@ -311,6 +307,7 @@ class HandleGoogleLoginCallback(Resource):
         google_login = GoogleLogin()
         res_json = {
             'valid': False,
+            'preference': False,
             'jwt_token': '',
             'message': 'This email had been taken. Please use original system to login.'
         }
@@ -340,6 +337,7 @@ class HandleGoogleLoginCallback(Resource):
         
         jwt_token = create_access_token(identity=user_info['email'])
         res_json['valid'] = True
+        res_json['preference'] = user.questionnaire
         res_json['jwt_token'] = jwt_token
         res_json['message'] = 'Login Successful'
 
