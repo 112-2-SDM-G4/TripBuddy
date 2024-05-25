@@ -29,7 +29,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
 
     # gcloud auth
-    - name: Set up gcloud Auth - sql
+    - name: Set up gcloud Auth - backend database
       uses: 'google-github-actions/auth@v2'
       with:
         credentials_json: ${{ secrets.GCP_DB_CREDENTIALS }}
@@ -77,7 +77,7 @@ jobs:
         envkey_GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
 
         # Google Login setting
-        envkey_CLIENT_ID: "688645866898-1mdotjk1gn8on9kf74b7gudinurcarui.apps.googleusercontent.com"
+        envkey_GOOGLE_OAUTH2_CLIENT_ID: "688645866898-1mdotjk1gn8on9kf74b7gudinurcarui.apps.googleusercontent.com"
         envkey_PROJECT_ID: "loyal-curve-418602"
         envkey_CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
         envkey_REDIRECT_URIS: ${{ vars.REDIRECT_URIS }}
@@ -89,36 +89,44 @@ jobs:
         pytest
 
     # gcloud auth
-    - name: 'Set up gcloud Auth - app engine'
+    - name: 'Set up gcloud Auth - backend service'
       uses: 'google-github-actions/auth@v2'
       with:
         credentials_json: ${{ secrets.GCP_APP_CREDENTIALS }}
 
-    # run deploy
-    - name: 'Deploy to App Engine'
-      uses: 'google-github-actions/deploy-appengine@v2'
+    # deploy to cloud run
+    - name: Deploy to Cloud Run
+      uses: 'google-github-actions/deploy-cloudrun@v2'
       with:
-        working_directory: './backend'
-        env_vars: |-
-          SECRET_KEY = ${{ secrets.SECRET_KEY }}
-          JWT_SECRET_KEY = ${{ secrets.JWT_SECRET_KEY }}
+        service: 'tripbuddy'
+        soucre: './backend'
+        region: 'asia-east1'
+    
+    # # run deploy
+    # - name: 'Deploy to App Engine'
+    #   uses: 'google-github-actions/deploy-appengine@v2'
+    #   with:
+    #     working_directory: './backend'
+    #     env_vars: |-
+    #       SECRET_KEY = ${{ secrets.SECRET_KEY }}
+    #       JWT_SECRET_KEY = ${{ secrets.JWT_SECRET_KEY }}
   
-          INSTANCE_NAME = loyal-curve-418602:asia-east1:sdm-g4-db
-          DB_NAME = tripbuddy
-          DB_USER = root
-          DB_PASSWORD = ${{ secrets.DB_PASSWORD }}
-          GOOGLE_MAPS_API_KEY = ${{ secrets.GOOGLE_MAPS_API_KEY }}
+    #       INSTANCE_NAME = loyal-curve-418602:asia-east1:sdm-g4-db
+    #       DB_NAME = tripbuddy
+    #       DB_USER = root
+    #       DB_PASSWORD = ${{ secrets.DB_PASSWORD }}
+    #       GOOGLE_MAPS_API_KEY = ${{ secrets.GOOGLE_MAPS_API_KEY }}
   
-          MAIL_SERVER = smtp.gmail.com
-          MAIL_PORT = 587
-          MAIL_USE_TLS = True
-          MAIL_USERNAME = tripbuddy4sdm@gmail.com
-          MAIL_PASSWORD = ${{ secrets.MAIL_PASSWORD }}
+    #       MAIL_SERVER = smtp.gmail.com
+    #       MAIL_PORT = 587
+    #       MAIL_USE_TLS = True
+    #       MAIL_USERNAME = tripbuddy4sdm@gmail.com
+    #       MAIL_PASSWORD = ${{ secrets.MAIL_PASSWORD }}
   
-          APP_ENGINE_PROJECT_ID = planar-effect-420508
-          GEMINI_API_KEY = ${{ secrets.GEMINI_API_KEY }}
+    #       APP_ENGINE_PROJECT_ID = planar-effect-420508
+    #       GEMINI_API_KEY = ${{ secrets.GEMINI_API_KEY }}
   
-          CLIENT_ID = 688645866898-1mdotjk1gn8on9kf74b7gudinurcarui.apps.googleusercontent.com
-          PROJECT_ID = loyal-curve-418602
-          CLIENT_SECRET = ${{ secrets.CLIENT_SECRET }}
-          REDIRECT_URIS = ${{ vars.REDIRECT_URIS }}
+    #       GOOGLE_OAUTH2_CLIENT_ID = 688645866898-1mdotjk1gn8on9kf74b7gudinurcarui.apps.googleusercontent.com
+    #       PROJECT_ID = loyal-curve-418602
+    #       CLIENT_SECRET = ${{ secrets.CLIENT_SECRET }}
+    #       REDIRECT_URIS = ${{ vars.REDIRECT_URIS }}
