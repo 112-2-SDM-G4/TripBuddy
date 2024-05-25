@@ -23,8 +23,35 @@ export default function ViewPost() {
     const { id } = useParams();
     const [stage, setStage] = useState(0);
     const [trip, setTrip] = useState({});
+    const [post, setPost] = useState({})
     const { language } = useLanguage();
     const navigate = useNavigate();
+
+    useEffect(() => {
+        if (id !== undefined) {
+            fetchWithJwt("/api/v1/post/" + id, "GET")
+                    .then(function (response) {
+                        return response.json();
+                    })
+                    .then(function (result) {
+                        console.log(result);
+                        if (result["public"] === true) {
+                            setPost({
+                                content: result["content"],
+                                tags_id: result["tags_id"]
+                            })
+                        } else {
+                            navigate("/login");
+                            console.log(result["message"]);
+                        }
+                    })
+                    .catch(function () {
+                        navigate("/login");
+                        console.log("errrr");
+                    });
+        }
+        return () => {};
+    }, []);
 
     useEffect(() => {
         if (id !== undefined) {
@@ -51,7 +78,7 @@ export default function ViewPost() {
     }, [id, navigate, language]);
 
     const refreshTrip = () => {
-        fetchWithJwt("/api/v1/trip/" + id + "/" + language, "GET")
+        fetchWithJwt("/api/v1/post/" + id + "/" + language, "GET")
             .then(function (response) {
                 return response.json();
             })
