@@ -9,8 +9,9 @@ from app import create_app
 from app.models.create_db import init_db
 from app.routes import initialize_routes
 from app.services.mail import init_mail
-from app.socket import socketio
+from app import socketio
 from datetime import timedelta
+import app.controllers.SocketTripManager
 
 # app = create_app()
 app = Flask(__name__)

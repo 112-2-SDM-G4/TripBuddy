@@ -8,7 +8,7 @@ from app.controllers.LedgerManager import Currency
 from app.controllers.PostManager import PostManager, HeartManager
 from app.controllers.GroupManager import SetGroupMember
 from app.controllers.LedgerManager import ManageTransaction, CheckBalance
-from app.controllers.SocketTripManager import SocketTripManager
+# from app.controllers.SocketTripManager import SocketTripManager
 from flask_restful import Api
 
 BASE_ROUTE = '/api/v1'

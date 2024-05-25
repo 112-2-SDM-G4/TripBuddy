@@ -1,10 +1,12 @@
 import os
 from dotenv import load_dotenv
-from .socket import socketio
+# from .socket import socketio
+from flask_socketio import SocketIO
+
 from flask import Flask
 from flask_jwt_extended import JWTManager
 
-
+socketio = SocketIO(cors_allowed_origins="*",always_connect=True, async_mode="threading")
 def create_app():
     app = Flask(__name__)
     
