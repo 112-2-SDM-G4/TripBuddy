@@ -391,7 +391,7 @@ function EditPage({ id, tripinfo, language, refreshTrip }) {
 
     const jwtToken = sessionStorage.getItem("jwtToken");
     const socket = useMemo(() => {
-        return io.connect("https://planar-effect-420508.de.r.appspot.com", {
+        return io.connect("https://tripbuddy-h5d6vsljfa-de.a.run.app", {
             query: {
                 ...(jwtToken && { jwt: jwtToken }),
             },
