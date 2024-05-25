@@ -1,0 +1,82 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  annotations:
+    run.googleapis.com/ingress: all
+    run.googleapis.com/ingress-status: all
+  labels:
+    cloud.googleapis.com/location: asia-east1
+  name: tripbuddy
+  namespace: '799992618394'
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/maxScale: '100'
+        run.googleapis.com/client-name: gcloud
+        run.googleapis.com/client-version: 471.0.0
+        run.googleapis.com/startup-cpu-boost: 'true'
+      labels:
+        client.knative.dev/nonce: jfvmxwecer
+        run.googleapis.com/startupProbeType: Default
+    spec:
+      containerConcurrency: 80
+      containers:
+      - image: asia-east1-docker.pkg.dev/planar-effect-420508/cloud-run-source-deploy/tripbuddy@sha256:da3dee07e4210d05aa97dde2c3e4d077d71ec6be7271f69cd7276d724a8bf62d
+        env:
+        - name: SECRET_KEY
+          value: "sdm112g4"
+        - name: JWT_SECRET_KEY
+          value: "wr6cBjpydKxPuQgm"
+        - name: INSTANCE_NAME
+          value: "loyal-curve-418602:asia-east1:sdm-g4-db"
+        - name: DB_NAME
+          value: "tripbuddy"
+        - name: DB_USER
+          value: "root"
+        - name: DB_PASSWORD
+          value: "sdm112g4"
+        - name: GOOGLE_MAPS_API_KEY
+          value: "AIzaSyBawHv_ZNIeetGkTnH3-mb4p-gKW-BTq1I"
+        - name: MAIL_SERVER
+          value: "smtp.gmail.com"
+        - name: MAIL_PORT
+          value: "587"
+        - name: MAIL_USE_TLS
+          value: "True"
+        - name: MAIL_DEFAULT_SENDER
+          value: "('admin', 'tripbuddy4sdm@gmail.com')"
+        - name: MAIL_USERNAME
+          value: "tripbuddy4sdm@gmail.com"
+        - name: MAIL_PASSWORD
+          value: "kynjlyoblneycjmv"
+        - name: APP_ENGINE_PROJECT_ID
+          value: "planar-effect-420508"
+        - name: GEMINI_API_KEY
+          value: "AIzaSyBM6sYI3OYIyhR_37_xq8X5J0djbK3EFzc"
+        - name: GOOGLE_OAUTH2_CLIENT_ID
+          value: "688645866898-1mdotjk1gn8on9kf74b7gudinurcarui.apps.googleusercontent.com"
+        - name: PROJECT_ID
+          value: "loyal-curve-418602"
+        - name: CLIENT_SECRET
+          value: "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"
+        - name: REDIRECT_URIS
+          value: "http://localhost:3000/login"
+        ports:
+        - containerPort: 8080
+          name: http1
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 512Mi
+        startupProbe:
+          failureThreshold: 1
+          periodSeconds: 240
+          tcpSocket:
+            port: 8080
+          timeoutSeconds: 240
+      serviceAccountName: 799992618394-compute@developer.gserviceaccount.com
+      timeoutSeconds: 300
+  traffic:
+  - latestRevision: true
+    percent: 100
