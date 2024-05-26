@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { fetchWithJwt } from "./fetchWithJwt";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useLanguage } from "./useLanguage";
+import { baseFetch } from "./baseFetch";
 
 const AuthContext = createContext();
 
@@ -12,36 +13,47 @@ export const AuthProvider = ({ children }) => {
     const navigate = useNavigate();
     const location = useLocation();
     const { pathname } = location;
-    const {setLanguage} = useLanguage();
+    const { setLanguage } = useLanguage();
 
-    const login = async (email, hashedPassword) => {
-        const url = "/api/v1/user/check_password";
-        const postData = {
-            user_email: email,
-            hashed_password: hashedPassword,
-        };
-
+    const login = async (email, hashedPassword, isGoogleLogin = false) => {
         try {
-            const loginResponse = await fetchWithJwt(url, "POST", postData);
-            const loginData = await loginResponse.json();
+            let loginData;
+            let loginResponse;
+            if (isGoogleLogin) {
+                loginResponse = await baseFetch("/api/v1/user/google_login", "GET");
+                alert(loginResponse);
+                if (loginResponse.redirected) {
+                    
+                    return;
+                }
+                console.log(loginResponse);
+            } else {
+                const url = "/api/v1/user/check_password";
+                const postData = {
+                    user_email: email,
+                    hashed_password: hashedPassword,
+                };
+                loginResponse = await fetchWithJwt(url, "POST", postData);
+
+            }
+            loginData = await loginResponse.json();
 
             if (loginData.valid) {
                 sessionStorage.setItem("jwtToken", loginData.jwt_token);
                 setIsLoggedIn(true);
-
             } else {
                 return { success: false, error: loginData.message, preference: false };
             }
 
             const response = await fetchWithJwt(`/api/v1/user/get_info`, 'GET');
-            if(response.status !== 200) {
+            if (response.status !== 200) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
             const infoData = await response.json();
-            console.log("user info:", infoData)
+            console.log("user info:", infoData);
             setUserInfo(infoData);
-            setLanguage(infoData["language"])
-            localStorage.setItem("language", infoData["language"] );
+            setLanguage(infoData["language"]);
+            localStorage.setItem("language", infoData["language"]);
 
             sessionStorage.setItem("avatar", infoData["avatar"]);
 
@@ -57,7 +69,6 @@ export const AuthProvider = ({ children }) => {
             } else {
                 throw new Error("Failed to fetch trips");
             }
-
         } catch (error) {
             console.error(error);
             return { success: false, error: error.message, preference: false };
