@@ -164,9 +164,9 @@ const Explore = () => {
                     <div className={style.blocktitle}>{language === "en" ? "Suggestions" : "為你推薦" }</div>
                     <div className={style.postscontainer}>
                         {(allTrips["public_trips"]?.length !== 0 && allTags.length !== 0)
-                            ? allTrips["public_trips"]?.map((trip) => (
+                            ? allTrips["public_trips"]?.map((trip, index) => (
                                 <PostCard 
-                                    key={trip["id"]}
+                                    key={`${trip["id"]}_all`}
                                     tripId={trip["id"]}
                                     name={trip["name"]}
                                     src={trip["image"]}git pu
@@ -184,7 +184,7 @@ const Explore = () => {
                         {(allTrips["hearted_trips"]?.length !== 0 && allTags.length !== 0)
                             ? allTrips["hearted_trips"]?.map((trip) => (
                                 <PostCard 
-                                    key={trip["id"]}
+                                    key={`${trip["id"]}_fav`}
                                     tripId={trip["id"]}
                                     name={trip["name"]}
                                     src={trip["image"]}
@@ -200,7 +200,7 @@ const Explore = () => {
 
             {noticeTrips.length !== 0 && noticeTripsCnt > 0 &&
                 noticeTrips.map(trip => 
-                    (<div className={style.upcoming}>
+                    (<div className={style.upcoming} key={trip["id"]}>
                         <TripNoticeCard 
                             trip={trip} 
                             setNoticeTripsCnt={() => {setNoticeTripsCnt(noticeTripsCnt => noticeTripsCnt - 1)}}
@@ -209,22 +209,7 @@ const Explore = () => {
                         />
                     </div>)
                 )
-                
             }
-
-            {/* {(haveUpcomingTrip && !hideUpcomingTrip) &&
-            <div className={style.upcoming}>
-                <TripNoticeCard 
-                    trip={upcomingTrip} 
-                    setHideTrip={(e) => {
-                        e.stopPropagation();
-                        setHideUpcomingTrip(true);
-                    }}
-                    noticeCnt={5}
-                />
-            </div>} */}
-
-
         </div>
     );
 };

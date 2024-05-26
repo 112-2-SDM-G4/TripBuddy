@@ -7,6 +7,7 @@ const Calendar = ({
     selectedEnd,
     setSelectedStart,
     setSelectedEnd,
+    toggleDropdown = () => {},
 }) => {
     const [date, setDate] = useState(new Date());
     const { language } = useLanguage();
@@ -47,6 +48,7 @@ const Calendar = ({
             }
         } else if (!selectedEnd || selectedEnd < newDate) {
             setSelectedEnd(newDate);
+            toggleDropdown();
         }
     };
 

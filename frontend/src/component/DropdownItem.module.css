@@ -29,11 +29,12 @@
 }
 
 .main:hover {
-    background-color: color-mix(in srgb, var(--fontcolor) 20%, var(--backgroundcolor));
+    background-color: color-mix(in srgb, var(--fontcolor) 20%, transparent);
 }
 
 .mainred:hover {
-    background-color: color-mix(in srgb, var(--fontcolor) 20%, #FF5151);
+    /* background-color: color-mix(in srgb, var(--fontcolor) 20%, #FF5151); */
+    background-color: color-mix(in srgb, var(--fontcolor) 20%, transparent);
 }
 
 .item {
