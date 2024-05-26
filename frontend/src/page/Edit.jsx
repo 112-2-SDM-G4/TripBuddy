@@ -36,8 +36,10 @@ export default function Edit() {
     const [trip, setTrip] = useState({});
     const { language } = useLanguage();
     const navigate = useNavigate();
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
+        setIsLoading(true);
         if (id !== undefined) {
             fetchWithJwt("/api/v1/trip/" + id + "/" + language, "GET")
                 .then(function (response) {
@@ -58,10 +60,12 @@ export default function Edit() {
                 });
             setStage(1);
         }
+        setIsLoading(false);
         return () => {};
     }, [id, navigate, language]);
 
     const refreshTrip = () => {
+        setIsLoading(true);
         fetchWithJwt("/api/v1/trip/" + id + "/" + language, "GET")
             .then(function (response) {
                 return response.json();
@@ -79,10 +83,12 @@ export default function Edit() {
                 navigate("/login");
                 console.log("errrr");
             });
+        setIsLoading(false);
     };
 
     return (
         <div className={style.main}>
+            <Loader isLoading={isLoading} />
             {stage === 0 && (
                 <InitialPage setStage={setStage} language={language} />
             )}

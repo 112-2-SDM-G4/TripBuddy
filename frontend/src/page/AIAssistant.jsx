@@ -60,26 +60,33 @@ const AIAssistant = () => {
     }
 
     const handleSubmit = async () => {
-        if(selectedStart === undefined || selectedEnd === undefined ||
+        if(selectedStart === "" || selectedEnd === "" 
+            ||selectedStart === undefined || selectedEnd === undefined ||
             (!isRandom && selectedCountryId === -1) || prompt === ""
         ) {
             alert("Please fill in all fields.");
             return;
         }
         setIsLoading(true);
+
+        let loc_id = null;
+        let lat = null;
+        let lon = null;
+
+        if (!isRandom) {
+            const selectedPlace = CountryData.places.find(
+                (place) => place.country_id === selectedCountryId
+            );
+            loc_id = selectedCountryId;
+            lat = selectedPlace.latitude;
+            lon = selectedPlace.longitude;
+        }
         await fetchWithJwt('/api/v1/trip/ai_generate', 'POST', {
             text: prompt,
             start_date: [selectedStart.getFullYear(), selectedStart.getMonth() + 1, selectedStart.getDate()],
             end_date: [selectedEnd.getFullYear(), selectedEnd.getMonth() + 1, selectedEnd.getDate()],
-            location_id: selectedCountryId,
-            location: [
-                CountryData.places.find(
-                    (place) => place.country_id === selectedCountryId
-                ).latitude,
-                CountryData.places.find(
-                    (place) => place.country_id === selectedCountryId
-                ).longitude
-            ]
+            location_id: loc_id,
+            location: lat !== null && lon !== null ? [lat, lon] : null
         })
         .then(function (response) {
             console.log("res", response);
@@ -214,11 +221,7 @@ const AIAssistant = () => {
                     </textarea>
                 </div>
 
-            </div>
-
-
-                
-
+            </div>   
                 <div className={style.submit}>
                     <Button
                         txt={words[language]["askAI"]}
