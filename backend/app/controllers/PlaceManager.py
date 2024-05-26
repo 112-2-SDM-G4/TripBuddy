@@ -100,7 +100,7 @@ class PlaceInTrip(Resource):
         place_info['period_minutes'] = place_info['stay_time'][1]
         relation = RelationSpotSch.create(place_info)
         
-        emit_trip_update(trip_id, "zh")
+        emit_trip_update(trip_id)
         return make_response({'message': 'Place added to trip successfully.',
                               'relation_id': relation.rss_id},
                                 200)

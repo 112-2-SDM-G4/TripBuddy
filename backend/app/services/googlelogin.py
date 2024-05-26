@@ -3,7 +3,14 @@ import google.oauth2.credentials
 from google_auth_oauthlib.flow import Flow
 from google.auth.transport.requests import Request
 import os
-from flask import Flask, redirect, url_for, session, request
+from flask import redirect, url_for, session, request
+
+FLASK_ENV = os.getenv('FLASK_ENV', 'LOCAL')
+
+if FLASK_ENV == 'DEPLOY':
+    backend_host = 'https://tripbuddy-h5d6vsljfa-de.a.run.app'
+elif FLASK_ENV == 'LOCAL':
+    backend_host = 'http://localhost:5000'
 
 frontend_url = "https://tripbuddy-frontend-repx5qxhzq-de.a.run.app/login"
 client_config = {
@@ -18,7 +25,7 @@ client_config = {
             "http://localhost:3000",
             "https://tripbuddy-frontend-repx5qxhzq-de.a.run.app/explore",
             "http://localhost:5000/api/v1/user/google_login/callback",
-            "https://planar-effect-420508.de.r.appspot.com/google_login/callback"
+            "https://tripbuddy-h5d6vsljfa-de.a.run.app/api/v1/user/google_login/callback"
         ],
         "javascript_origins": [
             "http://localhost:3000",
@@ -37,9 +44,9 @@ class GoogleLogin:
                 "openid",
             ],
         )
-        self.flow.redirect_uri = "http://localhost:5000/api/v1/user/google_login/callback" # dev env
-        # self.flow.redirect_uri = "https://planar-effect-420508.de.r.appspot.com/google_login/callback" # prod env
 
+        self.flow.redirect_uri = f"{backend_host}/api/v1/user/google_login/callback"
+        
     def login(self):
         authorization_url, state = self.flow.authorization_url(
                 access_type='offline',

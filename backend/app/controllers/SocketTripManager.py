@@ -93,7 +93,7 @@ def on_insert_place(place_info):
     place_info['period_minutes'] = place_info['stay_time'][1]
     relation = RelationSpotSch.create(place_info)
     
-    emit_trip_update(trip_id, language)
+    emit_trip_update(trip_id)
     
 
 @socketio.on('update_trip') #儲存更新行程
@@ -136,29 +136,80 @@ def on_update_trip(data):
             place_info['period_minutes'] = place_info['stay_time'][1]
             RelationSpotSch.create(place_info)
 
-    emit_trip_update(trip_id, language)
+    emit_trip_update(trip_id)
 
-def emit_trip_update(trip_id, language='zh'):
+# def emit_trip_update(trip_id, language='zh'):
+#     schedule = Schedule.get_by_id(trip_id)
+#     if not schedule:
+#         emit('error', {'message': 'Trip not found.'})
+#         return
+
+#     places_in_trip = RelationSpotSch.get_by_schedule(trip_id)
+#     trip_detail = [[] for _ in range((schedule.end_date - schedule.start_date).days + 1)]
+#     places_in_trip.sort(key=lambda x: (x.date, x.order))
+#     for relation_spot_sch in places_in_trip:
+#         res_code, place_info = fetch_and_save_place(relation_spot_sch.place_id, language)
+#         if res_code != 200:
+#             continue
+#         place_info['relation_id'] = relation_spot_sch.rss_id
+#         place_info['comment'] = relation_spot_sch.comment
+#         place_info['money'] = relation_spot_sch.money
+#         place_info['stay_time'] = [relation_spot_sch.period_hours, relation_spot_sch.period_minutes]
+#         trip_detail[relation_spot_sch.date - 1].append(place_info)
+
+#     trip_manager = TripManager()
+#     response = {
+#         "id": schedule.schedule_id,
+#         "name": schedule.schedule_name,
+#         "image": trip_manager.get_trip_photo(schedule),  
+#         "start_date": date_to_array(schedule.start_date),
+#         "end_date": date_to_array(schedule.end_date),
+#         "location_id": trip_manager.get_trip_location_id(schedule),
+#         "location": [schedule.location_lat, schedule.location_lng],
+#         "trip": trip_detail,
+#         "public": schedule.public,
+#         "standard": schedule.standard,
+#         "exchange": schedule.exchange,
+#     }
+
+#     socketio.emit('render_trip', response, room=trip_id)
+
+def emit_trip_update(trip_id):
     schedule = Schedule.get_by_id(trip_id)
     if not schedule:
         emit('error', {'message': 'Trip not found.'})
         return
 
     places_in_trip = RelationSpotSch.get_by_schedule(trip_id)
-    trip_detail = [[] for _ in range((schedule.end_date - schedule.start_date).days + 1)]
+    days_count = (schedule.end_date - schedule.start_date).days + 1
+    trip_detail_zh = [[] for _ in range(days_count)]
+    trip_detail_en = [[] for _ in range(days_count)]
     places_in_trip.sort(key=lambda x: (x.date, x.order))
+    
+    places_in_trip.sort(key=lambda x: (x.date, x.order))
+    
     for relation_spot_sch in places_in_trip:
-        res_code, place_info = fetch_and_save_place(relation_spot_sch.place_id, language)
-        if res_code != 200:
-            continue
-        place_info['relation_id'] = relation_spot_sch.rss_id
-        place_info['comment'] = relation_spot_sch.comment
-        place_info['money'] = relation_spot_sch.money
-        place_info['stay_time'] = [relation_spot_sch.period_hours, relation_spot_sch.period_minutes]
-        trip_detail[relation_spot_sch.date - 1].append(place_info)
+        # Fetch and save place information in Chinese
+        res_code_zh, place_info_zh = fetch_and_save_place(relation_spot_sch.place_id, 'zh')
+        if res_code_zh == 200:
+            place_info_zh['relation_id'] = relation_spot_sch.rss_id
+            place_info_zh['comment'] = relation_spot_sch.comment
+            place_info_zh['money'] = relation_spot_sch.money
+            place_info_zh['stay_time'] = [relation_spot_sch.period_hours, relation_spot_sch.period_minutes]
+            trip_detail_zh[relation_spot_sch.date - 1].append(place_info_zh)
+        
+        # Fetch and save place information in English
+        res_code_en, place_info_en = fetch_and_save_place(relation_spot_sch.place_id, 'en')
+        if res_code_en == 200:
+            place_info_en['relation_id'] = relation_spot_sch.rss_id
+            place_info_en['comment'] = relation_spot_sch.comment
+            place_info_en['money'] = relation_spot_sch.money
+            place_info_en['stay_time'] = [relation_spot_sch.period_hours, relation_spot_sch.period_minutes]
+            trip_detail_en[relation_spot_sch.date - 1].append(place_info_en)
 
     trip_manager = TripManager()
-    response = {
+    
+    response_zh = {
         "id": schedule.schedule_id,
         "name": schedule.schedule_name,
         "image": trip_manager.get_trip_photo(schedule),  
@@ -166,10 +217,29 @@ def emit_trip_update(trip_id, language='zh'):
         "end_date": date_to_array(schedule.end_date),
         "location_id": trip_manager.get_trip_location_id(schedule),
         "location": [schedule.location_lat, schedule.location_lng],
-        "trip": trip_detail,
+        "trip": trip_detail_zh,
         "public": schedule.public,
         "standard": schedule.standard,
         "exchange": schedule.exchange,
+    }
+
+    response_en = {
+        "id": schedule.schedule_id,
+        "name": schedule.schedule_name,
+        "image": trip_manager.get_trip_photo(schedule),  
+        "start_date": date_to_array(schedule.start_date),
+        "end_date": date_to_array(schedule.end_date),
+        "location_id": trip_manager.get_trip_location_id(schedule),
+        "location": [schedule.location_lat, schedule.location_lng],
+        "trip": trip_detail_en,
+        "public": schedule.public,
+        "standard": schedule.standard,
+        "exchange": schedule.exchange,
+    }
+    
+    response = {
+        "zh": response_zh,
+        "en": response_en
     }
 
     socketio.emit('render_trip', response, room=trip_id)
