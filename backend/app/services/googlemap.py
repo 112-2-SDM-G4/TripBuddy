@@ -194,3 +194,24 @@ class GoogleMapApi():
             res_json = {}
 
         return res.status_code, res_json
+
+    def get_place_lat_lng(self, place_id: str, language_code: str,) -> Dict:
+        """Google Maps Places API - Place Lat, Lng"""
+        detail_api_url = f"https://places.googleapis.com/v1/places/{place_id}?fields={('%2C').join(self.detail_field_mask)}"
+        params = self.detail_params.copy()
+        if language_code == "zh":
+            params['languageCode'] = "zh-TW"
+        else:
+            params['languageCode'] = language_code
+        res = requests.get(detail_api_url, params=params)
+        if res.ok:
+            place = json.loads(res.text)
+            location = place['location']
+            res_json = {
+                'lat': location['latitude'],
+                'lng': location['longitude'],
+            }
+        else:
+            res_json = {}
+
+        return res_json
