@@ -147,24 +147,24 @@ class SetUserInfo(Resource):
 class LoginCheckUser(Resource):
     def get(self):
         user_email = request.args.get('user_email')
-        # data = request.get_json()
-        # user_email = data.get('email')、
         user = User.get_by_email(user_email)
 
+        res_json = {
+            'valid': False,
+            'salt': '',
+            'message': ''
+        }
+        if user.google_token is not None:
+            res_json['message'] = 'This email is already being used with Google Account, please use google login.'
+            return make_response(res_json, 200)
+        
         if user is not None:
-            res_json = {
-                'valid': True,
-                'salt': user.salt
-            }
+            res_json['valid'] = True
+            res_json['salt'] = user.salt
             return make_response(res_json, 200)
         else:
-            res_json = {
-                'valid': False, 
-                'salt': '', 
-                'message': 'User do not exist, Please try to regist'
-            }
+            res_json['message'] = 'User do not exist, Please try to regist'
             return make_response(res_json, 401)
-
 
 class LoginCheckPassword(Resource):
     def post(self):
@@ -173,26 +173,29 @@ class LoginCheckPassword(Resource):
         password_input = data.get('hashed_password')
         user = User.get_by_email(user_email)
 
+        res_json = {
+            'valid': False,
+            'jwt_token': '',
+            'user_name': '',
+            'language': '',
+            'message': 'Wrong Password',
+            'preference': None
+        }
+
+        if user.google_token is not None:
+            res_json['message'] = 'This email is already being used with Google Account, please use google login.'
+            return make_response(res_json, 200)
+        
         if user and password_input == user.hashed_password :
             jwt_token = create_access_token(identity=user_email)
-            res_json = {
-                'valid': True,
-                'jwt_token': jwt_token,
-                'user_name': user.user_name,
-                'language': user.language,
-                'message': 'Login Successful',
-                'preference': user.questionnaire
-            }
+            res_json['valid'] = True
+            res_json['jwt_token'] = jwt_token
+            res_json['user_name'] = user.user_name
+            res_json['language'] = user.language
+            res_json['message'] = 'Login Successful'
+            res_json['preference'] = user.questionnaire
             return make_response(res_json, 200)
         else:
-            res_json = {
-                'valid': False,
-                'jwt_token': '',
-                'user_name': '',
-                'language': '',
-                'message': 'Wrong Password',
-                'preference': None
-            }
             return make_response(res_json, 401)
         
 class ForgetPassword(Resource):
@@ -300,8 +303,11 @@ class HandleGoogleLogin(Resource):
     def get(self):
         google_login = GoogleLogin()
         auth_url = google_login.login()
+        data = {
+            "auth_url": auth_url
+        }
 
-        return redirect(auth_url)
+        return make_response(data, 200)
 class HandleGoogleLoginCallback(Resource):
     def get(self):
         google_login = GoogleLogin()
@@ -336,9 +342,8 @@ class HandleGoogleLoginCallback(Resource):
             return make_response(res_json, 200)
         
         jwt_token = create_access_token(identity=user_info['email'])
-        res_json['valid'] = True
-        res_json['preference'] = user.questionnaire
-        res_json['jwt_token'] = jwt_token
-        res_json['message'] = 'Login Successful'
+        
+        frontend_url = "https://tripbuddy-frontend-repx5qxhzq-de.a.run.app/explore"
+        redirect_url = frontend_url + "?jwt_token=" + jwt_token + "&preference=" + str(user.questionnaire)
 
-        return make_response(res_json, 200)
+        return redirect(redirect_url)

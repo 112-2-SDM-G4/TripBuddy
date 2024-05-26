@@ -1,5 +1,5 @@
+import uuid
 from google.oauth2 import id_token
-import google.oauth2.credentials
 from google_auth_oauthlib.flow import Flow
 from google.auth.transport.requests import Request
 import os
@@ -48,12 +48,14 @@ class GoogleLogin:
         self.flow.redirect_uri = f"{backend_host}/api/v1/user/google_login/callback"
         
     def login(self):
+        state = uuid.uuid4().hex
+        session['state'] = state
         authorization_url, state = self.flow.authorization_url(
                 access_type='offline',
                 include_granted_scopes='true',
-                prompt='consent'
+                prompt='consent',
+                state=state
             )
-        session['state'] = state
         return authorization_url
 
     def callback(self):
@@ -108,3 +110,10 @@ class GoogleLogin:
             if key   == "code":
                 return value
         return None
+
+class CSRFTokenGenerator:
+    def __init__(self, token_length=16):
+        self.token_length = token_length
+
+    def generate_token(self):
+        return secrets.token_urlsafe(self.token_length)
