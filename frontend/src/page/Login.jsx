@@ -181,62 +181,86 @@ const LoginForm = ({ language }) => {
             }
         }
     };
+
+    const handleGoogleLogin = async () => {
+        setIsLoading(true);
+        try {
+            const result = await login(null, null, true); 
+            // window.location.href = 'https://tripbuddy-h5d6vsljfa-de.a.run.app/api/v1/user/google_login';
+            // console.log(result);
+            if (!result.success) {
+                setError(result.error);
+            }else if (!result.preference) {
+                navigate("/profile-setup");
+            }
+            else {
+                navigate("/explore");
+            }
+
+        } catch (error) {
+            setError("An error occurred during Google login.");
+            console.error(error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+
     return (
         <form method="post" onSubmit={handleSubmit} className={style.form}>
             {isLoading && <Loader isLoading={isLoading} />}
-            
-                    <div className={style.logoContainer}>
+
+            <div className={style.logoContainer}>
+                <img
+                    className={style.logo}
+                    src="../../logo.png"
+                    alt="TourBuddy"
+                />
+            </div>
+
+            <div className={style.inputWithErrorMessage}>
+                {error && <span className={style.errorMessage}>{error}</span>}
+            </div>
+            <div className={style.inputGroup}>
+                <InputText
+                    propmt={words[language]["email"]}
+                    name={"email"}
+                    setting={{ require: true, type: "email" }}
+                    value={email}
+                    onChange={setEmail}
+                    onBlur={handleEmailBlur}
+                />
+
+                <InputText
+                    propmt={words[language]["password"]}
+                    name={"password"}
+                    setting={{ require: true, type: "password" }}
+                    value={password}
+                    onChange={setPassword}
+                />
+            </div>
+            <Button
+                txt={words[language]["signin"]}
+                func={handleSubmit} // You might not need this if it's just submitting the form
+                setting={{ type: "submit" }}
+            />
+
+            <div className={style.links}>
+                <a href="/forget-password">{words[language]["forget_password"]}</a>
+            </div>
+            <div className={style.socialLogin}>
+                <div className={style.thirdSignin}>------{words[language]["third_party_login"]}------</div>
+                <div className={style.icons}>
+                    <div className={style.icon} onClick={handleGoogleLogin}>
                         <img
-                            className={style.logo}
-                            src="../../logo.png"
-                            alt="TourBuddy"
+                            src="../../google-icon.svg"
+                            alt="Sign in with Google"
                         />
                     </div>
+                </div>
+            </div>
 
-                    <div className={style.inputWithErrorMessage}>
-                        {error && <span className={style.errorMessage}>{error}</span>}
-                    </div>
-                    <div className={style.inputGroup}>
-                        <InputText
-                            propmt={words[language]["email"]}
-                            name={"email"}
-                            setting={{ require: true, type: "email" }}
-                            value={email}
-                            onChange={setEmail}
-                            onBlur={handleEmailBlur}
-                        />
 
-                        <InputText
-                            propmt={words[language]["password"]}
-                            name={"password"}
-                            setting={{ require: true, type: "password" }}
-                            value={password}
-                            onChange={setPassword}
-                        />
-                    </div>
-                    <Button
-                        txt={words[language]["signin"]}
-                        func={handleSubmit} // You might not need this if it's just submitting the form
-                        setting={{ type: "submit" }}
-                    />
-
-                    <div className={style.links}>
-                        <a href="/forget-password">{words[language]["forget_password"]}</a>
-                    </div>
-                    <div className={style.socialLogin}>
-                        <div className={style.thirdSignin}>------{words[language]["third_party_login"]}------</div>
-                        <div className={style.icons}>
-                            <a href="/auth/google" className={style.icon}>
-                                <img
-                                    src="../../google-icon.svg"
-                                    alt="Sign in with google"
-                                />
-                            </a>
-
-                        </div>
-                    </div>
-                
-            
         </form>
     );
 };
