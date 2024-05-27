@@ -41,16 +41,21 @@ function Header() {
 
       if (user) {
         const userData = JSON.parse(user);
-        updateHeader({
-          userName: userData.user_name || null,
-          avatar: avatar || 0,
-        });
+        const newUserName = userData.user_name || null;
+        const newAvatar = avatar || 0;
+        
+        if (newUserName !== headerState.userName || newAvatar !== headerState.avatar) {
+          updateHeader({
+            userName: newUserName,
+            avatar: newAvatar,
+          });
+        }
       }
     }
-  }, [isLoggedIn, updateHeader]);
+  }, [isLoggedIn, updateHeader, headerState.userName, headerState.avatar]);
 
   return (
-    <div className={style.main} onClick={(e) => setIsDropdownOpen(false)}>
+    <div className={style.main} onClick={() => setIsDropdownOpen(false)}>
       <img
         src="../../logoTitle.png"
         onClick={() => navigate('/explore')}
