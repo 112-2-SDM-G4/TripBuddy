@@ -20,9 +20,9 @@ export const AuthProvider = ({ children }) => {
             let loginData;
             let loginResponse;
             if (isGoogleLogin) {
-                loginResponse = await baseFetch("/api/v1/user/google_login", "GET");
-                const auth_url = await loginResponse.json();
-                window.location.href = auth_url.auth_url;
+                // loginResponse = await baseFetch("/api/v1/user/google_login", "GET");
+                // const auth_url = await loginResponse.json();
+                // window.location.href = auth_url.auth_url;
                 const searchParams = new URLSearchParams(location.search);
                 const errorMessage = searchParams.get('error');
                 const jwt_token = searchParams.get('jwt_token');

@@ -185,8 +185,12 @@ const LoginForm = ({ language }) => {
     const handleGoogleLogin = async () => {
         setIsLoading(true);
         try {
+            const loginResponse = await baseFetch("/api/v1/user/google_login", "GET");
+            const auth_url = await loginResponse.json();
+            window.location.href = auth_url.auth_url;
+            
             const { success, error, preference } = await login(null, null, true); 
-            // window.location.href = result;
+            
             
             if (!success) {
                 throw new Error(error);
