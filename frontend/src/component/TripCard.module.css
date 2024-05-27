@@ -20,7 +20,7 @@
 
 .img {
     object-fit: cover;
-    width: 18rem;
+    width: 15rem;
     height: 100%;
     overflow: hidden;
     border-radius: 0.5rem 0 0 0.5rem;
@@ -54,7 +54,7 @@
 .info {
     display: flex;
     flex-direction: column;
-    width: 12rem;
+    width: 15rem;
     padding-top: 0.2rem;
     padding-left: 0.5rem;
     justify-content: center;
@@ -71,6 +71,14 @@
     font-size: 1rem;
     font-weight: bold;
     align-items: center;
+    
+}
+
+.tripName {
+    white-space: nowrap; /* Prevent text wrapping */
+    overflow: hidden; /* Ensure overflowed text is hidden */
+    text-overflow: ellipsis; /* Show ellipsis for overflowed text */
+    max-width: calc(100% - 40px); /* Adjust width to prevent covering icons */
 }
 
 .countryIcon {
