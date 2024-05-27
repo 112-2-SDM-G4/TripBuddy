@@ -261,7 +261,7 @@ class AITripGeneration(Resource):
             return make_response(content, 200)
         raw_schedule = content['trip']
         schedule_info = {
-            'location_id': data['location_id'],
+            'location_id': country_id,
             'location_lng': location_lng,
             'location_lat': location_lat,
             'exchange': exchange,
