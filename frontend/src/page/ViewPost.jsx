@@ -8,11 +8,7 @@ import Tag from "../component/Tag";
 import { useLanguage } from "../hooks/useLanguage";
 import { fetchWithJwt } from "../hooks/fetchWithJwt";
 
-import {
-    IoSunny,
-    IoRainy,
-    IoAlertCircle,
-} from "react-icons/io5";
+import { IoSunny, IoRainy, IoAlertCircle } from "react-icons/io5";
 
 export default function ViewPost() {
     const { id } = useParams();
@@ -25,14 +21,17 @@ export default function ViewPost() {
     useEffect(() => {
         const getPostData = async () => {
             try {
-                const response = await fetchWithJwt(`/api/v1/post/${id}`, 'GET');
+                const response = await fetchWithJwt(
+                    `/api/v1/post/${id}`,
+                    "GET"
+                );
                 const result = await response.json();
                 if (result["public"] === true) {
                     console.log(result);
                     setPost({
                         content: result["content"],
-                        tags_id: result["tags"]
-                    })
+                        tags_id: result["tags"],
+                    });
                 } else {
                     navigate("/login");
                     console.log(result["message"]);
@@ -90,7 +89,10 @@ export default function ViewPost() {
     useEffect(() => {
         const getAllTags = async () => {
             try {
-                const response = await fetchWithJwt(`/api/v1/tag/get_tags?source=${"SharePost"}`, 'GET');
+                const response = await fetchWithJwt(
+                    `/api/v1/tag/get_tags?source=${"SharePost"}`,
+                    "GET"
+                );
                 const data = await response.json();
                 if (Array.isArray(data)) {
                     setAllTags(
@@ -106,45 +108,46 @@ export default function ViewPost() {
             }
         };
         getAllTags();
-
     }, []);
 
     const getTagName = (tagId, lang) => {
-        if(allTags.length === 0) return null;
+        if (allTags.length === 0) return null;
         for (let i = 0; i < allTags.length; i++) {
             if (allTags[i].tag_id === tagId) {
                 return allTags[i][`tag_name_${lang}`];
             }
         }
         return null;
-    }
+    };
 
     return (
         <div className={style.main}>
             <div className={style.postcontainer}>
                 <div className={style.row}>
-                    <div className={style.title}>
-                        {trip?.name}
-                    </div>
+                    <div className={style.title}>{trip?.name}</div>
 
                     <div className={style.tagscontainer}>
                         <div className={style.tag}>
-                            {post["tags_id"]?.map(tagId => (
-                                <Tag 
+                            {post["tags_id"]?.map((tagId) => (
+                                <Tag
                                     key={tagId}
                                     text={getTagName(tagId, language)}
-                                />))
-                            }
+                                />
+                            ))}
                         </div>
                     </div>
                 </div>
 
-                <div className={style.postcontent}>
-                    {post.content}
-                </div>
+                <textarea
+                    style={{
+                        border: "none",
+                        backgroundColor: "var(--backgroundcolor)",
+                    }}
+                    className={style.postcontent}
+                    value={post.content}
+                    disabled
+                ></textarea>
             </div>
-
-
 
             <EditPage
                 tripinfo={trip}
@@ -315,17 +318,17 @@ function EditPage({ tripinfo, language, refreshTrip }) {
         setSpots(newSpots);
     };
 
-    const getWeather = () => {
-        let weather = "晴";
-        switch (weather) {
-            case "晴":
-                return <IoSunny className={style.weather} />;
-            case "雨":
-                return <IoRainy className={style.weather} />;
-            default:
-                return <IoAlertCircle className={style.weather} />;
-        }
-    };
+    // const getWeather = () => {
+    //     let weather = "晴";
+    //     switch (weather) {
+    //         case "晴":
+    //             return <IoSunny className={style.weather} />;
+    //         case "雨":
+    //             return <IoRainy className={style.weather} />;
+    //         default:
+    //             return <IoAlertCircle className={style.weather} />;
+    //     }
+    // };
     return (
         <div className={style.editpagecontainer}>
             <div className={style.editpage}>
@@ -353,7 +356,7 @@ function EditPage({ tripinfo, language, refreshTrip }) {
                             {dates[selectedDate]
                                 ? dates[selectedDate].weekday + " "
                                 : ""}
-                            {getWeather()}
+                            {/* {getWeather()} */}
                         </div>
                     </div>
                     <DragBox
@@ -367,4 +370,3 @@ function EditPage({ tripinfo, language, refreshTrip }) {
         </div>
     );
 }
-

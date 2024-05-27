@@ -123,12 +123,24 @@ export default function ShareModal({ close }) {
                 style={{ width: "40rem", maxWidth: "70vw" }}
             >
                 {words[language]["title"]}
-                <InputText
-                    propmt={words[language]["intro"]}
-                    name={"intro"}
-                    setting={{ require: true, width: "100%", height: "6rem" }}
-                    onChange={setContent}
-                />
+                <div>
+                    <div>{words[language]["intro"]}</div>
+                    <textarea
+                        name="intro"
+                        required
+                        style={{
+                            width: "100%",
+                            height: "6rem",
+                            marginTop: "1rem",
+                            marginBottom: "1rem",
+                        }}
+                        id="intro"
+                        onChange={(e) => {
+                            setContent(e.target.value);
+                        }}
+                        value={content}
+                    ></textarea>
+                </div>
                 <div className={style.sharedropdown}>
                     <div className={style.sharedropdowntitle}>
                         {words[language]["tag"]}
