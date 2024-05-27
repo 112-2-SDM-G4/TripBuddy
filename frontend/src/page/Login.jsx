@@ -186,12 +186,12 @@ const LoginForm = ({ language }) => {
         setIsLoading(true);
         try {
             const result = await login(null, null, true); 
-            window.location.href = result;
+            // window.location.href = result;
             
-            // console.log(result);
-            // if (!result.success) {
-            //     setError(result.error);
-            // }else if (!result.preference) {
+            if (!result.success) {
+                setError(result.error);
+            }
+            // else if (!result.preference) {
             //     navigate("/profile-setup");
             // }
             // else {

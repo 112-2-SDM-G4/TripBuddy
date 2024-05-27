@@ -22,7 +22,28 @@ export const AuthProvider = ({ children }) => {
             if (isGoogleLogin) {
                 loginResponse = await baseFetch("/api/v1/user/google_login", "GET");
                 const auth_url = await loginResponse.json();
-                return auth_url.auth_url;
+                window.location.href = auth_url.auth_url;
+                const searchParams = new URLSearchParams(location.search);
+                const errorMessage = searchParams.get('error');
+                const jwt_token = searchParams.get('jwt_token');
+                const preference = searchParams.get('preference') === 'true';
+                if(errorMessage) {
+                    return { success: false, error: errorMessage, preference: false };
+                }
+                if (jwt_token) {
+                    // 保存 JWT Token 到本地存儲
+                    sessionStorage.setItem("jwtToken", jwt_token);
+                    setIsLoggedIn(true);
+                    // 根據用戶偏好進行重定向
+                    if (!preference) {
+                        navigate('/profile-setup'); // 假設有用戶偏好頁面
+                    } else {
+                        navigate('/explore');
+                    }
+                } else {
+                    console.error('JWT token is missing in URL');
+                    navigate('/login'); // 或其他合適的錯誤處理頁面
+                }
             } else {
                 const url = "/api/v1/user/check_password";
                 const postData = {
@@ -30,16 +51,17 @@ export const AuthProvider = ({ children }) => {
                     hashed_password: hashedPassword,
                 };
                 loginResponse = await fetchWithJwt(url, "POST", postData);
+                loginData = await loginResponse.json();
+
+                if (loginData.valid) {
+                    sessionStorage.setItem("jwtToken", loginData.jwt_token);
+                    setIsLoggedIn(true);
+                } else {
+                    return { success: false, error: loginData.message, preference: false };
+                }
 
             }
-            loginData = await loginResponse.json();
 
-            if (loginData.valid) {
-                sessionStorage.setItem("jwtToken", loginData.jwt_token);
-                setIsLoggedIn(true);
-            } else {
-                return { success: false, error: loginData.message, preference: false };
-            }
 
             const response = await fetchWithJwt(`/api/v1/user/get_info`, 'GET');
             if (response.status !== 200) {
@@ -70,7 +92,7 @@ export const AuthProvider = ({ children }) => {
             return { success: false, error: error.message, preference: false };
         }
     };
-    
+
 
     const logout = () => {
         sessionStorage.removeItem("jwtToken");
