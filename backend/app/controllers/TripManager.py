@@ -15,6 +15,7 @@ from app.models.relation_user_sch import RelationUserSch
 from app.models.relation_spot_sch import RelationSpotSch
 from app.models.relation_sch_tag import RelationSchTag
 from app.services.gemini import Gemini
+from app.services.weather import OpenWeatherAPI
 
 class TripManager(Resource):
     def get_trip_length(self, trip):
@@ -310,9 +311,12 @@ class AITripGeneration(Resource):
             'response_mime_type': 'application/json',
             'response_schema': response_schema,
         }
-        gemini = Gemini(configs=model_config)
-        response = gemini.generate_content(gpt_input)
-        trip_name = ast.literal_eval(str(response.candidates[0].content.parts[0].text))['trip_name']
+        try:
+            gemini = Gemini(configs=model_config)
+            response = gemini.generate_content(gpt_input)
+            trip_name = ast.literal_eval(str(response.candidates[0].content.parts[0].text))['trip_name']
+        except:
+            trip_name = 'AI generate trip'
         print(trip_name)
         return trip_name
 
@@ -345,12 +349,14 @@ class AITripGeneration(Resource):
             'valid': 1
         }
         bad_response = {'msg': 'your response', 'valid': 0}
+        # Verify if this text is an unreasonable custom itinerary preference. If it is unreasonable, 
         gpt_input = f"""
-        You are a local guide in {country} who gives advice to tourists.
+        You are a local guide in {country} who gives travel itinerary to tourists.
         Please read the request from a tourist in the 『』 sign, 
         and follow the instructions step by step listed below:
-        1. Verify if this text is an unreasonable custom itinerary preference.
-            If it is unreasonable, please explain the reasons why it is inappropriate and respond politely.
+        1. You should try your best to arrange travel, but some people just come and mess around.
+            If you think the request comes from these malicious people
+            please explain the reasons why it is inappropriate and respond politely.
             Your explanation must follow this JSON schema.<JSONSchema>{json.dumps(bad_response)}</JSONSchema>
             If not, go to step 2
         
@@ -366,12 +372,13 @@ class AITripGeneration(Resource):
             'candidate_count': 1,
             'response_mime_type': 'application/json',
         }
-        gemini = Gemini(configs=model_config)
-        response = gemini.generate_content(gpt_input)
-        print(response.candidates[0].content.parts[0].text)
-        print("type :", type(response.candidates[0].content.parts[0].text))
-        res_dict = ast.literal_eval(str(response.candidates[0].content.parts[0].text))
-        
+        try:
+            gemini = Gemini(configs=model_config)
+            response = gemini.generate_content(gpt_input)
+            res_dict = ast.literal_eval(str(response.candidates[0].content.parts[0].text))
+        except:
+            bad_response['msg'] = 'AI failed to generate schedule.'
+            res_dict = bad_response
         return res_dict
     
     def _create_schedule(self, schedule_info: Dict, user_id: int) -> int:
@@ -468,3 +475,53 @@ class AITripGeneration(Resource):
             "exchange": schedule.exchange,
         }
         return 200, response
+    
+class WeatherManager(Resource):
+    @jwt_required()
+    def get(self, trip_id):
+        OPEN_WEATHER_API_KEY = "a84fa03da67828c145d8b5c137e1d6b7"
+        '''流程：
+        1. 從 trip_id 抓「每天的」第一個景點的經緯度
+        2. 透過 OpenWeatherAPI 抓取當天最高溫、最低溫、天氣狀況
+        3. 回傳天氣資訊
+        '''
+        user_id = varify_user(get_jwt_identity())
+        if user_id == None:
+            return make_response({'message': 'User not found.'}, 400)
+
+        if not Schedule.get_by_id(trip_id):
+            return make_response({'message': 'Trip not found.'}, 400)
+
+        weather_infos = []
+        schedule = Schedule.get_by_id(trip_id)
+        today = datetime.now().date()
+        start_date = schedule.start_date
+        end_date = schedule.end_date
+
+        if end_date < today:
+            return make_response({'message': 'Trip has ended.'}, 400)
+
+        if start_date + timedelta(5) < today:
+            return make_response({'message': 'Trip is too far away.'}, 400)
+
+        places_in_trip = RelationSpotSch.get_by_schedule(trip_id)
+        places_in_trip.sort(key=lambda x: (x.date, x.order))
+        print(places_in_trip)
+        google_maps = GoogleMapApi(GOOGLE_MAPS_API_KEY)
+        open_weather = OpenWeatherAPI(OPEN_WEATHER_API_KEY)
+
+        limit = 5
+        for relation_spot_sch in places_in_trip:
+            if relation_spot_sch.order == 1 and len(weather_infos) < limit:
+                place_location = google_maps.get_place_lat_lng(relation_spot_sch.place_id, "zh_TW")
+                if not place_location:
+                    place_location['lat'] = schedule.location_lat
+                    place_location['lng'] = schedule.location_lng
+                weather_info = open_weather.get_weather(place_location['lat'], place_location['lng'])
+                weather_infos.append(weather_info)
+
+        response = {
+            "result": weather_infos,
+        }
+
+        return make_response(response, 200)
