@@ -21,12 +21,8 @@ export const AuthProvider = ({ children }) => {
             let loginResponse;
             if (isGoogleLogin) {
                 loginResponse = await baseFetch("/api/v1/user/google_login", "GET");
-                alert(loginResponse);
-                if (loginResponse.redirected) {
-                    
-                    return;
-                }
-                console.log(loginResponse);
+                const auth_url = await loginResponse.json();
+                return auth_url.auth_url;
             } else {
                 const url = "/api/v1/user/check_password";
                 const postData = {
@@ -74,6 +70,7 @@ export const AuthProvider = ({ children }) => {
             return { success: false, error: error.message, preference: false };
         }
     };
+    
 
     const logout = () => {
         sessionStorage.removeItem("jwtToken");

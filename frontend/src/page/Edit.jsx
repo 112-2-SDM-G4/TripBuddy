@@ -24,6 +24,8 @@ import { RiMoneyDollarBoxLine } from "react-icons/ri";
 import {
     IoSunny,
     IoRainy,
+    IoSnow,
+    IoCloud,
     IoAlertCircle,
     IoAddCircleOutline,
     IoChevronBack,
@@ -393,6 +395,7 @@ function EditPage({ id, tripinfo, language, refreshTrip }) {
     const [openExplore, setOpenExplore] = useState(false);
     const [openDropDown, setOpenDropDown] = useState(false);
     const [openWallet, setOpenWallet] = useState(false);
+    const [weathers, setWeathers] = useState([]);
     const dropdownRef = useRef(null);
 
     const jwtToken = sessionStorage.getItem("jwtToken");
@@ -421,7 +424,7 @@ function EditPage({ id, tripinfo, language, refreshTrip }) {
 
         socket.on("render_trip", (data) => {
             console.log("ㄝㄝㄝㄝ動了");
-            setTrip(data.trip);
+            setTrip(data[language].trip);
         });
 
         socket.on("message", (message) => {
@@ -560,7 +563,6 @@ function EditPage({ id, tripinfo, language, refreshTrip }) {
         //             console.log("Network error:", error.message);
         //         }
         //     });
-        console.log("我自己動");
         socket.emit("update_trip", {
             trip_id: id,
             langauge: language,
@@ -620,17 +622,34 @@ function EditPage({ id, tripinfo, language, refreshTrip }) {
 
         setSpots(newSpots);
     };
-    const getWeather = () => {
-        let weather = "晴";
+
+    useEffect(() => {
+        fetchWithJwt("/api/v1/weather/" + id, "GET")
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (result) {
+                console.log({ 天氣: result });
+                setWeathers(result["result"]);
+            });
+
+        return () => {};
+    }, [id]);
+    const getWeather = (weather) => {
         switch (weather) {
-            case "晴":
+            case "Clear":
                 return <IoSunny className={style.weather} />;
-            case "雨":
+            case "Rain":
                 return <IoRainy className={style.weather} />;
+            case "Clouds":
+                return <IoCloud className={style.weather} />;
+            case "Snow":
+                return <IoSnow className={style.weather} />;
             default:
-                return <IoAlertCircle className={style.weather} />;
+                return <></>;
         }
     };
+
     const openAddSpot = () => {
         setOpenWallet(false);
         setOpenExplore((prev) => !prev);
@@ -672,7 +691,11 @@ function EditPage({ id, tripinfo, language, refreshTrip }) {
                                 onClick={() => {
                                     setSelectedDate(i);
                                 }}
-                            >{`第${i + 1}天`}</div>
+                            >
+                                {language === "zh"
+                                    ? `第${i + 1}天`
+                                    : `Day${i + 1}`}
+                            </div>
                         ))}
                     </div>
                     <RiMoneyDollarBoxLine
@@ -683,13 +706,18 @@ function EditPage({ id, tripinfo, language, refreshTrip }) {
                 <div className={style.datedetail}>
                     <div className={style.dateinfos}>
                         <div>
-                            {dates[selectedDate]
+                            {dates && dates[selectedDate]
                                 ? dates[selectedDate].date + " "
                                 : ""}
-                            {dates[selectedDate]
+                            {dates && dates[selectedDate]
                                 ? dates[selectedDate].weekday + " "
                                 : ""}
-                            {getWeather()}
+                            {weathers &&
+                                getWeather(
+                                    weathers[selectedDate]
+                                        ? weathers[selectedDate]["main"]
+                                        : null
+                                )}
                         </div>
                         <IoAddCircleOutline
                             className={style.addspot}

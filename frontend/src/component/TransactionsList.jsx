@@ -67,6 +67,7 @@ const TransactionsList = ({ transactions, currentUser, onDeleteTransaction, find
                 <>
                     <div className={style.overlay} onClick={handleCloseDetail}></div>
                     <TransactionDetail
+                        key={selectedTransaction.transaction_id}
                         schedule_id={id}
                         transactionId={selectedTransaction.transaction_id}
                         date={selectedTransaction.date}
@@ -85,9 +86,8 @@ const TransactionsList = ({ transactions, currentUser, onDeleteTransaction, find
 
             )}
             {transactions.map(transaction => (
-                <div className={style.transactionItem}>
+                <div className={style.transactionItem} key={transaction.transaction_id}>
                     <TransactionItem
-                        key={transaction.transaction_id}
                         transaction_id={transaction.transaction_id}
                         date={transaction.date}
                         currentUser={currentUser}
