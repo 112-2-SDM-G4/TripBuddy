@@ -34,15 +34,10 @@ export const AuthProvider = ({ children }) => {
                     // 保存 JWT Token 到本地存儲
                     sessionStorage.setItem("jwtToken", jwt_token);
                     setIsLoggedIn(true);
-                    // 根據用戶偏好進行重定向
-                    if (!preference) {
-                        navigate('/profile-setup'); // 假設有用戶偏好頁面
-                    } else {
-                        navigate('/explore');
-                    }
                 } else {
-                    console.error('JWT token is missing in URL');
-                    navigate('/login'); // 或其他合適的錯誤處理頁面
+                    
+                    return { success: false, error: 'JWT token is missing in URL', preference: false };
+                
                 }
             } else {
                 const url = "/api/v1/user/check_password";

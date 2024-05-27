@@ -185,22 +185,21 @@ const LoginForm = ({ language }) => {
     const handleGoogleLogin = async () => {
         setIsLoading(true);
         try {
-            const result = await login(null, null, true); 
+            const { success, error, preference } = await login(null, null, true); 
             // window.location.href = result;
             
-            if (!result.success) {
-                setError(result.error);
+            if (!success) {
+                throw new Error(error);
             }
-            // else if (!result.preference) {
-            //     navigate("/profile-setup");
-            // }
-            // else {
-            //     navigate("/explore");
-            // }
+            else if (!preference) {
+                navigate("/profile-setup");
+            }
+            else {
+                navigate("/explore");
+            }
 
         } catch (error) {
-            setError("An error occurred during Google login.");
-            console.error(error);
+            setError(error.message);
         } finally {
             setIsLoading(false);
         }
