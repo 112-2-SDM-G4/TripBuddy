@@ -47,6 +47,9 @@ class TripManager(Resource):
             
             schedule = Schedule.get_by_id(trip_id)
 
+            if not (schedule.public or user_owns_schedule(user_id, trip_id)):
+                return make_response({'message': 'User does not have access to this trip.'}, 403)
+
             places_in_trip = RelationSpotSch.get_by_schedule(trip_id)
             
             trip_detail = [[] for _ in range(self.get_trip_length(schedule))]
@@ -362,6 +365,8 @@ class AITripGeneration(Resource):
         
         2. For verified request, you must customize a {travel_days}-day itinerary plan according to the user preferences.
             For each day, give at least three tourist spots to visit.
+            For each attraction, please provide a clear attraction name instead of an action,
+            such as: "Starbucks Da'an Store" instead of "Spend a leisurely afternoon in a cafe", "Historic Canal Tour" instead of "Take a cruise on the canal"
             Your responce must follow JSON schema.<JSONSchema>{json.dumps(response_schema)}</JSONSchema>
 
         The request from a tourist:
