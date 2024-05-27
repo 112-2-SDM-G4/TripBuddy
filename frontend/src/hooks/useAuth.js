@@ -116,17 +116,7 @@ export const AuthProvider = ({ children }) => {
         if (jwt_token && userData) {
             setUser(JSON.parse(userData));
             setIsLoggedIn(true);
-        } else if (
-            pathname.includes("login") ||
-            pathname.includes("forget-password") ||
-            pathname.includes("reset")
-        ) {
-            return;
-        } else {
-            navigate("/login");
-        }
-
-        if (pathname === "/login") {
+        } else if (pathname === "/login") {
             const result = handleGoogleLoginCallback();
             if (result.success) {
                 if (!result.preference) {
@@ -139,6 +129,17 @@ export const AuthProvider = ({ children }) => {
                 navigate('/login'); // 或其他合適的錯誤處理頁面
             }
         }
+        else if (
+            pathname.includes("login") ||
+            pathname.includes("forget-password") ||
+            pathname.includes("reset")
+        ) {
+            return;
+        } else {
+            navigate("/login");
+        }
+
+
 
         return () => { };
     }, [navigate, pathname]);
