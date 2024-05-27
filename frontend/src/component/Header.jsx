@@ -84,11 +84,9 @@ function Header() {
         className={style.logo}
       />
 
-      <div className={style.navitems}>
-          {windowSize.width > constants.MOBILE_SCREEN_WIDTH && <NavbarItems />}
-      </div>
       <div className={style.switchcontainer}>
-        
+        {windowSize.width > constants.MOBILE_SCREEN_WIDTH && <NavbarItems />}
+
 
         <div className={style.switch}>
           <ColorButton
