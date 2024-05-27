@@ -421,7 +421,7 @@ function EditPage({ id, tripinfo, language, refreshTrip }) {
 
         socket.on("render_trip", (data) => {
             console.log("ㄝㄝㄝㄝ動了");
-            setTrip(data.trip);
+            setTrip(data[language].trip);
         });
 
         socket.on("message", (message) => {
@@ -560,7 +560,6 @@ function EditPage({ id, tripinfo, language, refreshTrip }) {
         //             console.log("Network error:", error.message);
         //         }
         //     });
-        console.log("我自己動");
         socket.emit("update_trip", {
             trip_id: id,
             langauge: language,
