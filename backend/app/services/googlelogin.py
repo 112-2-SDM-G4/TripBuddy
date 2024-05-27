@@ -56,7 +56,6 @@ class GoogleLogin:
                 prompt='consent',
                 state=state
             )
-        print(session['state'])
         return authorization_url
 
     def callback(self):
