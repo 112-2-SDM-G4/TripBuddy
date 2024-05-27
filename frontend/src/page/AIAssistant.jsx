@@ -25,7 +25,7 @@ const AIAssistant = () => {
     const [selectedStart, setSelectedStart] = useState("");
     const [selectedEnd, setSelectedEnd] = useState("");
 
-    const [isRandom, setIsRandom] = useState(true);
+    const [isRandom, setIsRandom] = useState(false);
     const [prompt, setPrompt] = useState("");
 
     const [newTripId, setNewTripId] = useState(-1);
@@ -57,6 +57,13 @@ const AIAssistant = () => {
             errormsg: "Some error occured:( Please try again.",
             success: "Trip created successfully."
         }
+    }
+
+    const findCountry = (countryId) => {
+        const foundedCountry = CountryData.places.find(
+            (place) => place.country_id === countryId
+        )
+        return foundedCountry["country"][language]
     }
 
     const handleRandom = () => {
@@ -217,9 +224,7 @@ const AIAssistant = () => {
                                 />
                             </div>
                             :
-                            <div>{CountryData.places.find(
-                                (place) => place.country_id === selectedCountryId
-                            ).country[language]}</div>
+                            <div>{selectedCountryId !== -1 && findCountry(selectedCountryId)}</div>
                             
                             }
                             
