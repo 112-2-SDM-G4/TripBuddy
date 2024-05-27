@@ -47,6 +47,9 @@ class TripManager(Resource):
             
             schedule = Schedule.get_by_id(trip_id)
 
+            if not (schedule.public or user_owns_schedule(user_id, trip_id)):
+                return make_response({'message': 'User does not have access to this trip.'}, 403)
+
             places_in_trip = RelationSpotSch.get_by_schedule(trip_id)
             
             trip_detail = [[] for _ in range(self.get_trip_length(schedule))]
