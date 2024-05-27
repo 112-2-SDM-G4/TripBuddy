@@ -114,6 +114,7 @@ const AIAssistant = () => {
                 setAiMsg(words[language]["success"]);
                 setNewTripId(result["trip_id"])
                 setShowModal(true);
+                navigate(`/edit/${result["trip_id"]}`);
             } else {
                 setAiMsg(result["msg"]);
                 setShowModal(true);

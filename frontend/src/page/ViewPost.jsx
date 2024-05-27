@@ -318,17 +318,17 @@ function EditPage({ tripinfo, language, refreshTrip }) {
         setSpots(newSpots);
     };
 
-    const getWeather = () => {
-        let weather = "晴";
-        switch (weather) {
-            case "晴":
-                return <IoSunny className={style.weather} />;
-            case "雨":
-                return <IoRainy className={style.weather} />;
-            default:
-                return <IoAlertCircle className={style.weather} />;
-        }
-    };
+    // const getWeather = () => {
+    //     let weather = "晴";
+    //     switch (weather) {
+    //         case "晴":
+    //             return <IoSunny className={style.weather} />;
+    //         case "雨":
+    //             return <IoRainy className={style.weather} />;
+    //         default:
+    //             return <IoAlertCircle className={style.weather} />;
+    //     }
+    // };
     return (
         <div className={style.editpagecontainer}>
             <div className={style.editpage}>
@@ -356,7 +356,7 @@ function EditPage({ tripinfo, language, refreshTrip }) {
                             {dates[selectedDate]
                                 ? dates[selectedDate].weekday + " "
                                 : ""}
-                            {getWeather()}
+                            {/* {getWeather()} */}
                         </div>
                     </div>
                     <DragBox

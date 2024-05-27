@@ -128,7 +128,7 @@ const ViewSpot = ({ spotid, closeModal }) => {
                                                     <div>
                                                         {openday.split(":")[0]}
                                                     </div>
-                                                    <div>
+                                                    <div className={style.openhrtime}>
                                                         {
                                                             openday.split(
                                                                 /:(.*)/s

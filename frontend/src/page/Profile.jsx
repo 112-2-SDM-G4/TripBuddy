@@ -171,21 +171,8 @@ function Profile() {
             <div className={style.title}>
               {words[language]['tags']}
             </div>
-            <div className={style.content}>
-              <div className={style.tags}>
-                {selectedTagsId.length !== 0 && allTags.length !== 0 &&
-                        selectedTagsId.map(tagId =>
-                        <Tag 
-                            key={tagId}
-                            tagId={tagId}
-                            text={allTagsMapping.find(tag => tag["tag_id"] === tagId)[`tag_name_${language}`]}
-                            inSearchbox={true}
-                            removeFromSearch={() => {
-                              console.log("selected tagsid: " + selectedTagsId);
-                              setSelectedTagsId(selectedTagsId.filter(t => t !== tagId))}}
-                        />)
-                }
-                <div className={style.smallbtn} onClick={() => setIsTagDropdownOpen(!isTagDropdownOpen)}>
+            <div>
+            <div className={style.smallbtn} onClick={() => setIsTagDropdownOpen(!isTagDropdownOpen)}>
                     {language === 'en' ? 'Add a tag' : '新增標籤'}
                 </div>
                 {isTagDropdownOpen &&
@@ -206,11 +193,30 @@ function Profile() {
                           }}
                       />
                   </div>}
-              </div>
-              
             </div>
 
           </div>
+
+          <div className={style.content}>
+
+              <div className={style.tags}>
+                {selectedTagsId.length !== 0 && allTags.length !== 0 &&
+                        selectedTagsId.map(tagId =>
+                        <Tag 
+                            key={tagId}
+                            tagId={tagId}
+                            text={allTagsMapping.find(tag => tag["tag_id"] === tagId)[`tag_name_${language}`]}
+                            inSearchbox={true}
+                            removeFromSearch={() => {
+                              console.log("selected tagsid: " + selectedTagsId);
+                              setSelectedTagsId(selectedTagsId.filter(t => t !== tagId))}}
+                        />)
+                }
+
+                
+              </div>
+              
+            </div>
 
           <div className={style.row}>
             <div className={style.title}>
