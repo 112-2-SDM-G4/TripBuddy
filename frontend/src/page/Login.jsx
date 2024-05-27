@@ -186,16 +186,17 @@ const LoginForm = ({ language }) => {
         setIsLoading(true);
         try {
             const result = await login(null, null, true); 
-            // window.location.href = 'https://tripbuddy-h5d6vsljfa-de.a.run.app/api/v1/user/google_login';
+            window.location.href = result;
+            
             // console.log(result);
-            if (!result.success) {
-                setError(result.error);
-            }else if (!result.preference) {
-                navigate("/profile-setup");
-            }
-            else {
-                navigate("/explore");
-            }
+            // if (!result.success) {
+            //     setError(result.error);
+            // }else if (!result.preference) {
+            //     navigate("/profile-setup");
+            // }
+            // else {
+            //     navigate("/explore");
+            // }
 
         } catch (error) {
             setError("An error occurred during Google login.");
