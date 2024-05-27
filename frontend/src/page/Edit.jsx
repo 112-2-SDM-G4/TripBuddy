@@ -691,7 +691,11 @@ function EditPage({ id, tripinfo, language, refreshTrip }) {
                                 onClick={() => {
                                     setSelectedDate(i);
                                 }}
-                            >{`第${i + 1}天`}</div>
+                            >
+                                {language === "zh"
+                                    ? `第${i + 1}天`
+                                    : `Day${i + 1}`}
+                            </div>
                         ))}
                     </div>
                     <RiMoneyDollarBoxLine

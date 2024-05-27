@@ -1,9 +1,13 @@
 import React, { useState } from "react";
 import style from "./SpotinEdit.module.css";
 import { IoMdClose } from "react-icons/io";
-import EditViewSpot from "./EditViewSpot";
 
-export default function SpotinEdit({ spot, delSpot, updateSpotData, locked=false }) {
+export default function SpotinEdit({
+    spot,
+    delSpot,
+    setOpenedSpot,
+    locked = false,
+}) {
     const [openEdit, setOpenEdit] = useState(false);
 
     const tryvalid = (obj) => {
@@ -15,7 +19,10 @@ export default function SpotinEdit({ spot, delSpot, updateSpotData, locked=false
     };
 
     return (
-        <div className={`${style.block} ${locked && style.blocklocked}`} onClick={() => setOpenEdit(true)}>
+        <div
+            className={`${style.block} ${locked && style.blocklocked}`}
+            onClick={() => setOpenedSpot(spot)}
+        >
             {spot && (
                 <>
                     <img
@@ -36,23 +43,17 @@ export default function SpotinEdit({ spot, delSpot, updateSpotData, locked=false
                             {tryvalid(spot["comment"])}
                         </div>
                     </div>
-                    {!locked && <button
-                        className={style.closebt}
-                        onClick={() => {
-                            delSpot();
-                        }}
-                    >
-                        <IoMdClose className={style.closebt} />
-                    </button>}
+                    {!locked && (
+                        <button
+                            className={style.closebt}
+                            onClick={() => {
+                                delSpot();
+                            }}
+                        >
+                            <IoMdClose className={style.closebt} />
+                        </button>
+                    )}
                 </>
-            )}
-            {openEdit && (
-                <EditViewSpot
-                    spot={spot}
-                    onClose={() => setOpenEdit(false)}
-                    updateSpotData={updateSpotData}
-                    locked={locked}
-                />
             )}
         </div>
     );
