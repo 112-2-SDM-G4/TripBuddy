@@ -5,6 +5,7 @@ import style from "./Login.module.css";
 import Button from "../component/Button";
 import InputText from "../component/InputText";
 import EmailVerification from "../component/EmailVerification";
+import Loader from "../component/Loader";
 import SHA256 from "crypto-js/sha256";
 import { useAuth } from "../hooks/useAuth";
 import { baseFetch } from "../hooks/baseFetch";
@@ -21,14 +22,14 @@ const Login = () => {
         en: {
             login: 'Login',
             signup: 'Signup'
-          
+
         },
         zh: {
             login: '登入',
             signup: '註冊'
-          
+
         }
-      }
+    }
 
     const handleTabClick = (tab) => {
         setActiveTab(tab);
@@ -66,9 +67,9 @@ const Login = () => {
                                 {words[language]['signup']}
                             </button>
                         </div>
-                        {activeTab === "login" && <LoginForm language={language}/>}
+                        {activeTab === "login" && <LoginForm language={language} />}
                         {activeTab === "signup" && (
-                            <SignupForm onSignupSuccess={handleSignupSuccess} language={language}/>
+                            <SignupForm onSignupSuccess={handleSignupSuccess} language={language} />
                         )}
                     </div>
                 </>
@@ -93,6 +94,7 @@ const LoginForm = ({ language }) => {
     const [error, setError] = useState(""); // State to store error messages
     const navigate = useNavigate();
     const { login } = useAuth();
+    const [isLoading, setIsLoading] = useState(false);
 
     const words = {
         en: {
@@ -101,7 +103,7 @@ const LoginForm = ({ language }) => {
             signin: 'Sign In',
             forget_password: 'Forget Password?',
             third_party_login: 'or you can login with'
-          
+
         },
         zh: {
             email: '電子信箱',
@@ -109,12 +111,22 @@ const LoginForm = ({ language }) => {
             signin: '登入',
             forget_password: '忘記密碼了?',
             third_party_login: '或是用以下方式登入'
-          
+
         }
-      }
+    }
 
     const handleEmailBlur = async () => {
         setError(""); // Reset error message
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!email) {
+            setError('Email is required.');
+            return; // Stop the function if the email is empty
+        }
+        if (!emailPattern.test(email)) {
+            setError('Please enter a valid email address.');
+            return;
+        }
+
         if (email) {
             try {
                 const response = await baseFetch(`/api/v1/user/check_user?user_email=${email}`, 'GET');
@@ -132,15 +144,29 @@ const LoginForm = ({ language }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!email) {
+            setError('Email is required.');
+            return; // Stop the function if the email is empty
+        }
+        if (!emailPattern.test(email)) {
+            setError('Please enter a valid email address.');
+            return;
+        }
+        if (!password) {
+            setError('Please enter your password.');
+            return;
+        }
         if (password && salt) {
             // Hash the password with the salt
             const hashedPassword = SHA256(password + salt).toString();
 
             try {
+                setIsLoading(true);
                 const { success, error, preference } = await login(email, hashedPassword);
                 if (!success) {
                     throw new Error(error);
-                } 
+                }
                 else if (!preference) {
                     navigate("/profile-setup");
                 }
@@ -150,11 +176,40 @@ const LoginForm = ({ language }) => {
 
             } catch (error) {
                 setError(error.message);
+            } finally {
+                setIsLoading(false);
             }
         }
     };
+
+    const handleGoogleLogin = async () => {
+        setIsLoading(true);
+        try {
+            const result = await login(null, null, true); 
+            // window.location.href = 'https://tripbuddy-h5d6vsljfa-de.a.run.app/api/v1/user/google_login';
+            // console.log(result);
+            if (!result.success) {
+                setError(result.error);
+            }else if (!result.preference) {
+                navigate("/profile-setup");
+            }
+            else {
+                navigate("/explore");
+            }
+
+        } catch (error) {
+            setError("An error occurred during Google login.");
+            console.error(error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+
     return (
         <form method="post" onSubmit={handleSubmit} className={style.form}>
+            {isLoading && <Loader isLoading={isLoading} />}
+
             <div className={style.logoContainer}>
                 <img
                     className={style.logo}
@@ -162,6 +217,7 @@ const LoginForm = ({ language }) => {
                     alt="TourBuddy"
                 />
             </div>
+
             <div className={style.inputWithErrorMessage}>
                 {error && <span className={style.errorMessage}>{error}</span>}
             </div>
@@ -193,28 +249,18 @@ const LoginForm = ({ language }) => {
                 <a href="/forget-password">{words[language]["forget_password"]}</a>
             </div>
             <div className={style.socialLogin}>
-                <div className={style.thirdSignin}>{words[language]["third_party_login"]}</div>
+                <div className={style.thirdSignin}>------{words[language]["third_party_login"]}------</div>
                 <div className={style.icons}>
-                    <a href="/auth/google" className={style.icon}>
+                    <div className={style.icon} onClick={handleGoogleLogin}>
                         <img
                             src="../../google-icon.svg"
-                            alt="Sign in with google"
+                            alt="Sign in with Google"
                         />
-                    </a>
-                    <a href="/auth/twitter" className={style.icon}>
-                        <img
-                            src="../../twitter-icon.svg"
-                            alt="Sign in with twitter"
-                        />
-                    </a>
-                    <a href="/auth/facebook" className={style.icon}>
-                        <img
-                            src="../../facebook-icon.svg"
-                            alt="Sign in with facebook"
-                        />
-                    </a>
+                    </div>
                 </div>
             </div>
+
+
         </form>
     );
 };
@@ -232,7 +278,7 @@ const SignupForm = ({ onSignupSuccess, language }) => {
             confirmedPassword: 'Confirmed Password',
             signup: 'Sign Up',
             signingUp: 'Signing Up...'
-          
+
         },
         zh: {
             email: '電子信箱',
@@ -240,9 +286,9 @@ const SignupForm = ({ onSignupSuccess, language }) => {
             confirmedPassword: '確認密碼',
             signup: '註冊',
             signingUp: '註冊中...'
-            
+
         }
-      }
+    }
 
     const generateSalt = (length = 10) => {
         const characters =
@@ -285,7 +331,7 @@ const SignupForm = ({ onSignupSuccess, language }) => {
 
         try {
             const response = await baseFetch(
-                "/api/v1/user/send_email", "POST", 
+                "/api/v1/user/send_email", "POST",
                 { user_email: localEmail }
             );
 
@@ -295,7 +341,7 @@ const SignupForm = ({ onSignupSuccess, language }) => {
 
             const data = await response.json();
 
-        
+
             if (data.valid) {
                 onSignupSuccess(localEmail, salt, hashedPassword); // Pass the email back up to the parent component
             } else {

@@ -1,0 +1,270 @@
+.main {
+    display: flex;
+    flex-direction: column;
+    padding-top: 6rem;
+    align-items: center;
+}
+
+.maincontent {
+    width: 60%;
+}
+
+.title {
+    padding: 1rem 9rem 2rem 0;
+    white-space: nowrap;
+    font-weight: bold;
+    font-size: 0.9rem;
+    height: 2.5rem;
+    width: 10rem;
+
+}
+
+textarea {
+    width: 100%;
+    height: 16rem;
+    padding: 12px 20px;
+    box-sizing: border-box;
+    border: 2px solid color-mix(in srgb, var(--secondarycolor) 65%, var(--backgroundcolor));
+    border-radius: 0.5rem;
+    /* background-color: #f8f8f8; */
+    background-color: color-mix(in srgb, var(--secondarycolor) 5%, var(--backgroundcolor));
+    font-size: 16px;
+    resize: none;
+    z-index: 1000;
+    margin-bottom: 8rem;
+}
+
+textarea:focus {
+    outline: none;
+}
+  
+
+.row {
+    width: 100%;
+    height: 4rem;
+    /* padding-top: 3rem; */
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.section {
+    display: flex;
+    flex-direction: column;
+    height: 2rem;
+    /* width: 20rem; */
+    position: relative;
+    padding-top: 0.5rem;
+    align-items: flex-end;
+}
+
+.sectionrow {
+    width: 22rem;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.span {
+    background-color: color-mix(in srgb, var(--secondarycolor) 10%, var(--backgroundcolor));
+    border-radius: 1rem;
+    position: relative;
+    z-index: 3;
+    height: 20rem;
+    transition: height 1s ease; 
+    width: 22rem;
+    margin-top: 0.2rem;
+    /* align-items: center; */
+    /* display: flex; */
+    /* height: 17rem; */
+    /* margin-bottom: 3rem; */
+
+}
+
+.hidespan {
+    height: 0;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    opacity: 0;
+}
+
+.calendarcontainer {
+    position: relative;
+    transform: scale(0.8);
+    /* max-width: 30rem; */
+    height: 21rem;
+    overflow: hidden;
+    transition: all 1s ease;
+    display: flex;
+    direction: row;
+    align-items: center;
+    justify-content: center;
+    /* margin-top: -2rem; */
+    /* margin-bottom: -2rem; */
+}
+
+.hidecalendar {
+    height: 0rem;
+}
+
+.selectcountry {
+    padding-top: 0.2rem;
+    /* padding-right: 3rem; */
+    padding-left: 1rem;
+    transform: scale(0.9);
+}
+
+.submit {
+    width: 60%;
+    position: absolute;
+    bottom: 2rem;
+    z-index: 1;
+}
+
+.button {
+  width: 22rem;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+  background-color: color-mix(in srgb, var(--secondarycolor) 65%, var(--backgroundcolor));
+  border-radius: 0.5rem;
+  box-sizing: border-box;
+  color: var(--fontcolor);
+  font-size: 0.8rem;
+  cursor: pointer;
+  display: inline-block;
+  line-height: 1rem;
+  margin: 0;
+  outline: none;
+  padding: 13px 23px;
+  position: relative;
+  text-align: center;
+  text-decoration: none;
+  /* width: 100%; */
+  /* box-shadow: var(--fontcolor) 0 2px 4px; */
+
+  /* z-index: 5; */
+}
+
+.button:hover {
+    background-color: color-mix(
+        in srgb,
+        var(--secondarycolor) 80%,
+        var(--backgroundcolor)
+  );
+}
+
+.button:active {
+  background-color: color-mix(
+    in srgb,
+    var(--secondarycolor) 75%,
+    var(--backgroundcolor)
+);
+  transform: scale(.96);
+}
+
+.selectbtns {
+    display: flex;
+    flex-direction: row;
+}
+
+.leftborder {
+    border-radius: 0 0.5rem 0.5rem 0;
+}
+
+.rightborder {
+    border-radius: 0.5rem 0 0 0.5rem;
+}
+
+.unselectedbtn {
+    background-color: color-mix(in srgb, var(--secondarycolor) 5%, var(--backgroundcolor));
+}
+
+.selectedbtn {
+    background-color: color-mix(in srgb, var(--secondarycolor) 65%, var(--backgroundcolor));
+}
+
+.btn {
+    width: 7rem;
+    /* height: 2rem; */
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+    /* background-color: color-mix(in srgb, var(--secondarycolor) 65%, var(--backgroundcolor)); */
+    /* border-radius: 0.5rem 0 0 0.5rem; */
+    box-sizing: border-box;
+    color: var(--fontcolor);
+    font-size: 0.8rem;
+    cursor: pointer;
+    line-height: 1.2rem;
+    margin: 0;
+    outline: none;
+    padding: 13px 23px;
+    position: relative;
+    text-align: center;
+    text-decoration: none;
+    touch-action: manipulation;
+    user-select: none;
+    align-items: center;
+    justify-content: center;
+    /* width: 100%; */
+    /* box-shadow: var(--fontcolor) 0 2px 4px; */
+  
+    /* z-index: 5; */
+  }
+  
+.btn:hover {
+      background-color: color-mix(
+          in srgb,
+          var(--secondarycolor) 80%,
+          var(--backgroundcolor)
+    );
+}
+
+.searchableselect {
+    background-color: var(--primarycolor);
+}
+
+.modalbtn {
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+}
+  
+
+@media (max-width: 768px) {
+    .row {
+        flex-direction: column;
+        height: 7rem;
+        padding-top: 0;
+        justify-content: flex-start;
+    }
+
+    .submit {
+        bottom: 4rem;
+        width: 80%;
+    }
+
+    .button {
+        width: 100%;
+    }
+
+    .sectionrow {
+        width: 100%;
+    }
+
+    .maincontent {
+        width: 80%;
+    }
+
+    .span {
+        width: 100%;
+    }
+
+    textarea {
+        height: 18rem;
+    }
+
+    .btn {
+        line-height: 2.5rem;
+        height: 2.5rem;
+        padding: 0;
+    }
+}

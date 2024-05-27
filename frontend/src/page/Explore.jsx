@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 import style from "./Explore.module.css";
 
@@ -8,24 +7,23 @@ import Loader from "../component/Loader";
 
 import { fetchWithJwt } from "../hooks/fetchWithJwt";
 import { useLanguage } from "../hooks/useLanguage";
-import { useWindowSize } from "../hooks/useWindowSize";
-import UpcomingTrip from "../component/UpcomingTrip";
+import TripNoticeCard from "../component/TripNoticeCard";
 import PostCard from "../component/PostCard";
 
 const Explore = () => {
-    const navigate = useNavigate();
-    const windowSize = useWindowSize();
 
     const { language } = useLanguage();
     const [isLoading, setIsLoading] = useState(true);
-    const [haveUpcomingTrip, setHaveUpcomingTrip] = useState(false);
-    const [upcomingTrip, setUpcomingTrip] = useState({});
+    // const [haveUpcomingTrip, setHaveUpcomingTrip] = useState(false);
+    // const [upcomingTrip, setUpcomingTrip] = useState({});
     const [allTrips, setAllTrips] = useState([]);
 
     const [isSearchDropdownOpen, setIsSearchDropdownOpen] = useState(false);
     const [allTags, setAllTags] = useState([]);
     const [selectedTagsId, setSelectedTagsId] = useState([]);
-    const [hideUpcomingTrip, setHideUpcomingTrip] = useState(false);
+    // const [hideUpcomingTrip, setHideUpcomingTrip] = useState(false);
+    const [noticeTrips, setNoticeTrips] = useState([]);
+    const [noticeTripsCnt, setNoticeTripsCnt] = useState(0);
 
     const getTagsMap = (allTags) => {
         const tagidToName = {};
@@ -64,15 +62,17 @@ const Explore = () => {
                 const tripResponse = await fetchWithJwt("/api/v1/trip", "GET");
                 const tripData = await tripResponse.json();
                 if (tripResponse.ok) {
+                    const currentTrips = tripData.user_trip.filter(trip => trip.date_status === 1) // current
                     const upcomingTrips = tripData.user_trip.filter(trip => trip.date_status === 2) // start in 7 days
-                    // console.log(upcomingTrips)
-                    if(upcomingTrips.length === 0) {
-                        setHaveUpcomingTrip(false)
-                    } else {
-                        setHaveUpcomingTrip(true)
-                        setUpcomingTrip(upcomingTrips[0]);
-                    }
 
+                    const currentTripsWithStatus = currentTrips.map(trip => ({ ...trip, isCurrent: true }));
+                    const upcomingTripsWithStatus = upcomingTrips.map(trip => ({ ...trip, isCurrent: false }));
+
+                    // console.log(upcomingTrips)
+                    if(upcomingTrips.length !== 0) {
+                        setNoticeTrips([...upcomingTripsWithStatus, ...currentTripsWithStatus]);
+                        setNoticeTripsCnt(currentTrips.length + upcomingTrips.length);
+                    }
                     // console.log(tripData.user_trip);
                     setIsLoading(false);
                     return { success: true, error: null };
@@ -164,9 +164,9 @@ const Explore = () => {
                     <div className={style.blocktitle}>{language === "en" ? "Suggestions" : "為你推薦" }</div>
                     <div className={style.postscontainer}>
                         {(allTrips["public_trips"]?.length !== 0 && allTags.length !== 0)
-                            ? allTrips["public_trips"]?.map((trip) => (
+                            ? allTrips["public_trips"]?.map((trip, index) => (
                                 <PostCard 
-                                    key={trip["id"]}
+                                    key={`${trip["id"]}_all`}
                                     tripId={trip["id"]}
                                     name={trip["name"]}
                                     src={trip["image"]}git pu
@@ -184,7 +184,7 @@ const Explore = () => {
                         {(allTrips["hearted_trips"]?.length !== 0 && allTags.length !== 0)
                             ? allTrips["hearted_trips"]?.map((trip) => (
                                 <PostCard 
-                                    key={trip["id"]}
+                                    key={`${trip["id"]}_fav`}
                                     tripId={trip["id"]}
                                     name={trip["name"]}
                                     src={trip["image"]}
@@ -198,15 +198,18 @@ const Explore = () => {
 
             </div>
 
-            {(haveUpcomingTrip && !hideUpcomingTrip) &&
-            <div className={style.upcoming}>
-                <UpcomingTrip trip={upcomingTrip} setHideUpcomingTrip={(e) => {
-                    e.stopPropagation();
-                    setHideUpcomingTrip(true);
-                }}/>
-            </div>}
-
-
+            {noticeTrips.length !== 0 && noticeTripsCnt > 0 &&
+                noticeTrips.map(trip => 
+                    (<div className={style.upcoming} key={trip["id"]}>
+                        <TripNoticeCard 
+                            trip={trip} 
+                            setNoticeTripsCnt={() => {setNoticeTripsCnt(noticeTripsCnt => noticeTripsCnt - 1)}}
+                            noticeCnt={noticeTripsCnt}
+                            isCurrent={trip.isCurrent}
+                        />
+                    </div>)
+                )
+            }
         </div>
     );
 };

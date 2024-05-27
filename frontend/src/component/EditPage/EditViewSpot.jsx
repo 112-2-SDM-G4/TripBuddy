@@ -26,6 +26,9 @@ export default function EditViewSpot({
             budget: "預算",
             comment: "註記",
             staytime: "停留時間",
+            stayfor: "停留",
+            hour: "時",
+            minute: "分"
         },
         en: {
             rate: "Rate:",
@@ -37,12 +40,15 @@ export default function EditViewSpot({
             budget: "Budget",
             comment: "Comment",
             staytime: "Residence time",
+            stayfor: "Stay for",
+            hour: "hour",
+            minute: "minute"
         },
     };
     const { language } = useLanguage();
     const [selectTime, setSelectTime] = useState([]);
-    const [Comment, setComment] = useState("");
-    const [Budget, setBudget] = useState("");
+    const [Comment, setComment] = useState(spot.comment ? spot.comment : "");
+    const [Budget, setBudget] = useState(spot.money ? spot.money : "0");
 
     const handleRedirect = () => {
         window.open(spot["google_map_uri"], "_blank", "noreferrer");
@@ -57,10 +63,16 @@ export default function EditViewSpot({
         onClose();
     };
 
+    const tryvalid = (obj) => {
+        if (obj) return obj;
+        return "";
+    };
+    const formatNumber = (num) => {
+        return num.toString().length < 2 ? ` 0${num} ` : ` ${num} `;
+    };
+
     return (
-        
-        <Modal onClose={onClose} >
-            
+        <Modal onClose={onClose}>
             <div className={style.main}>
                 <img src={spot["image"]} alt="Logo" className={style.img} />
 
@@ -125,30 +137,68 @@ export default function EditViewSpot({
                                 )}
                             </div>
                         </div>
+
+                        {locked && 
+                        <>
+                            <div className={style.row}>
+                                <div className={style.rowname}>
+                                    {`${words[language]["comment"]}:`}
+                                </div>
+                                <div className={style.item}>
+                                    {spot.comment}
+                                </div>
+                            </div>
+
+                            <div className={style.row}>
+                                <div className={style.rowname}>
+                                    {`${words[language]["budget"]}:`}
+                                </div>
+                                <div className={style.item}>
+                                    {spot.money ? spot.money : "0"}
+                                </div>
+                            </div>
+
+                            <div className={style.row}>
+                                <div className={style.rowname}>
+                                    {`${words[language]["staytime"]}:`}
+                                </div>
+                                <div className={style.item}>
+                                    {`${words[language]["stayfor"]}${formatNumber(
+                                        tryvalid(spot["stay_time"][0])
+                                    )}${words[language]["hour"]}${formatNumber(
+                                        tryvalid(spot["stay_time"][1])
+                                    )}${words[language]["minute"]}`}
+                                </div>
+                            </div>
+                        </>}
                     </div>
                     <div className={style.editblock}>
-                        <InputText
-                            propmt={words[language]["comment"]}
-                            onChange={setComment}
-                            setting={{
-                                defaultValue: spot.comment ? spot.comment : "",
-                            }}
-                        />
-                        <InputText
-                            propmt={words[language]["budget"]}
-                            onChange={setBudget}
-                            setting={{
-                                type: "number",
-                                defaultValue: spot.money ? spot.money : "0",
-                            }}
-                        />
-                        <div className={style.inputcontainer}>
-                            <label>{words[language]["staytime"]}</label>
-                            <TimePicker
-                                changeTime={setSelectTime}
-                                setTime={spot["stay_time"]}
+                        {!locked &&
+                            <>
+                            <InputText
+                                propmt={words[language]["comment"]}
+                                onChange={setComment}
+                                setting={{
+                                    defaultValue: spot.comment ? spot.comment : "",
+                                }}
                             />
-                        </div>
+                            <InputText
+                                propmt={words[language]["budget"]}
+                                onChange={setBudget}
+                                setting={{
+                                    type: "number",
+                                    defaultValue: spot.money ? spot.money : "0",
+                                }}
+                            />
+                            <div className={style.inputcontainer}>
+                                <label>{words[language]["staytime"]}</label>
+                                <TimePicker
+                                    changeTime={setSelectTime}
+                                    setTime={spot["stay_time"]}
+                                />
+                            </div>
+                            </>
+                        }
                     </div>
                     {!locked && (
                         <div className={style.submit}>
