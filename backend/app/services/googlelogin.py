@@ -12,7 +12,7 @@ if FLASK_ENV == 'DEPLOY':
 elif FLASK_ENV == 'LOCAL':
     backend_host = 'http://localhost:5000'
 
-frontend_url = "https://tripbuddy-frontend-repx5qxhzq-de.a.run.app/login"
+frontend_url = "https://tripbuddy-frontend-repx5qxhzq-de.a.run.app"
 client_config = {
     "web": {
         "client_id": os.getenv('GOOGLE_OAUTH2_CLIENT_ID'),
@@ -56,14 +56,16 @@ class GoogleLogin:
                 prompt='consent',
                 state=state
             )
+        print(session['state'])
         return authorization_url
 
     def callback(self):
-        state = session.get('state')
-        request_state = request.args.get('state')
+        # state = session.get('state')
+        # request_state = request.args.get('state')
 
-        if not state or not request_state or state != request_state:
-            return redirect(frontend_url)
+        # if not state or not request_state or state != request_state:
+        #     print("this line.")
+        #     return redirect(frontend_url)
 
         session.pop('state', None)
 
@@ -110,10 +112,3 @@ class GoogleLogin:
             if key   == "code":
                 return value
         return None
-
-class CSRFTokenGenerator:
-    def __init__(self, token_length=16):
-        self.token_length = token_length
-
-    def generate_token(self):
-        return secrets.token_urlsafe(self.token_length)
