@@ -327,7 +327,7 @@ class HandleGoogleLoginCallback(Resource):
         user = User.get_by_email(user_email)
         
         if not user: 
-            User.create({
+            user = User.create({
                 'user_name': user_info['name'],
                 'email': user_info['email'],
                 'hashed_password': 'google',
@@ -338,12 +338,12 @@ class HandleGoogleLoginCallback(Resource):
                 'google_token': 'google'
             })
 
+        frontend_url = "https://tripbuddy-frontend-repx5qxhzq-de.a.run.app/login"
+        
         if (user.google_token is None):
-            return make_response(res_json, 200)
+            return redirect(f"{frontend_url}?error=google_login_error")
         
         jwt_token = create_access_token(identity=user_info['email'])
         
-        frontend_url = "https://tripbuddy-frontend-repx5qxhzq-de.a.run.app/explore"
         redirect_url = frontend_url + "?jwt_token=" + jwt_token + "&preference=" + str(user.questionnaire)
-
         return redirect(redirect_url)

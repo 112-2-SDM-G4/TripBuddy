@@ -63,9 +63,9 @@ class GoogleLogin:
         # state = session.get('state')
         # request_state = request.args.get('state')
 
-        # if not state or not request_state or state != request_state:
+        # # if not state or not request_state or state != request_state:
         #     print("this line.")
-        #     return redirect(frontend_url)
+        # #     return redirect(frontend_url)
 
         session.pop('state', None)
 
@@ -76,7 +76,7 @@ class GoogleLogin:
             id_token=credentials.id_token,
             request=Request(),
             audience=os.getenv('CLIENT_ID'),
-            clock_skew_in_seconds=0
+            clock_skew_in_seconds=10
         )
 
         if id_info.get('error'):
