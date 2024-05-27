@@ -188,26 +188,13 @@ const LoginForm = ({ language }) => {
             const loginResponse = await baseFetch("/api/v1/user/google_login", "GET");
             const auth_url = await loginResponse.json();
             window.location.href = auth_url.auth_url;
-            
-            const { success, error, preference } = await login(null, null, true); 
-            
-            
-            if (!success) {
-                throw new Error(error);
-            }
-            else if (!preference) {
-                navigate("/profile-setup");
-            }
-            else {
-                navigate("/explore");
-            }
-
         } catch (error) {
             setError(error.message);
         } finally {
             setIsLoading(false);
         }
     };
+    
 
 
     return (

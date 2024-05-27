@@ -12,7 +12,7 @@ export const AuthProvider = ({ children }) => {
     const [userInfo, setUserInfo] = useState({});
     const navigate = useNavigate();
     const location = useLocation();
-    const { pathname } = location;
+    const { pathname, search } = location;
     const { setLanguage } = useLanguage();
 
     const login = async (email, hashedPassword, isGoogleLogin = false) => {
@@ -20,14 +20,11 @@ export const AuthProvider = ({ children }) => {
             let loginData;
             let loginResponse;
             if (isGoogleLogin) {
-                // loginResponse = await baseFetch("/api/v1/user/google_login", "GET");
-                // const auth_url = await loginResponse.json();
-                // window.location.href = auth_url.auth_url;
                 const searchParams = new URLSearchParams(location.search);
                 const errorMessage = searchParams.get('error');
                 const jwt_token = searchParams.get('jwt_token');
                 const preference = searchParams.get('preference') === 'true';
-                if(errorMessage) {
+                if (errorMessage) {
                     return { success: false, error: errorMessage, preference: false };
                 }
                 if (jwt_token) {
@@ -35,9 +32,7 @@ export const AuthProvider = ({ children }) => {
                     sessionStorage.setItem("jwtToken", jwt_token);
                     setIsLoggedIn(true);
                 } else {
-                    
                     return { success: false, error: 'JWT token is missing in URL', preference: false };
-                
                 }
             } else {
                 const url = "/api/v1/user/check_password";
@@ -54,9 +49,7 @@ export const AuthProvider = ({ children }) => {
                 } else {
                     return { success: false, error: loginData.message, preference: false };
                 }
-
             }
-
 
             const response = await fetchWithJwt(`/api/v1/user/get_info`, 'GET');
             if (response.status !== 200) {
@@ -88,6 +81,25 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    const handleGoogleLoginCallback = () => {
+        const searchParams = new URLSearchParams(location.search);
+        const errorMessage = searchParams.get('error');
+        const jwt_token = searchParams.get('jwt_token');
+        const preference = searchParams.get('preference') === 'true';
+
+        if (errorMessage) {
+            return { success: false, error: errorMessage, preference: false };
+        }
+
+        if (jwt_token) {
+            // 保存 JWT Token 到本地存儲
+            sessionStorage.setItem("jwtToken", jwt_token);
+            setIsLoggedIn(true);
+            return { success: true, error: null, preference: preference };
+        } else {
+            return { success: false, error: 'JWT token is missing in URL', preference: false };
+        }
+    };
 
     const logout = () => {
         sessionStorage.removeItem("jwtToken");
@@ -100,6 +112,7 @@ export const AuthProvider = ({ children }) => {
     useEffect(() => {
         const jwt_token = sessionStorage.getItem("jwtToken");
         const userData = sessionStorage.getItem("user");
+
         if (jwt_token && userData) {
             setUser(JSON.parse(userData));
             setIsLoggedIn(true);
@@ -112,6 +125,21 @@ export const AuthProvider = ({ children }) => {
         } else {
             navigate("/login");
         }
+
+        if (pathname === "/login") {
+            const result = handleGoogleLoginCallback();
+            if (result.success) {
+                if (!result.preference) {
+                    navigate('/profile-setup'); // 假設有用戶偏好頁面
+                } else {
+                    navigate('/explore');
+                }
+            } else {
+                console.error(result.error);
+                navigate('/login'); // 或其他合適的錯誤處理頁面
+            }
+        }
+
         return () => { };
     }, [navigate, pathname]);
 
