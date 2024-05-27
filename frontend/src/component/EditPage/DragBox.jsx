@@ -99,7 +99,7 @@ function DragBox({ spots, onItemsReordered, updateSpotData, locked = false }) {
                     spot={openSpot}
                     onClose={() => setOpenSpot(null)}
                     updateSpotData={updateSpotData}
-                    locked={false}
+                    locked={locked}
                 />
             )}
         </>

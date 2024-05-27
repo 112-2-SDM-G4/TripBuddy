@@ -25,7 +25,7 @@ const AIAssistant = () => {
     const [selectedStart, setSelectedStart] = useState("");
     const [selectedEnd, setSelectedEnd] = useState("");
 
-    const [isRandom, setIsRandom] = useState(true);
+    const [isRandom, setIsRandom] = useState(false);
     const [prompt, setPrompt] = useState("");
 
     const [newTripId, setNewTripId] = useState(-1);
@@ -59,6 +59,19 @@ const AIAssistant = () => {
         }
     }
 
+    const findCountry = (countryId) => {
+        const foundedCountry = CountryData.places.find(
+            (place) => place.country_id === countryId
+        )
+        return foundedCountry["country"][language]
+    }
+
+    const handleRandom = () => {
+        const allCountryIds = CountryData.places.map(country => country.country_id)
+        const selectedCountryId = allCountryIds[Math.floor(Math.random()*allCountryIds.length)]
+        setSelectedCountryId(selectedCountryId)
+    }
+
     const handleSubmit = async () => {
         if(selectedStart === "" || selectedEnd === "" 
             ||selectedStart === undefined || selectedEnd === undefined ||
@@ -73,14 +86,14 @@ const AIAssistant = () => {
         let lat = null;
         let lon = null;
 
-        if (!isRandom) {
-            const selectedPlace = CountryData.places.find(
-                (place) => place.country_id === selectedCountryId
-            );
-            loc_id = selectedCountryId;
-            lat = selectedPlace.latitude;
-            lon = selectedPlace.longitude;
-        }
+        const selectedPlace = CountryData.places.find(
+            (place) => place.country_id === selectedCountryId
+        );
+        loc_id = selectedCountryId;
+        lat = selectedPlace.latitude;
+        lon = selectedPlace.longitude;
+
+
         await fetchWithJwt('/api/v1/trip/ai_generate', 'POST', {
             text: prompt,
             start_date: [selectedStart.getFullYear(), selectedStart.getMonth() + 1, selectedStart.getDate()],
@@ -101,6 +114,7 @@ const AIAssistant = () => {
                 setAiMsg(words[language]["success"]);
                 setNewTripId(result["trip_id"])
                 setShowModal(true);
+                navigate(`/edit/${result["trip_id"]}`);
             } else {
                 setAiMsg(result["msg"]);
                 setShowModal(true);
@@ -172,7 +186,13 @@ const AIAssistant = () => {
                     <div className={style.section}>
                         <div className={style.sectionrow}>
                             <div className={style.selectbtns}>
-                                <div className={`${style.btn} ${style.rightborder} ${isRandom ? style.selectedbtn : style.unselectedbtn}`} onClick={() => setIsRandom(true)}>
+                                <div 
+                                    className={`${style.btn} ${style.rightborder} ${isRandom ? style.selectedbtn : style.unselectedbtn}`}
+                                    onClick={() => {
+                                        setIsRandom(true);
+                                        handleRandom();
+                                    }}
+                                >
                                     {<FaDice size={17}/>}
                                     {` ${words[language]["random"]}`}
                                 </div>
@@ -180,7 +200,7 @@ const AIAssistant = () => {
                                     {words[language]["choose"]}
                                 </div>
                             </div>
-                            {!isRandom && <div className={style.selectcountry}>
+                            {!isRandom ? <div className={style.selectcountry}>
                                 <SearchableSelect
                                     words={{
                                         zh: {
@@ -203,7 +223,12 @@ const AIAssistant = () => {
                                     }}
                                     className={style.searchableselect}
                                 />
-                            </div>}
+                            </div>
+                            :
+                            <div>{selectedCountryId !== -1 && findCountry(selectedCountryId)}</div>
+                            
+                            }
+                            
                         </div>
                     </div>
                 </div>

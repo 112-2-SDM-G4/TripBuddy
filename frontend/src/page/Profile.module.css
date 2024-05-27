@@ -25,7 +25,10 @@
 .title {
     margin-right: 2rem;
     line-height: 2rem;
+}
 
+.titletags {
+    margin-top: 2rem;
 }
 
 .content {
@@ -89,6 +92,7 @@
 }
 
 .smallbtn {
+    width: 6rem;
     display: flex;
     flex-direction: row;
     height: 1.7rem;
@@ -124,6 +128,10 @@
     display: inline-block;
     float: right;
     text-align: right;
+    flex-direction: row;
+    justify-content: flex-end;
+    width: 30rem;
+    height: 4rem;
 }
 
 .tagsdropdown {
