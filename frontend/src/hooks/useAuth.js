@@ -116,7 +116,7 @@ export const AuthProvider = ({ children }) => {
         if (jwt_token && userData) {
             setUser(JSON.parse(userData));
             setIsLoggedIn(true);
-        } else if (pathname === "/login") {
+        } else if (pathname.includes("login")) {
             const result = handleGoogleLoginCallback();
             if (result.success) {
                 if (!result.preference) {
