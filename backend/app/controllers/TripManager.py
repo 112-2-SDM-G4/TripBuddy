@@ -311,9 +311,12 @@ class AITripGeneration(Resource):
             'response_mime_type': 'application/json',
             'response_schema': response_schema,
         }
-        gemini = Gemini(configs=model_config)
-        response = gemini.generate_content(gpt_input)
-        trip_name = ast.literal_eval(str(response.candidates[0].content.parts[0].text))['trip_name']
+        try:
+            gemini = Gemini(configs=model_config)
+            response = gemini.generate_content(gpt_input)
+            trip_name = ast.literal_eval(str(response.candidates[0].content.parts[0].text))['trip_name']
+        except:
+            trip_name = 'AI generate trip'
         print(trip_name)
         return trip_name
 
@@ -346,12 +349,14 @@ class AITripGeneration(Resource):
             'valid': 1
         }
         bad_response = {'msg': 'your response', 'valid': 0}
+        # Verify if this text is an unreasonable custom itinerary preference. If it is unreasonable, 
         gpt_input = f"""
-        You are a local guide in {country} who gives advice to tourists.
+        You are a local guide in {country} who gives travel itinerary to tourists.
         Please read the request from a tourist in the 『』 sign, 
         and follow the instructions step by step listed below:
-        1. Verify if this text is an unreasonable custom itinerary preference.
-            If it is unreasonable, please explain the reasons why it is inappropriate and respond politely.
+        1. You should try your best to arrange travel, but some people just come and mess around.
+            If you think the request comes from these malicious people
+            please explain the reasons why it is inappropriate and respond politely.
             Your explanation must follow this JSON schema.<JSONSchema>{json.dumps(bad_response)}</JSONSchema>
             If not, go to step 2
         
@@ -367,12 +372,13 @@ class AITripGeneration(Resource):
             'candidate_count': 1,
             'response_mime_type': 'application/json',
         }
-        gemini = Gemini(configs=model_config)
-        response = gemini.generate_content(gpt_input)
-        print(response.candidates[0].content.parts[0].text)
-        print("type :", type(response.candidates[0].content.parts[0].text))
-        res_dict = ast.literal_eval(str(response.candidates[0].content.parts[0].text))
-        
+        try:
+            gemini = Gemini(configs=model_config)
+            response = gemini.generate_content(gpt_input)
+            res_dict = ast.literal_eval(str(response.candidates[0].content.parts[0].text))
+        except:
+            bad_response['msg'] = 'AI failed to generate schedule.'
+            res_dict = bad_response
         return res_dict
     
     def _create_schedule(self, schedule_info: Dict, user_id: int) -> int:
