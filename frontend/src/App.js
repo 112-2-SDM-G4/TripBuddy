@@ -19,6 +19,7 @@ import ProfileSetup from "./page/ProfileSetup";
 import Profile from "./page/Profile";
 import NotFound from "./page/NotFound";
 import SettingOptions from "./page/SettingOptions";
+import GoogleLoginCallback from './page/GoogleLoginCallback';
 
 function App() {
     const { isDarkMode } = useTheme();
@@ -43,6 +44,7 @@ function App() {
                         )
                     }
                 />
+                <Route path="/google-login-callback" element={<GoogleLoginCallback />} />
                 <Route path="explore" element={<Explore />} />
                 <Route path="login" element={<Login />} />
                 <Route path="forget-password" element={<ForgotPassword />} />
