@@ -29,6 +29,7 @@ function TripSearchBox({
     const handleSubmit = (event) => {
         event.preventDefault();
         onSearch(query);
+        setIsDropdownOpen(false);
     };
 
     const allTagsMapping = allTags.map(cat => {

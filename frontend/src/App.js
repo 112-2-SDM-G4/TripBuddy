@@ -20,6 +20,7 @@ import Profile from "./page/Profile";
 import NotFound from "./page/NotFound";
 import SettingOptions from "./page/SettingOptions";
 import GoogleLoginCallback from './page/GoogleLoginCallback';
+import AIAssistant from "./page/AIAssistant";
 
 function App() {
     const { isDarkMode } = useTheme();
@@ -29,9 +30,7 @@ function App() {
 
     return (
         <div className="App" theme={isDarkMode ? "dark" : "light"}>
-            {/* {isLoggedIn && <Header />} */}
             <Header />
-
             <Routes>
                 {/* <Route path="/"> */}
                 <Route
@@ -57,6 +56,7 @@ function App() {
                 <Route path="post/:id" element={<ViewPost />} />
                 <Route path="profile" element={<Profile />} />
                 <Route path="setting-options" element={<SettingOptions />} />
+                <Route path="assistant" element={<AIAssistant />} />
                 <Route path="*" element={<NotFound />} />
                 {/* </Route> */}
             </Routes>

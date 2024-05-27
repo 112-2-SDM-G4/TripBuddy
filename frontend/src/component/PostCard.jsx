@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from 'react';
 import { IoMdHeartEmpty } from "react-icons/io";
 import { IoMdHeart } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
@@ -12,6 +12,27 @@ import defultImage from "../assets/defaultImg.jpg";
 function PostCard({ name, src, tripId, tagNames, isFav }) {
     const navigate = useNavigate();
     const { language } = useLanguage();
+
+    const containerRef = useRef(null);
+    const textRef = useRef(null);
+    const [isOverflowing, setIsOverflowing] = useState(false);
+
+    useEffect(() => {
+        const checkOverflow = () => {
+          if (containerRef.current && textRef.current) {
+            const isOverflow = textRef.current.scrollWidth > containerRef.current.clientWidth;
+            setIsOverflowing(isOverflow);
+          }
+        };
+    
+        checkOverflow();
+        window.addEventListener('resize', checkOverflow);
+    
+        return () => {
+          window.removeEventListener('resize', checkOverflow);
+        };
+    }, [tagNames]);
+
 
     const words = {
         zh: {
@@ -78,13 +99,15 @@ function PostCard({ name, src, tripId, tagNames, isFav }) {
                 </div>
             </div>
 
-            <div className={style.tags}>
-                {tagNames.map((tagName, index) => 
-                    <Tag 
-                        key={tagName + index}
-                        text={tagName}
-                    />
-                )}
+            <div className={style.tagscontainer}>
+                <div className={style.tags}>
+                    {tagNames.map((tagName, index) => 
+                        <Tag 
+                            key={tagName + index}
+                            text={tagName}
+                        />
+                    )}
+                </div>
             </div>
             
         </div>

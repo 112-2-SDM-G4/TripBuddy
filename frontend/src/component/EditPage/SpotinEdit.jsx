@@ -15,7 +15,7 @@ export default function SpotinEdit({ spot, delSpot, updateSpotData, locked=false
     };
 
     return (
-        <div className={style.block} onClick={() => setOpenEdit(true)}>
+        <div className={`${style.block} ${locked && style.blocklocked}`} onClick={() => setOpenEdit(true)}>
             {spot && (
                 <>
                     <img
@@ -36,14 +36,14 @@ export default function SpotinEdit({ spot, delSpot, updateSpotData, locked=false
                             {tryvalid(spot["comment"])}
                         </div>
                     </div>
-                    <button
+                    {!locked && <button
                         className={style.closebt}
                         onClick={() => {
                             delSpot();
                         }}
                     >
                         <IoMdClose className={style.closebt} />
-                    </button>
+                    </button>}
                 </>
             )}
             {openEdit && (

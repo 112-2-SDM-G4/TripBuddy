@@ -29,14 +29,13 @@
 
 .modalcontent {
     margin-top: 1rem;
-    padding: 1rem 2rem;
+    padding: 0.5rem 2rem 1rem 2rem;
     display: flex;
     align-items: stretch;
     flex-direction: column;
     overflow-y: scroll;
     max-height: 80vh;
     max-width: 100%;
-    padding-bottom: 2rem;
     overflow-x: hidden;
 }
 
