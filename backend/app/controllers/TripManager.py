@@ -47,6 +47,9 @@ class TripManager(Resource):
             
             schedule = Schedule.get_by_id(trip_id)
 
+            if not (schedule.public or user_owns_schedule(user_id, trip_id)):
+                return make_response({'message': 'User does not have access to this trip.'}, 403)
+
             places_in_trip = RelationSpotSch.get_by_schedule(trip_id)
             
             trip_detail = [[] for _ in range(self.get_trip_length(schedule))]
@@ -261,7 +264,7 @@ class AITripGeneration(Resource):
             return make_response(content, 200)
         raw_schedule = content['trip']
         schedule_info = {
-            'location_id': data['location_id'],
+            'location_id': country_id,
             'location_lng': location_lng,
             'location_lat': location_lat,
             'exchange': exchange,
@@ -311,9 +314,12 @@ class AITripGeneration(Resource):
             'response_mime_type': 'application/json',
             'response_schema': response_schema,
         }
-        gemini = Gemini(configs=model_config)
-        response = gemini.generate_content(gpt_input)
-        trip_name = ast.literal_eval(str(response.candidates[0].content.parts[0].text))['trip_name']
+        try:
+            gemini = Gemini(configs=model_config)
+            response = gemini.generate_content(gpt_input)
+            trip_name = ast.literal_eval(str(response.candidates[0].content.parts[0].text))['trip_name']
+        except:
+            trip_name = 'AI generate trip'
         print(trip_name)
         return trip_name
 
@@ -346,17 +352,21 @@ class AITripGeneration(Resource):
             'valid': 1
         }
         bad_response = {'msg': 'your response', 'valid': 0}
+        # Verify if this text is an unreasonable custom itinerary preference. If it is unreasonable, 
         gpt_input = f"""
-        You are a local guide in {country} who gives advice to tourists.
+        You are a local guide in {country} who gives travel itinerary to tourists.
         Please read the request from a tourist in the 『』 sign, 
         and follow the instructions step by step listed below:
-        1. Verify if this text is an unreasonable custom itinerary preference.
-            If it is unreasonable, please explain the reasons why it is inappropriate and respond politely.
+        1. You should try your best to arrange travel, but some people just come and mess around.
+            If you think the request comes from these malicious people
+            please explain the reasons why it is inappropriate and respond politely.
             Your explanation must follow this JSON schema.<JSONSchema>{json.dumps(bad_response)}</JSONSchema>
             If not, go to step 2
         
         2. For verified request, you must customize a {travel_days}-day itinerary plan according to the user preferences.
             For each day, give at least three tourist spots to visit.
+            For each attraction, please provide a clear attraction name instead of an action,
+            such as: "Starbucks Da'an Store" instead of "Spend a leisurely afternoon in a cafe", "Historic Canal Tour" instead of "Take a cruise on the canal"
             Your responce must follow JSON schema.<JSONSchema>{json.dumps(response_schema)}</JSONSchema>
 
         The request from a tourist:
@@ -367,12 +377,13 @@ class AITripGeneration(Resource):
             'candidate_count': 1,
             'response_mime_type': 'application/json',
         }
-        gemini = Gemini(configs=model_config)
-        response = gemini.generate_content(gpt_input)
-        print(response.candidates[0].content.parts[0].text)
-        print("type :", type(response.candidates[0].content.parts[0].text))
-        res_dict = ast.literal_eval(str(response.candidates[0].content.parts[0].text))
-        
+        try:
+            gemini = Gemini(configs=model_config)
+            response = gemini.generate_content(gpt_input)
+            res_dict = ast.literal_eval(str(response.candidates[0].content.parts[0].text))
+        except:
+            bad_response['msg'] = 'AI failed to generate schedule.'
+            res_dict = bad_response
         return res_dict
     
     def _create_schedule(self, schedule_info: Dict, user_id: int) -> int:
