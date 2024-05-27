@@ -2,7 +2,6 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { fetchWithJwt } from "./fetchWithJwt";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useLanguage } from "./useLanguage";
-import { baseFetch } from "./baseFetch";
 
 const AuthContext = createContext();
 
@@ -10,47 +9,63 @@ export const AuthProvider = ({ children }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [user, setUser] = useState({});
     const [userInfo, setUserInfo] = useState({});
+    const [isLoading, setIsLoading] = useState(true); // 新增加载状态
     const navigate = useNavigate();
     const location = useLocation();
     const { pathname, search } = location;
     const { setLanguage } = useLanguage();
 
-    const login = async (email, hashedPassword, isGoogleLogin = false) => {
+    const login = async (email, hashedPassword) => {
         try {
-            let loginData;
-            let loginResponse;
-            if (isGoogleLogin) {
-                const searchParams = new URLSearchParams(location.search);
-                const errorMessage = searchParams.get('error');
-                const jwt_token = searchParams.get('jwt_token');
-                const preference = searchParams.get('preference') === 'true';
-                if (errorMessage) {
-                    return { success: false, error: errorMessage, preference: false };
-                }
-                if (jwt_token) {
-                    // 保存 JWT Token 到本地存儲
-                    sessionStorage.setItem("jwtToken", jwt_token);
-                    setIsLoggedIn(true);
-                } else {
-                    return { success: false, error: 'JWT token is missing in URL', preference: false };
-                }
-            } else {
-                const url = "/api/v1/user/check_password";
-                const postData = {
-                    user_email: email,
-                    hashed_password: hashedPassword,
-                };
-                loginResponse = await fetchWithJwt(url, "POST", postData);
-                loginData = await loginResponse.json();
+            const url = "/api/v1/user/check_password";
+            const postData = {
+                user_email: email,
+                hashed_password: hashedPassword,
+            };
+            const loginResponse = await fetchWithJwt(url, "POST", postData);
+            const loginData = await loginResponse.json();
 
-                if (loginData.valid) {
-                    sessionStorage.setItem("jwtToken", loginData.jwt_token);
-                    setIsLoggedIn(true);
-                } else {
-                    return { success: false, error: loginData.message, preference: false };
-                }
+            if (loginData.valid) {
+                sessionStorage.setItem("jwtToken", loginData.jwt_token);
+                setIsLoggedIn(true);
+            } else {
+                return { success: false, error: loginData.message, preference: false };
             }
 
+            return await loadUserInfo(loginData.preference);
+            
+        } catch (error) {
+            console.error(error);
+            return { success: false, error: error.message, preference: false };
+        }
+    };
+
+    const handleGoogleLoginCallback = async () => {
+        const searchParams = new URLSearchParams(search);
+        const errorMessage = searchParams.get('error');
+        const jwt_token = searchParams.get('jwt_token');
+        const preference = searchParams.get('preference') === 'True';
+
+        
+        console.log("handleGoogleLoginCallback", { errorMessage, jwt_token, preference });
+
+        if (errorMessage) {
+            return { success: false, error: errorMessage, preference: false };
+        }
+
+        if (jwt_token) {
+            // 保存 JWT Token 到本地存储
+            sessionStorage.setItem("jwtToken", jwt_token);
+            setIsLoggedIn(true);
+            
+        } else {
+            return { success: false, error: 'JWT token is missing in URL', preference: false };
+        }
+        return await loadUserInfo(preference);
+    };
+
+    const loadUserInfo = async(preference) => {
+        try {
             const response = await fetchWithJwt(`/api/v1/user/get_info`, 'GET');
             if (response.status !== 200) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
@@ -67,37 +82,19 @@ export const AuthProvider = ({ children }) => {
             const tripData = await tripResponse.json();
 
             if (tripResponse.ok) {
-                const userData = { user_name: loginData.user_name, trips: tripData.user_trip };
+                const userData = { user_name: infoData['user_name'], trips: tripData.user_trip };
                 setUser(userData);
                 sessionStorage.setItem("user", JSON.stringify(userData)); // Optional: Store user data in sessionStorage
                 console.log(userData);
-                return { success: true, error: null, preference: loginData.preference };
+                return { success: true, error: null, preference: preference };
             } else {
-                throw new Error("Failed to fetch trips");
+                return { success: false, error: "Failed to fetch trips", preference: preference };
             }
         } catch (error) {
             console.error(error);
-            return { success: false, error: error.message, preference: false };
-        }
-    };
-
-    const handleGoogleLoginCallback = () => {
-        const searchParams = new URLSearchParams(location.search);
-        const errorMessage = searchParams.get('error');
-        const jwt_token = searchParams.get('jwt_token');
-        const preference = searchParams.get('preference') === 'true';
-
-        if (errorMessage) {
-            return { success: false, error: errorMessage, preference: false };
-        }
-
-        if (jwt_token) {
-            // 保存 JWT Token 到本地存儲
-            sessionStorage.setItem("jwtToken", jwt_token);
-            setIsLoggedIn(true);
-            return { success: true, error: null, preference: preference };
-        } else {
-            return { success: false, error: 'JWT token is missing in URL', preference: false };
+            return { success: false, error: error.message, preference: preference };
+        } finally {
+            setIsLoading(false); // 取消加载状态
         }
     };
 
@@ -116,30 +113,31 @@ export const AuthProvider = ({ children }) => {
         if (jwt_token && userData) {
             setUser(JSON.parse(userData));
             setIsLoggedIn(true);
+            setIsLoading(false); // 取消加载状态
         } else if (pathname.includes("login")) {
-            const result = handleGoogleLoginCallback();
-            if (result.success) {
-                if (!result.preference) {
-                    navigate('/profile-setup'); // 假設有用戶偏好頁面
+            handleGoogleLoginCallback().then(result => {
+                if (result.success) {
+                    if (!result.preference) {
+                        navigate('/profile-setup'); // 假设有用户偏好页面
+                    } else {
+                        navigate('/explore');
+                    }
                 } else {
-                    navigate('/explore');
+                    console.error(result.error);
+                    // 设置全局错误状态以便在 LoginForm 中显示
+                    setIsLoading(false); // 取消加载状态
                 }
-            } else {
-                console.error(result.error);
-                navigate('/login'); // 或其他合適的錯誤處理頁面
-            }
-        }
-        else if (
-            pathname.includes("login") ||
+            });
+        } else if (
             pathname.includes("forget-password") ||
             pathname.includes("reset")
         ) {
+            setIsLoading(false); // 取消加载状态
             return;
         } else {
             navigate("/login");
+            setIsLoading(false); // 取消加载状态
         }
-
-
 
         return () => { };
     }, [navigate, pathname]);
@@ -169,7 +167,7 @@ export const AuthProvider = ({ children }) => {
 
     return (
         <AuthContext.Provider
-            value={{ isLoggedIn, login, logout, user, updateUserData, userInfo }}
+            value={{ isLoggedIn, login, logout, user, updateUserData, userInfo, handleGoogleLoginCallback, isLoading }}
         >
             {children}
         </AuthContext.Provider>
