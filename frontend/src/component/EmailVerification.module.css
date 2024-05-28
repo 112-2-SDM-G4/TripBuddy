@@ -74,7 +74,7 @@ img {
 }
 
 .loader:before {
-    content: "Building your account...";
+    content: "Creating your account...";
 }
 
 @keyframes l8 {
