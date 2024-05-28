@@ -235,13 +235,14 @@ const AIAssistant = () => {
 
             <div>
                 <div className={style.title}>{words[language]["input"]}</div>
-                <div className={style.textarea}>
+                <div>
                     <textarea
                         name = "promptarea"
                         type="text"
                         id="prompt"
                         value = {prompt}
                         onChange={e => setPrompt(e.target.value)}
+                        className={style.textarea}
                     >
                     </textarea>
                 </div>
