@@ -139,6 +139,7 @@ export default function ShareModal({ close }) {
                             setContent(e.target.value);
                         }}
                         value={content}
+                        className={style.textarea}
                     ></textarea>
                 </div>
                 <div className={style.sharedropdown}>

@@ -66,7 +66,8 @@ export default function SpotinEdit({
                     {!locked && (
                         <button
                             className={style.closebt}
-                            onClick={() => {
+                            onClick={(e) => {
+                                e.stopPropagation();
                                 delSpot();
                             }}
                         >

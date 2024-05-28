@@ -138,7 +138,7 @@ export default function ViewPost() {
                     </div>
                 </div>
 
-                <textarea
+                {post.content?.length !== 0 && <textarea
                     style={{
                         border: "none",
                         backgroundColor: "var(--backgroundcolor)",
@@ -146,7 +146,7 @@ export default function ViewPost() {
                     className={style.postcontent}
                     value={post.content}
                     disabled
-                ></textarea>
+                ></textarea>}
             </div>
 
             <EditPage

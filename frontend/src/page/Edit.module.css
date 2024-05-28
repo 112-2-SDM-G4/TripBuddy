@@ -311,6 +311,26 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     height: auto;
 }
 
+.textarea {
+    width: 100%;
+    height: 16rem;
+    padding: 12px 20px;
+    box-sizing: border-box;
+    border: 2px solid color-mix(in srgb, var(--secondarycolor) 65%, var(--backgroundcolor));
+    border-radius: 0.5rem;
+    /* background-color: #f8f8f8; */
+    background-color: color-mix(in srgb, var(--secondarycolor) 5%, var(--backgroundcolor));
+    font-size: 16px;
+    resize: none;
+    z-index: 1;
+    margin-bottom: 8rem;
+}
+
+.textarea:focus {
+    outline: none;
+}
+  
+
 @media (min-width: 1200px) {
     .spotscontainer {
         column-count: 3;

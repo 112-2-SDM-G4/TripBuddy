@@ -48,23 +48,24 @@ const TransactionItem = ({ transaction_id, date, currentUser, currency, item_nam
     const symbol = findCurrencySymbol(currency);
 
     if (payer === currentUser) {
-        const totalLent = payees.reduce((acc, payee) => acc + (payee.payee_name === currentUser ? 0 : payee.borrowed_amount), 0);
+        const totalLent = payees.reduce((acc, payee) => 
+            acc + (payee.payee_name === currentUser ? 0 : parseFloat(payee.borrowed_amount.toFixed(2))), 0);
         amountColor = style.amountGreen; // Green if current user paid
         amountText = words[language]['amountText_lend'];
-        amountValue = `${symbol}${totalLent}`;
+        amountValue = `${symbol}${totalLent.toFixed(2)}`;
     } 
     else {
         const currentUserPayee = payees.find(payee => payee.payee_name === currentUser);
         if (currentUserPayee) {
             amountColor = style.amountRed; // Red if current user needs to pay
             amountText = words[language]['amountText_borrow'];
-            amountValue = `${symbol}${currentUserPayee.borrowed_amount}`;
+            amountValue = `${symbol}${parseFloat(currentUserPayee.borrowed_amount.toFixed(2))}`;
         } else {
             amountText = words[language]['amountText_notInvolved'];
             amountValue = ""; // No amount displayed
         }
     }
-
+    
     
 
     return (
