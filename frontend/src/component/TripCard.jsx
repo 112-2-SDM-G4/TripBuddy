@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import { fetchWithJwt } from '../hooks/fetchWithJwt';
 import { useLanguage } from "../hooks/useLanguage";
@@ -99,7 +99,7 @@ function TripCard({
             />
             <div className={style.info}>
                 <div className={style.title}>
-                    <div>{name}</div>
+                    <div className={style.tripName}>{name}</div>
                     <div className={style.icons}>
                         {country && (
                             <img
