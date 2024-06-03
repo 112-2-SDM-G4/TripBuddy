@@ -15,6 +15,7 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import SpotinEdit from "./SpotinEdit";
 import { useEffect, useState } from "react";
+import EditViewSpot from "./EditViewSpot";
 
 function SortableItem(props) {
     const { id } = props;
@@ -33,8 +34,9 @@ function SortableItem(props) {
     );
 }
 
-function DragBox({ spots, onItemsReordered, updateSpotData, locked=false }) {
+function DragBox({ spots, onItemsReordered, updateSpotData, locked = false }) {
     const [items, setItems] = useState(spots.map((s) => s.relation_id));
+    const [openSpot, setOpenSpot] = useState(null);
     const sensors = useSensors(
         useSensor(PointerSensor, {
             activationConstraint: {
@@ -54,7 +56,7 @@ function DragBox({ spots, onItemsReordered, updateSpotData, locked=false }) {
         });
     };
     const handleDragEnd = (event) => {
-        if(locked) return;
+        if (locked) return;
         const { active, over } = event;
         if (active !== null && over !== null && active.id !== over.id) {
             setItems((items) => {
@@ -68,29 +70,39 @@ function DragBox({ spots, onItemsReordered, updateSpotData, locked=false }) {
     };
 
     return (
-        <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragEnd={handleDragEnd}
-        >
-            <SortableContext
-                items={items}
-                strategy={verticalListSortingStrategy}
+        <>
+            <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEnd}
             >
-                {items.map((item, index) => (
-                    <SortableItem key={item} id={item}>
-                        <SpotinEdit
-                            spot={spots.find((s) => s.relation_id === item)}
-                            delSpot={() => {
-                                delSpot(item);
-                            }}
-                            updateSpotData={updateSpotData}
-                            locked={locked}
-                        />
-                    </SortableItem>
-                ))}
-            </SortableContext>
-        </DndContext>
+                <SortableContext
+                    items={items}
+                    strategy={verticalListSortingStrategy}
+                >
+                    {items.map((item, index) => (
+                        <SortableItem key={item} id={item}>
+                            <SpotinEdit
+                                spot={spots.find((s) => s.relation_id === item)}
+                                delSpot={() => {
+                                    delSpot(item);
+                                }}
+                                setOpenedSpot={setOpenSpot}
+                                locked={locked}
+                            />
+                        </SortableItem>
+                    ))}
+                </SortableContext>
+            </DndContext>
+            {openSpot && (
+                <EditViewSpot
+                    spot={openSpot}
+                    onClose={() => setOpenSpot(null)}
+                    updateSpotData={updateSpotData}
+                    locked={locked}
+                />
+            )}
+        </>
     );
 }
 

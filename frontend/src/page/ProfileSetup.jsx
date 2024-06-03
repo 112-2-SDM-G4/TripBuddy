@@ -7,7 +7,7 @@ import TripSearchDropdown from "../component/TripSearchDropdown";
 import style from "./ProfileSetup.module.css";
 import { fetchWithJwt } from '../hooks/fetchWithJwt';
 import { useLanguage } from "../hooks/useLanguage";
-
+import { useHeader } from '../component/HeaderContext'; // Import the HeaderContext
 
 const ProgressBar = ({ progress, currentStep }) => {
   return (
@@ -33,7 +33,6 @@ const AvatarSelector = ({ onSelect, avatars, selectedAvatar }) => {
           className={index === selectedAvatar ? style.selectedAvatar : style.avatar}
         />
       ))}
-
     </div>
   );
 };
@@ -49,6 +48,7 @@ const ProfileSetup = () => {
   const [selectedTag, setSelectedTag] = useState([]);
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const { updateHeader } = useHeader(); // Use the HeaderContext
 
   const words = {
     en: {
@@ -60,10 +60,8 @@ const ProfileSetup = () => {
       language: 'Language',
       next: 'Next',
       back: 'Back',
-
       title2: 'Travel Preferences',
-      title2_info: 'Please choose some preferences when you decside to travel.',
-
+      title2_info: 'Please choose some preferences when you decide to travel.',
       title3: 'Welcome to TripBuddy!',
       title3_info: 'Your profile is all set up. Start exploring now!',
       submit: 'Explore'
@@ -77,23 +75,19 @@ const ProfileSetup = () => {
       language: '語言偏好',
       next: '下一步',
       back: '上一步',
-
       title2: '旅遊偏好',
       title2_info: '請選擇當你旅行時通常喜歡那些風格',
-
       title3: '歡迎來到TripBuddy!',
       title3_info: '你的個人檔案設定即將完成，現在開始探索旅程吧!',
       submit: "開始探索"
-
     }
   }
-
 
   const totalSteps = 3;
 
   const nextStep = () => {
     if (currentStep === 1) {
-      if (!avatar) {
+      if (selectedAvatar === null) {
         setError(words[language]['error_for_avatar']);
         return;
       }
@@ -113,29 +107,19 @@ const ProfileSetup = () => {
 
   useEffect(() => {
     getTag();
-    return () => { };
   }, []);
 
   const getTag = () => {
     fetchWithJwt(`/api/v1/tag/get_tags?source=UserProfile`, "GET")
-      .then((response) => {
-        return response.json();
-      })
+      .then((response) => response.json())
       .then((data) => {
         if (Array.isArray(data)) {
           setTags(data);
-
-          setAllTags(
-            data
-              .map((cat) => {
-                return cat["options"];
-              })
-              .flat()
-          );
+          setAllTags(data.flatMap(cat => cat.options));
         }
       })
       .catch((error) => {
-        setError(error);
+        setError(error.message);
         if (error.response) {
           error.response.json().then((errorMessage) => {
             alert(errorMessage.message);
@@ -148,22 +132,14 @@ const ProfileSetup = () => {
   };
 
   const handleSubmit = async () => {
-
     try {
-      console.log({
-        user_name: userName,
-        tags: selectedTag,
-        avatar: avatar,
-        language: language
-      });
       const response = await fetchWithJwt('/api/v1/user/set_info', 'POST', {
         user_name: userName,
         tags: selectedTag,
-        avatar: avatar,
+        avatar: selectedAvatar + 1, // Adjusted to match avatar index
         language: language
       });
       const data = await response.json();
-      console.log(data);
       if (!data.valid) {
         throw new Error(data.message || "Submission failed, please try again.");
       }
@@ -173,7 +149,15 @@ const ProfileSetup = () => {
         user_name: data.user_name,
       };
       sessionStorage.setItem('user', JSON.stringify(updatedUserData));
+      sessionStorage.setItem('avatar', selectedAvatar + 1);
       localStorage.setItem('language', data.language);
+
+      // Update the Header state
+      updateHeader({
+        userName: data.user_name,
+        avatar: selectedAvatar + 1,
+        language: data.language,
+      });
 
       navigate('/explore');
     } catch (error) {
@@ -182,21 +166,17 @@ const ProfileSetup = () => {
     }
   };
 
-
   const handleAvatarSelect = (index) => {
     setSelectedAvatar(index);
     setAvatar(index + 1);
   };
 
-  const handleLanguageChange = (e) => {
+  const handleLanguageChange = () => {
     toggleLanguage();
   };
 
   let content;
   switch (currentStep) {
-
-    // UserInfoForm
-
     case 1:
       content = (
         <>
@@ -249,7 +229,6 @@ const ProfileSetup = () => {
       );
       break;
 
-    // UserPreferencesForm
     case 2:
       content = (
         <>
@@ -343,7 +322,7 @@ const ProfileSetup = () => {
   return (
     <div className={style.main}>
       <div className={style.container}>
-        <ProgressBar progress={(currentStep / totalSteps) * 100} currentStep={currentStep}></ProgressBar>
+        <ProgressBar progress={(currentStep / totalSteps) * 100} currentStep={currentStep} />
         {content}
       </div>
     </div>

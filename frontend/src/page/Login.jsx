@@ -1,10 +1,11 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useLanguage } from "../hooks/useLanguage";
 import style from "./Login.module.css";
 import Button from "../component/Button";
 import InputText from "../component/InputText";
 import EmailVerification from "../component/EmailVerification";
+import Loader from "../component/Loader";
 import SHA256 from "crypto-js/sha256";
 import { useAuth } from "../hooks/useAuth";
 import { baseFetch } from "../hooks/baseFetch";
@@ -16,19 +17,18 @@ const Login = () => {
     const [salt, setSalt] = useState("");
     const [isSignupSuccess, setIsSignupSuccess] = useState(false);
     const { language } = useLanguage();
+    const { isLoading } = useAuth();
 
     const words = {
         en: {
             login: 'Login',
             signup: 'Signup'
-          
         },
         zh: {
             login: '登入',
             signup: '註冊'
-          
         }
-      }
+    };
 
     const handleTabClick = (tab) => {
         setActiveTab(tab);
@@ -45,42 +45,45 @@ const Login = () => {
 
     return (
         <div className={style.main}>
-            {!isSignupSuccess ? (
-                <>
-                    <div className={style.loginContainer}>
-                        <div className={style.tabs}>
-                            <button
-                                onClick={() => handleTabClick("login")}
-                                className={
-                                    activeTab === "login" ? style.active : ""
-                                }
-                            >
-                                {words[language]['login']}
-                            </button>
-                            <button
-                                onClick={() => handleTabClick("signup")}
-                                className={
-                                    activeTab === "signup" ? style.active : ""
-                                }
-                            >
-                                {words[language]['signup']}
-                            </button>
-                        </div>
-                        {activeTab === "login" && <LoginForm language={language}/>}
-                        {activeTab === "signup" && (
-                            <SignupForm onSignupSuccess={handleSignupSuccess} language={language}/>
-                        )}
-                    </div>
-                </>
+            {isLoading ? (
+                <Loader isLoading={isLoading} />
             ) : (
-                // Success message
-
-                <EmailVerification
-                    email={email}
-                    hashed_password={password}
-                    salt={salt}
-                    language={language}
-                />
+                !isSignupSuccess ? (
+                    <>
+                        <div className={style.loginContainer}>
+                            <div className={style.tabs}>
+                                <button
+                                    onClick={() => handleTabClick("login")}
+                                    className={
+                                        activeTab === "login" ? style.active : ""
+                                    }
+                                >
+                                    {words[language]['login']}
+                                </button>
+                                <button
+                                    onClick={() => handleTabClick("signup")}
+                                    className={
+                                        activeTab === "signup" ? style.active : ""
+                                    }
+                                >
+                                    {words[language]['signup']}
+                                </button>
+                            </div>
+                            {activeTab === "login" && <LoginForm language={language} />}
+                            {activeTab === "signup" && (
+                                <SignupForm onSignupSuccess={handleSignupSuccess} language={language} />
+                            )}
+                        </div>
+                    </>
+                ) : (
+                    // Success message
+                    <EmailVerification
+                        email={email}
+                        hashed_password={password}
+                        salt={salt}
+                        language={language}
+                    />
+                )
             )}
         </div>
     );
@@ -92,7 +95,9 @@ const LoginForm = ({ language }) => {
     const [salt, setSalt] = useState("");
     const [error, setError] = useState(""); // State to store error messages
     const navigate = useNavigate();
-    const { login } = useAuth();
+    const { login, handleGoogleLoginCallback } = useAuth();
+    const location = useLocation();
+    const [isLoading, setIsLoading] = useState(false);
 
     const words = {
         en: {
@@ -100,21 +105,37 @@ const LoginForm = ({ language }) => {
             password: 'Password',
             signin: 'Sign In',
             forget_password: 'Forget Password?',
-            third_party_login: 'or you can login with'
-          
+            third_party_login: 'or you can login with',
+            emailRequired: 'Email is required.',
+            passwordRequired: 'Please enter your password.',
+            validEmail: 'Please enter a valid email address.',
+            googleError: "This email is already registered. Use the original login method."
         },
         zh: {
             email: '電子信箱',
             password: '密碼',
             signin: '登入',
             forget_password: '忘記密碼了?',
-            third_party_login: '或是用以下方式登入'
-          
+            third_party_login: '或是用以下方式登入',
+            emailRequired: '請輸入信箱',
+            validEmail: '請輸入有效的信箱格式',
+            passwordRequired: '請輸入密碼',
+            googleError: "此電子郵件已經註冊，請使用原本的登入方式"
         }
-      }
+    };
 
     const handleEmailBlur = async () => {
         setError(""); // Reset error message
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!email) {
+            setError(words[language]['emailRequired']);
+            return; // Stop the function if the email is empty
+        }
+        if (!emailPattern.test(email)) {
+            setError(words[language]['validEmail']);
+            return;
+        }
+
         if (email) {
             try {
                 const response = await baseFetch(`/api/v1/user/check_user?user_email=${email}`, 'GET');
@@ -132,29 +153,88 @@ const LoginForm = ({ language }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!email) {
+            setError(words[language]['emailRequired']);
+            return; // Stop the function if the email is empty
+        }
+        if (!emailPattern.test(email)) {
+            setError(words[language]['validEmail']);
+            return;
+        }
+        if (!password) {
+            setError(words[language]['passwordRequired']);
+            return;
+        }
         if (password && salt) {
             // Hash the password with the salt
             const hashedPassword = SHA256(password + salt).toString();
 
             try {
+                setIsLoading(true);
                 const { success, error, preference } = await login(email, hashedPassword);
                 if (!success) {
                     throw new Error(error);
-                } 
+                }
                 else if (!preference) {
                     navigate("/profile-setup");
                 }
                 else {
                     navigate("/explore");
                 }
-
             } catch (error) {
                 setError(error.message);
+            } finally {
+                setIsLoading(false);
             }
         }
     };
+
+    useEffect(() => {
+        const checkGoogleLoginCallback = async () => {
+            const searchParams = new URLSearchParams(location.search);
+            const jwt_token = searchParams.get('jwt_token');
+            const errorMessage = searchParams.get('error');
+            if (errorMessage) {
+                setError(words[language]['googleError']);
+            }
+            if (jwt_token) {
+                const result = await handleGoogleLoginCallback();
+                console.log("GoogleLoginCallback result", result);
+                
+                if (result.success) {
+                    if (!result.preference) {
+                        navigate('/profile-setup'); // 假设有用户偏好页面
+                    } else {
+                        navigate('/explore');
+                    }
+                } else {
+                    console.error(result.error);
+                    setError(result.error);
+                }
+            }
+        };
+
+        checkGoogleLoginCallback();
+    }, [handleGoogleLoginCallback, location.search, navigate]);
+
+    const handleGoogleLogin = async () => {
+        setIsLoading(true);
+        try {
+            const loginResponse = await baseFetch("/api/v1/user/google_login", "GET");
+            const auth_url = await loginResponse.json();
+            window.location.href = auth_url.auth_url;
+        } catch (error) {
+            setError(error.message);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     return (
         <form method="post" onSubmit={handleSubmit} className={style.form}>
+            {isLoading && <Loader isLoading={isLoading} />}
+
             <div className={style.logoContainer}>
                 <img
                     className={style.logo}
@@ -162,6 +242,7 @@ const LoginForm = ({ language }) => {
                     alt="TourBuddy"
                 />
             </div>
+
             <div className={style.inputWithErrorMessage}>
                 {error && <span className={style.errorMessage}>{error}</span>}
             </div>
@@ -193,26 +274,14 @@ const LoginForm = ({ language }) => {
                 <a href="/forget-password">{words[language]["forget_password"]}</a>
             </div>
             <div className={style.socialLogin}>
-                <div className={style.thirdSignin}>{words[language]["third_party_login"]}</div>
+                <div className={style.thirdSignin}>------{words[language]["third_party_login"]}------</div>
                 <div className={style.icons}>
-                    <a href="/auth/google" className={style.icon}>
+                    <div className={style.icon} onClick={handleGoogleLogin}>
                         <img
                             src="../../google-icon.svg"
-                            alt="Sign in with google"
+                            alt="Sign in with Google"
                         />
-                    </a>
-                    <a href="/auth/twitter" className={style.icon}>
-                        <img
-                            src="../../twitter-icon.svg"
-                            alt="Sign in with twitter"
-                        />
-                    </a>
-                    <a href="/auth/facebook" className={style.icon}>
-                        <img
-                            src="../../facebook-icon.svg"
-                            alt="Sign in with facebook"
-                        />
-                    </a>
+                    </div>
                 </div>
             </div>
         </form>
@@ -232,7 +301,6 @@ const SignupForm = ({ onSignupSuccess, language }) => {
             confirmedPassword: 'Confirmed Password',
             signup: 'Sign Up',
             signingUp: 'Signing Up...'
-          
         },
         zh: {
             email: '電子信箱',
@@ -240,9 +308,8 @@ const SignupForm = ({ onSignupSuccess, language }) => {
             confirmedPassword: '確認密碼',
             signup: '註冊',
             signingUp: '註冊中...'
-            
         }
-      }
+    };
 
     const generateSalt = (length = 10) => {
         const characters =
@@ -285,17 +352,12 @@ const SignupForm = ({ onSignupSuccess, language }) => {
 
         try {
             const response = await baseFetch(
-                "/api/v1/user/send_email", "POST", 
+                "/api/v1/user/send_email", "POST",
                 { user_email: localEmail }
             );
 
-            // if (!response.OK) {
-            //     throw new Error(`HTTP error! status: ${response.status}`);
-            // }
-
             const data = await response.json();
 
-        
             if (data.valid) {
                 onSignupSuccess(localEmail, salt, hashedPassword); // Pass the email back up to the parent component
             } else {
@@ -348,7 +410,6 @@ const SignupForm = ({ onSignupSuccess, language }) => {
                 setting={{ type: "submit", disabled: isLoading }}
             // Add additional props if needed to pass className
             />
-
         </form>
     );
 };

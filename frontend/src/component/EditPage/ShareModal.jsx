@@ -22,6 +22,7 @@ export default function ShareModal({ close }) {
             tag: "標籤選擇",
             success:
                 "成功分享！你的行程現已公開，任何人都可以查看。快來探索吧！",
+            cancel: "行程分享已取消，重新分享可以幫助更多人安排行程喔!",
         },
         en: {
             title: "Share Trip",
@@ -31,6 +32,7 @@ export default function ShareModal({ close }) {
             tag: "Tag selection",
             success:
                 "Shared successfully! Your itinerary is now public for everyone to see. Start exploring!",
+            cancel: "Trip sharing has been canceled. Sharing again can help more people arrange their schedules!",
         },
     };
     const { id } = useParams();
@@ -90,7 +92,11 @@ export default function ShareModal({ close }) {
             })
             .then((data) => {
                 console.log(data);
-                alert(words[language]["success"]);
+                if (share) {
+                    alert(words[language]["success"]);
+                } else {
+                    alert(words[language]["cancel"]);
+                }
                 close();
                 updateUserData();
             })
@@ -112,14 +118,30 @@ export default function ShareModal({ close }) {
 
     return (
         <Modal onClose={close}>
-            <div className={style.addusermodal}>
+            <div
+                className={style.addusermodal}
+                style={{ width: "40rem", maxWidth: "70vw" }}
+            >
                 {words[language]["title"]}
-                <InputText
-                    propmt={words[language]["intro"]}
-                    name={"intro"}
-                    setting={{ require: true, width: "100%", height: "6rem" }}
-                    onChange={setContent}
-                />
+                <div>
+                    <div>{words[language]["intro"]}</div>
+                    <textarea
+                        name="intro"
+                        required
+                        style={{
+                            width: "100%",
+                            height: "6rem",
+                            marginTop: "1rem",
+                            marginBottom: "1rem",
+                        }}
+                        id="intro"
+                        onChange={(e) => {
+                            setContent(e.target.value);
+                        }}
+                        value={content}
+                        className={style.textarea}
+                    ></textarea>
+                </div>
                 <div className={style.sharedropdown}>
                     <div className={style.sharedropdowntitle}>
                         {words[language]["tag"]}

@@ -12,7 +12,8 @@
                 "en": "TWD",
                 "symbol": "NT$"
             },
-            "country_id": 24
+            "country_id": 24,
+            "icon": "https://flagpedia.net/data/flags/h80/tw.png"
         },
         {
             "country": {
@@ -26,7 +27,8 @@
                 "en": "JPY",
                 "symbol": "¥"
             },
-            "country_id": 25
+            "country_id": 25,
+            "icon": "https://flagpedia.net/data/flags/h80/jp.png"
         },
         {
             "country": {
@@ -40,7 +42,8 @@
                 "en": "KRW",
                 "symbol": "₩"
             },
-            "country_id": 26
+            "country_id": 26,
+            "icon": "https://flagpedia.net/data/flags/h80/kr.png"
         },
         {
             "country": {
@@ -54,7 +57,8 @@
                 "en": "THB",
                 "symbol": "฿"
             },
-            "country_id": 27
+            "country_id": 27,
+            "icon": "https://flagpedia.net/data/flags/h80/th.png"
         },
         {
             "country": {
@@ -68,7 +72,8 @@
                 "en": "VND",
                 "symbol": "₫"
             },
-            "country_id": 28
+            "country_id": 28,
+            "icon": "https://flagpedia.net/data/flags/h80/vn.png"
         },
         {
             "country": {
@@ -82,7 +87,8 @@
                 "en": "PHP",
                 "symbol": "₱"
             },
-            "country_id": 29
+            "country_id": 29,
+            "icon": "https://flagpedia.net/data/flags/h80/ph.png"
         },
         {
             "country": {
@@ -96,7 +102,8 @@
                 "en": "IDR",
                 "symbol": "Rp"
             },
-            "country_id": 30
+            "country_id": 30,
+            "icon": "https://flagpedia.net/data/flags/h80/id.png"
         },
         {
             "country": {
@@ -110,7 +117,8 @@
                 "en": "MYR",
                 "symbol": "RM"
             },
-            "country_id": 31
+            "country_id": 31,
+            "icon": "https://flagpedia.net/data/flags/h80/my.png"
         },
         {
             "country": {
@@ -124,7 +132,8 @@
                 "en": "SGD",
                 "symbol": "S$"
             },
-            "country_id": 32
+            "country_id": 32,
+            "icon": "https://flagpedia.net/data/flags/h80/sg.png"
         },
         {
             "country": {
@@ -138,7 +147,8 @@
                 "en": "HKD",
                 "symbol": "HK$"
             },
-            "country_id": 33
+            "country_id": 33,
+            "icon": "https://flagpedia.net/data/flags/h80/hk.png"
         },
         {
             "country": {
@@ -152,7 +162,8 @@
                 "en": "CNY",
                 "symbol": "¥"
             },
-            "country_id": 34
+            "country_id": 34,
+            "icon": "https://flagpedia.net/data/flags/h80/cn.png"
         },
         {
             "country": {
@@ -166,7 +177,8 @@
                 "en": "MOP",
                 "symbol": "MOP$"
             },
-            "country_id": 35
+            "country_id": 35,
+            "icon": "https://flagpedia.net/data/flags/h80/mo.png"
         },
         {
             "country": {
@@ -180,7 +192,8 @@
                 "en": "USD",
                 "symbol": "$"
             },
-            "country_id": 36
+            "country_id": 36,
+            "icon": "https://flagpedia.net/data/flags/h80/us.png"
         },
         {
             "country": {
@@ -194,7 +207,8 @@
                 "en": "EUR",
                 "symbol": "€"
             },
-            "country_id": 37
+            "country_id": 37,
+            "icon": "https://flagpedia.net/data/flags/h80/fr.png"
         },
         {
             "country": {
@@ -208,7 +222,8 @@
                 "en": "EUR",
                 "symbol": "€"
             },
-            "country_id": 38
+            "country_id": 38,
+            "icon": "https://flagpedia.net/data/flags/h80/it.png"
         },
         {
             "country": {
@@ -222,7 +237,8 @@
                 "en": "EUR",
                 "symbol": "€"
             },
-            "country_id": 39
+            "country_id": 39,
+            "icon": "https://flagpedia.net/data/flags/h80/es.png"
         },
         {
             "country": {
@@ -236,7 +252,8 @@
                 "en": "GBP",
                 "symbol": "£"
             },
-            "country_id": 40
+            "country_id": 40,
+            "icon": "https://flagpedia.net/data/flags/h80/gb.png"
         },
         {
             "country": {
@@ -250,7 +267,8 @@
                 "en": "EUR",
                 "symbol": "€"
             },
-            "country_id": 41
+            "country_id": 41,
+            "icon": "https://flagpedia.net/data/flags/h80/de.png"
         },
         {
             "country": {
@@ -264,7 +282,8 @@
                 "en": "CAD",
                 "symbol": "CA$"
             },
-            "country_id": 42
+            "country_id": 42,
+            "icon": "https://flagpedia.net/data/flags/h80/ca.png"
         },
         {
             "country": {
@@ -278,7 +297,8 @@
                 "en": "AUD",
                 "symbol": "A$"
             },
-            "country_id": 43
+            "country_id": 43,
+            "icon": "https://flagpedia.net/data/flags/h80/au.png"
         },
         {
             "country": {
@@ -292,7 +312,8 @@
                 "en": "BRL",
                 "symbol": "R$"
             },
-            "country_id": 44
+            "country_id": 44,
+            "icon": "https://flagpedia.net/data/flags/h80/br.png"
         },
         {
             "country": {
@@ -306,7 +327,8 @@
                 "en": "RUB",
                 "symbol": "₽"
             },
-            "country_id": 45
+            "country_id": 45,
+            "icon": "https://flagpedia.net/data/flags/h80/ru.png"
         },
         {
             "country": {
@@ -320,7 +342,8 @@
                 "en": "ARS",
                 "symbol": "$"
             },
-            "country_id": 46
+            "country_id": 46,
+            "icon": "https://flagpedia.net/data/flags/h80/ar.png"
         },
         {
             "country": {
@@ -334,7 +357,8 @@
                 "en": "INR",
                 "symbol": "₹"
             },
-            "country_id": 47
+            "country_id": 47,
+            "icon": "https://flagpedia.net/data/flags/h80/in.png"
         },
         {
             "country": {
@@ -348,7 +372,8 @@
                 "en": "ZAR",
                 "symbol": "R"
             },
-            "country_id": 48
+            "country_id": 48,
+            "icon": "https://flagpedia.net/data/flags/h80/za.png"
         },
         {
             "country": {
@@ -362,7 +387,8 @@
                 "en": "EGP",
                 "symbol": "E£"
             },
-            "country_id": 49
+            "country_id": 49,
+            "icon": "https://flagpedia.net/data/flags/h80/eg.png"
         },
         {
             "country": {
@@ -376,7 +402,8 @@
                 "en": "NZD",
                 "symbol": "NZ$"
             },
-            "country_id": 50
+            "country_id": 50,
+            "icon": "https://flagpedia.net/data/flags/h80/nz.png"
         },
         {
             "country": {
@@ -390,7 +417,8 @@
                 "en": "CHF",
                 "symbol": "CHF"
             },
-            "country_id": 51
+            "country_id": 51,
+            "icon": "https://flagpedia.net/data/flags/h80/ch.png"
         },
         {
             "country": {
@@ -404,7 +432,8 @@
                 "en": "EUR",
                 "symbol": "€"
             },
-            "country_id": 52
+            "country_id": 52,
+            "icon": "https://flagpedia.net/data/flags/h80/nl.png"
         },
         {
             "country": {
@@ -418,7 +447,8 @@
                 "en": "EUR",
                 "symbol": "€"
             },
-            "country_id": 53
+            "country_id": 53,
+            "icon": "https://flagpedia.net/data/flags/h80/gr.png"
         },
         {
             "country": {
@@ -432,7 +462,8 @@
                 "en": "SEK",
                 "symbol": "kr"
             },
-            "country_id": 54
+            "country_id": 54,
+            "icon": "https://flagpedia.net/data/flags/h80/se.png"
         },
         {
             "country": {
@@ -446,7 +477,8 @@
                 "en": "NOK",
                 "symbol": "kr"
             },
-            "country_id": 55
+            "country_id": 55,
+            "icon": "https://flagpedia.net/data/flags/h80/no.png"
         },
         {
             "country": {
@@ -460,7 +492,8 @@
                 "en": "DKK",
                 "symbol": "kr"
             },
-            "country_id": 56
+            "country_id": 56,
+            "icon": "https://flagpedia.net/data/flags/h80/dk.png"
         },
         {
             "country": {
@@ -474,7 +507,8 @@
                 "en": "EUR",
                 "symbol": "€"
             },
-            "country_id": 57
+            "country_id": 57,
+            "icon": "https://flagpedia.net/data/flags/h80/at.png"
         },
         {
             "country": {
@@ -488,7 +522,8 @@
                 "en": "EUR",
                 "symbol": "€"
             },
-            "country_id": 58
+            "country_id": 58,
+            "icon": "https://flagpedia.net/data/flags/h80/fi.png"
         },
         {
             "country": {
@@ -502,7 +537,8 @@
                 "en": "EUR",
                 "symbol": "€"
             },
-            "country_id": 59
+            "country_id": 59,
+            "icon": "https://flagpedia.net/data/flags/h80/be.png"
         },
         {
             "country": {
@@ -516,7 +552,8 @@
                 "en": "EUR",
                 "symbol": "€"
             },
-            "country_id": 60
+            "country_id": 60,
+            "icon": "https://flagpedia.net/data/flags/h80/ie.png"
         },
         {
             "country": {
@@ -530,7 +567,8 @@
                 "en": "CZK",
                 "symbol": "Kč"
             },
-            "country_id": 61
+            "country_id": 61,
+            "icon": "https://flagpedia.net/data/flags/h80/cz.png"
         },
         {
             "country": {
@@ -544,7 +582,8 @@
                 "en": "ILS",
                 "symbol": "₪"
             },
-            "country_id": 62
+            "country_id": 62,
+            "icon": "https://flagpedia.net/data/flags/h80/il.png"
         },
         {
             "country": {
@@ -558,7 +597,8 @@
                 "en": "TRY",
                 "symbol": "₺"
             },
-            "country_id": 63
+            "country_id": 63,
+            "icon": "https://flagpedia.net/data/flags/h80/tr.png"
         },
         {
             "country": {
@@ -572,7 +612,8 @@
                 "en": "HRK",
                 "symbol": "kn"
             },
-            "country_id": 64
+            "country_id": 64,
+            "icon": "https://flagpedia.net/data/flags/h80/hr.png"
         }
     ]
 }

@@ -13,6 +13,11 @@
     box-shadow: 0rem 0rem 0.2rem 0rem
         color-mix(in srgb, var(--fontcolor) 40%, transparent);
 }
+
+.blocklocked {
+    cursor: pointer;
+}
+
 .block::after {
     position: absolute;
 }

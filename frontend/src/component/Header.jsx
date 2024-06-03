@@ -1,61 +1,25 @@
 import React, { useEffect, useState, useRef } from 'react';
-
 import * as constants from '../constants';
-
 import style from "./Header.module.css";
 import { useTheme } from "../hooks/useTheme";
 import { useWindowSize } from '../hooks/useWindowSize';
 import { useNavigate } from "react-router-dom";
 import { ColorButton } from "./ColorButton";
-
 import NavbarItems from './NavbarItems';
 import Avatar from './Avatar';
 import Dropdown from './Dropdown';
-import { useAuth } from '../hooks/useAuth';
-
+import { useHeader } from './HeaderContext';
+import { useAuth } from "../hooks/useAuth";
 
 function Header() {
   const { isDarkMode, setIsDarkMode } = useTheme();
-  const { isLoggedIn, userInfo } = useAuth();
   const windowSize = useWindowSize();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const navigate = useNavigate();
-
-  const [username, setUsername] = useState("");
-  const [avatar, setAvatar] = useState("");
   const dropdownRef = useRef(null);
-
-  function waitForSessionData(key) {
-    return new Promise((resolve, reject) => {
-      const checkData = () => {
-        const dataString = sessionStorage.getItem(key);
-        if (dataString) {
-          const data = JSON.parse(dataString);
-          resolve(data);
-        } else {
-          setTimeout(checkData, 100); // 每100毫秒检查一次
-        }
-      };
-
-      checkData();
-    });
-  }
-
-  useEffect(() => {
-    if (isLoggedIn) {
-      waitForSessionData("user").then(userData => {
-        setUsername(userData["user_name"]);
-      }).catch(error => {
-        console.error("Error waiting for user data:", error);
-      });
-
-      waitForSessionData("avatar").then(avatarData => {
-        setAvatar(avatarData);
-      }).catch(error => {
-        console.error("Error waiting for avatar data:", error);
-      });
-    }
-  }, [userInfo, isLoggedIn]);
+  const { headerState, updateHeader } = useHeader(); // Use HeaderContext
+  const { userName, avatar } = headerState;
+  const { isLoggedIn } = useAuth();
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -70,10 +34,28 @@ function Header() {
     };
   }, [dropdownRef]);
 
+  useEffect(() => {
+    if (isLoggedIn) {
+      const user = sessionStorage.getItem("user");
+      const avatar = sessionStorage.getItem("avatar");
+
+      if (user) {
+        const userData = JSON.parse(user);
+        const newUserName = userData.user_name || null;
+        const newAvatar = avatar || 0;
+        
+        if (newUserName !== headerState.userName || newAvatar !== headerState.avatar) {
+          updateHeader({
+            userName: newUserName,
+            avatar: newAvatar,
+          });
+        }
+      }
+    }
+  }, [isLoggedIn, updateHeader, headerState.userName, headerState.avatar]);
+
   return (
-    <div className={style.main} onClick={(e) => {
-      setIsDropdownOpen(false);
-    }}>
+    <div className={style.main} onClick={() => setIsDropdownOpen(false)}>
       <img
         src="../../logoTitle.png"
         onClick={() => navigate('/explore')}
@@ -84,27 +66,20 @@ function Header() {
         className={style.logo}
       />
 
-
       <div className={style.switchcontainer}>
         {windowSize.width > constants.MOBILE_SCREEN_WIDTH && <NavbarItems />}
-
         <div className={style.switch}>
-          <ColorButton
-            isDarkMode={isDarkMode}
-            setIsDarkMode={setIsDarkMode}
-          ></ColorButton>
+          <ColorButton isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
         </div>
 
-        {windowSize.width > constants.MOBILE_SCREEN_WIDTH && isLoggedIn
-          &&
+        {windowSize.width > constants.MOBILE_SCREEN_WIDTH && isLoggedIn &&
           <>
             <Avatar
               src={`../../${avatar}.png`}
-              alt={username}
-              username={username}
+              alt={userName}
+              username={userName}
               onClick={(e) => {
                 e.stopPropagation();
-                console.log("userinfo", userInfo);
                 setIsDropdownOpen(!isDropdownOpen);
               }}
             />
@@ -113,8 +88,8 @@ function Header() {
                 <Dropdown setIsDropdownOpen={setIsDropdownOpen} />
               </div>
             )}
-          </>}
-
+          </>
+        }
       </div>
     </div>
   );

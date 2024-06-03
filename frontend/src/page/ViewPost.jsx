@@ -1,30 +1,47 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import style from "./Edit.module.css";
+import style from "./ViewPost.module.css";
 
-import Button from "../component/Button";
-import Calendar from "../component/Calendar";
-import InputText from "../component/InputText";
-import SearchableSelect from "../component/SearchableSelect";
 import DragBox from "../component/EditPage/DragBox";
+import Tag from "../component/Tag";
 
 import { useLanguage } from "../hooks/useLanguage";
-import { useAuth } from "../hooks/useAuth";
 import { fetchWithJwt } from "../hooks/fetchWithJwt";
 
-import CountryData from "../assets/Country.json";
-import {
-    IoSunny,
-    IoRainy,
-    IoAlertCircle,
-} from "react-icons/io5";
+import { IoSunny, IoRainy, IoAlertCircle } from "react-icons/io5";
 
 export default function ViewPost() {
     const { id } = useParams();
-    const [stage, setStage] = useState(0);
     const [trip, setTrip] = useState({});
+    const [post, setPost] = useState({});
+    const [allTags, setAllTags] = useState([]);
     const { language } = useLanguage();
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const getPostData = async () => {
+            try {
+                const response = await fetchWithJwt(
+                    `/api/v1/post/${id}`,
+                    "GET"
+                );
+                const result = await response.json();
+                if (result["public"] === true) {
+                    console.log(result);
+                    setPost({
+                        content: result["content"],
+                        tags_id: result["tags"],
+                    });
+                } else {
+                    navigate("/login");
+                    console.log(result["message"]);
+                }
+            } catch (error) {
+                console.error("Fetching preferences failed:", error);
+            }
+        };
+        getPostData();
+    }, []);
 
     useEffect(() => {
         if (id !== undefined) {
@@ -45,13 +62,12 @@ export default function ViewPost() {
                     navigate("/login");
                     console.log("errrr");
                 });
-            setStage(1);
         }
         return () => {};
     }, [id, navigate, language]);
 
     const refreshTrip = () => {
-        fetchWithJwt("/api/v1/trip/" + id + "/" + language, "GET")
+        fetchWithJwt("/api/v1/post/" + id + "/" + language, "GET")
             .then(function (response) {
                 return response.json();
             })
@@ -70,297 +86,74 @@ export default function ViewPost() {
             });
     };
 
+    useEffect(() => {
+        const getAllTags = async () => {
+            try {
+                const response = await fetchWithJwt(
+                    `/api/v1/tag/get_tags?source=${"SharePost"}`,
+                    "GET"
+                );
+                const data = await response.json();
+                if (Array.isArray(data)) {
+                    setAllTags(
+                        data
+                            .map((cat) => {
+                                return cat["options"];
+                            })
+                            .flat()
+                    );
+                }
+            } catch (error) {
+                console.error("Fetching preferences failed:", error);
+            }
+        };
+        getAllTags();
+    }, []);
+
+    const getTagName = (tagId, lang) => {
+        if (allTags.length === 0) return null;
+        for (let i = 0; i < allTags.length; i++) {
+            if (allTags[i].tag_id === tagId) {
+                return allTags[i][`tag_name_${lang}`];
+            }
+        }
+        return null;
+    };
+
     return (
         <div className={style.main}>
-            {stage === 0 && (
-                <InitialPage setStage={setStage} language={language} />
-            )}
-            {stage === 1 && (
-                <EditPage
-                    tripinfo={trip}
-                    language={language}
-                    refreshTrip={refreshTrip}
-                />
-            )}
-        </div>
-    );
-}
-
-function InitialPage({ setStage, language }) {
-    const words = {
-        zh: {
-            title: "創建行程",
-            tripname: "請替這個旅程起個名稱",
-            startdate: "起始日期",
-            enddate: "結束日期",
-            area: "地區",
-            Sun: "日",
-            Mon: "一",
-            Tue: "二",
-            Wed: "三",
-            Thu: "四",
-            Fri: "五",
-            Sat: "六",
-            noname: "尚未填寫名稱",
-            nodate: "尚未輸入日期",
-            nodetail: "尚未選擇目標國家/貨幣",
-            next: "下一頁",
-        },
-        en: {
-            title: "Create Trip",
-            tripname: "Please name this trip",
-            startdate: "Start date",
-            enddate: "End date",
-            area: "Area",
-            Sun: "Sun",
-            Mon: "Mon",
-            Tue: "Tue",
-            Wed: "Wed",
-            Thu: "Thu",
-            Fri: "Fri",
-            Sat: "Sat",
-            noname: "Name not found",
-            nodate: "Date not found",
-            nodetail: "Country not found",
-            next: "Next page",
-        },
-    };
-    const [displayCalendar, setDisplayCalendar] = useState(false);
-    const [tripName, setTripName] = useState("");
-    const [selectedStart, setSelectedStart] = useState("");
-    const [selectedEnd, setSelectedEnd] = useState("");
-    const [selectedLocation, setSelectedLocation] = useState("");
-    const [selectedExchange, setSelectedExchange] = useState("");
-    const [selectedStandard, setSelectedStandard] = useState("");
-    let navigate = useNavigate();
-    let { updateUserData } = useAuth();
-
-    const createTrip = () => {
-        if (tripName === "") {
-            alert(words[language]["noname"]);
-            return;
-        }
-        if (selectedStart === "" || selectedEnd === "") {
-            alert(words[language]["nodate"]);
-            return;
-        }
-        if (selectedLocation === "" || selectedStandard === "") {
-            alert(words[language]["nodetail"]);
-            return;
-        }
-        const place = CountryData.places.find(
-            (place) => place.country_id === selectedLocation
-        );
-        console.log({
-            trip_name: tripName,
-            start_date: DatetoArray(selectedStart),
-            end_date: DatetoArray(selectedEnd),
-            location_id: selectedLocation,
-            location: [place.latitude, place.longitude],
-            exchange: selectedExchange,
-            standard: selectedStandard,
-        });
-        fetchWithJwt("/api/v1/trip", "POST", {
-            trip_name: tripName,
-            start_date: DatetoArray(selectedStart),
-            end_date: DatetoArray(selectedEnd),
-            location_id: selectedLocation,
-            location: [place.latitude, place.longitude],
-            exchange: selectedExchange,
-            standard: selectedStandard,
-        })
-            .then(function (response) {
-                return response.json();
-            })
-            .then(function (result) {
-                if (result["trip_id"]) {
-                    updateUserData();
-                    navigate("./" + result["trip_id"]);
-                } else {
-                    console.log(result);
-                }
-            });
-
-        setStage(1);
-    };
-
-    const DatetoArray = (date) => {
-        const year = date.getFullYear(); // 获取年份
-        const month = date.getMonth() + 1; // 获取月份（注意加1）
-        const day = date.getDate(); // 获取日期
-
-        return [year, month, day];
-    };
-
-    const formatDate = (date) => {
-        if (!date || date === "") {
-            return "";
-        }
-        let d = new Date(date),
-            month = "" + (d.getMonth() + 1),
-            day = "" + d.getDate(),
-            year = d.getFullYear();
-
-        if (month.length < 2) month = "0" + month;
-        if (day.length < 2) day = "0" + day;
-
-        return [year, month, day].join("-");
-    };
-
-    const getUniqueMoneyValues = (data, language) => {
-        const uniqueMoneyValues = new Map();
-        data.places.forEach((place) => {
-            const id = place.money["en"]; // 假设 "en" 是唯一标识
-            if (!uniqueMoneyValues.has(id)) {
-                uniqueMoneyValues.set(id, {
-                    value: place.money[language],
-                    id: id,
-                });
-            }
-        });
-        return Array.from(uniqueMoneyValues.values());
-    };
-
-    return (
-        <div className={style.initialpage}>
-            <div className={style.initialblock}>
-                <div className={style.title}>{words[language]["title"]}</div>
-                <InputText
-                    propmt={words[language]["tripname"]}
-                    name={"tripname"}
-                    setting={{ require: true, width: "100%" }}
-                    onChange={setTripName}
-                />
-
+            <div className={style.postcontainer}>
                 <div className={style.row}>
-                    <div className={style.selectbar}>
-                        <div>{"目標國家"}</div>
-                        <SearchableSelect
-                            words={{
-                                zh: {
-                                    select: "請選擇",
-                                    search: "搜尋",
-                                },
-                                en: {
-                                    select: "Select",
-                                    search: "Search",
-                                },
-                            }}
-                            options={CountryData.places.map((c) => {
-                                return {
-                                    value: c.country[language],
-                                    id: c.country_id,
-                                };
-                            })}
-                            onSelect={(value) => {
-                                setSelectedLocation(value.id);
-                                const place = CountryData.places.find(
-                                    (place) => place.country_id === value.id
-                                );
-                                const money = place ? place.money["en"] : "";
-                                setSelectedExchange(money);
-                            }}
-                        />
-                    </div>
-                    <div className={style.selectbar}>
-                        <div>{"記帳貨幣"}</div>
-                        <SearchableSelect
-                            words={{
-                                zh: {
-                                    select: "請選擇",
-                                    search: "搜尋",
-                                },
-                                en: {
-                                    select: "Select",
-                                    search: "Search",
-                                },
-                            }}
-                            options={getUniqueMoneyValues(
-                                CountryData,
-                                language
-                            )}
-                            onSelect={(money) => {
-                                setSelectedExchange(money.id);
-                            }}
-                            setvalue={selectedExchange}
-                        />
-                    </div>
-                    <div className={style.selectbar}>
-                        <div>{"結算幣別"}</div>
-                        <SearchableSelect
-                            words={{
-                                zh: {
-                                    select: "請選擇",
-                                    search: "搜尋",
-                                },
-                                en: {
-                                    select: "Select",
-                                    search: "Search",
-                                },
-                            }}
-                            options={getUniqueMoneyValues(
-                                CountryData,
-                                language
-                            )}
-                            onSelect={(value) => {
-                                setSelectedStandard(value.id);
-                            }}
-                        />
+                    <div className={style.title}>{trip?.name}</div>
+
+                    <div className={style.tagscontainer}>
+                        <div className={style.tag}>
+                            {post["tags_id"]?.map((tagId) => (
+                                <Tag
+                                    key={tagId}
+                                    text={getTagName(tagId, language)}
+                                />
+                            ))}
+                        </div>
                     </div>
                 </div>
 
-                <div
-                    className={style.pickdate}
-                    onClick={() => {
-                        setDisplayCalendar(!displayCalendar);
+                {post.content?.length !== 0 && <textarea
+                    style={{
+                        border: "none",
+                        backgroundColor: "var(--backgroundcolor)",
                     }}
-                >
-                    <div>{words["startdate"]}</div>
-                    <div>{words["enddate"]}</div>
-                    <input
-                        className={style.datepicker}
-                        type="date"
-                        name="startdate"
-                        id="startdate"
-                        value={formatDate(selectedStart)}
-                        onClick={(event) => {
-                            event.target.blur();
-                        }}
-                        readOnly
-                    />
-                    <input
-                        className={style.datepicker}
-                        type="date"
-                        name="enddate"
-                        id="enddate"
-                        onClick={(event) => {
-                            event.target.blur();
-                        }}
-                        value={formatDate(selectedEnd)}
-                        readOnly
-                    />
-                </div>
-                <div
-                    className={`${style.calendarcontainer} ${
-                        displayCalendar ? null : style.hidecalendar
-                    }`}
-                >
-                    <Calendar
-                        selectedStart={selectedStart}
-                        setSelectedStart={setSelectedStart}
-                        selectedEnd={selectedEnd}
-                        setSelectedEnd={setSelectedEnd}
-                    />
-                </div>
-                <div style={{ width: "100%", height: "2rem" }}>&nbsp;</div>
-                <Button
-                    txt={words[language]["next"]}
-                    func={() => {
-                        createTrip();
-                    }}
-                    setting={{ width: "100%" }}
-                />
+                    className={style.postcontent}
+                    value={post.content}
+                    disabled
+                ></textarea>}
             </div>
+
+            <EditPage
+                tripinfo={trip}
+                language={language}
+                refreshTrip={refreshTrip}
+            />
         </div>
     );
 }
@@ -524,23 +317,21 @@ function EditPage({ tripinfo, language, refreshTrip }) {
 
         setSpots(newSpots);
     };
-    const getWeather = () => {
-        let weather = "晴";
-        switch (weather) {
-            case "晴":
-                return <IoSunny className={style.weather} />;
-            case "雨":
-                return <IoRainy className={style.weather} />;
-            default:
-                return <IoAlertCircle className={style.weather} />;
-        }
-    };
+
+    // const getWeather = () => {
+    //     let weather = "晴";
+    //     switch (weather) {
+    //         case "晴":
+    //             return <IoSunny className={style.weather} />;
+    //         case "雨":
+    //             return <IoRainy className={style.weather} />;
+    //         default:
+    //             return <IoAlertCircle className={style.weather} />;
+    //     }
+    // };
     return (
         <div className={style.editpagecontainer}>
             <div className={style.editpage}>
-                <div className={`${style.editpageTitle}`}>
-                    {tripinfo["name"]}
-                </div>
                 <div className={style.secondRow}>
                     <div className={style.selectdate}>
                         {dates.map((d, i) => (
@@ -565,7 +356,7 @@ function EditPage({ tripinfo, language, refreshTrip }) {
                             {dates[selectedDate]
                                 ? dates[selectedDate].weekday + " "
                                 : ""}
-                            {getWeather()}
+                            {/* {getWeather()} */}
                         </div>
                     </div>
                     <DragBox
@@ -579,4 +370,3 @@ function EditPage({ tripinfo, language, refreshTrip }) {
         </div>
     );
 }
-

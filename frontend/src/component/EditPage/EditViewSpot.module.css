@@ -33,7 +33,8 @@
 
 .row {
     display: flex;
-    padding-top: 1rem;
+    padding-top: 0.5rem;
+    font-size: 0.8rem;
 }
 
 .rowname {
@@ -60,6 +61,7 @@
 }
 
 .info {
+    
     padding-top: 0.5rem;
     font-size: 0.8rem;
     line-height: 1.5rem;
@@ -81,13 +83,13 @@
     justify-content: space-between;
 }
 
-
 .submit {
     position: absolute;
     right: 1rem;
     bottom: 1rem;
     width: 8rem;
 }
+
 @media (max-width: 735px) {
     .main {
         padding: 1rem;
@@ -110,6 +112,7 @@
     margin-top: 2rem;
     max-width: 90%;
 }
+
 .inputcontainer {
     margin-top: 1.5rem;
     position: relative;

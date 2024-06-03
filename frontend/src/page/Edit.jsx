@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import style from "./Edit.module.css";
 
@@ -24,6 +24,8 @@ import { RiMoneyDollarBoxLine } from "react-icons/ri";
 import {
     IoSunny,
     IoRainy,
+    IoSnow,
+    IoCloud,
     IoAlertCircle,
     IoAddCircleOutline,
     IoChevronBack,
@@ -36,8 +38,10 @@ export default function Edit() {
     const [trip, setTrip] = useState({});
     const { language } = useLanguage();
     const navigate = useNavigate();
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
+        setIsLoading(true);
         if (id !== undefined) {
             fetchWithJwt("/api/v1/trip/" + id + "/" + language, "GET")
                 .then(function (response) {
@@ -58,10 +62,12 @@ export default function Edit() {
                 });
             setStage(1);
         }
+        setIsLoading(false);
         return () => {};
     }, [id, navigate, language]);
 
     const refreshTrip = () => {
+        setIsLoading(true);
         fetchWithJwt("/api/v1/trip/" + id + "/" + language, "GET")
             .then(function (response) {
                 return response.json();
@@ -79,15 +85,18 @@ export default function Edit() {
                 navigate("/login");
                 console.log("errrr");
             });
+        setIsLoading(false);
     };
 
     return (
         <div className={style.main}>
+            <Loader isLoading={isLoading} />
             {stage === 0 && (
                 <InitialPage setStage={setStage} language={language} />
             )}
             {stage === 1 && (
                 <EditPage
+                    id={id}
                     tripinfo={trip}
                     language={language}
                     refreshTrip={refreshTrip}
@@ -376,7 +385,7 @@ function InitialPage({ setStage, language }) {
     );
 }
 
-function EditPage({ tripinfo, language, refreshTrip }) {
+function EditPage({ id, tripinfo, language, refreshTrip }) {
     const [dates, setDates] = useState([]);
     const [selectedDate, setSelectedDate] = useState(0);
     const [trip, setTrip] = useState(tripinfo["trip"] ? tripinfo["trip"] : []);
@@ -386,7 +395,54 @@ function EditPage({ tripinfo, language, refreshTrip }) {
     const [openExplore, setOpenExplore] = useState(false);
     const [openDropDown, setOpenDropDown] = useState(false);
     const [openWallet, setOpenWallet] = useState(false);
+    const [weathers, setWeathers] = useState([]);
     const dropdownRef = useRef(null);
+
+    const jwtToken = sessionStorage.getItem("jwtToken");
+    const socket = useMemo(() => {
+        return io.connect("https://tripbuddy-h5d6vsljfa-de.a.run.app", {
+            query: {
+                ...(jwtToken && { jwt: jwtToken }),
+            },
+        });
+    }, [jwtToken]);
+
+    useEffect(() => {
+        socket.connect();
+        socket.on("connect", () => {
+            console.log("WebSocket 连接成功");
+            socket.emit("join_trip", { trip_id: id });
+        });
+
+        socket.on("reconnect_attempt", (attemptNumber) => {
+            console.log(`尝试重新连接，第 ${attemptNumber} 次`);
+        });
+
+        socket.on("error", (error) => {
+            console.error("WebSocket 连接错误:", error);
+        });
+
+        socket.on("render_trip", (data) => {
+            console.log("ㄝㄝㄝㄝ動了");
+            setTrip(data[language].trip);
+        });
+
+        socket.on("message", (message) => {
+            console.log("WebSocket 通知:", message);
+        });
+
+        socket.on("disconnect", (reason) => {
+            console.log("WebSocket 连接断开:", reason);
+            if (reason === "transport error") {
+                console.error("传输层错误导致连接断开");
+            }
+        });
+
+        return () => {
+            socket.emit("leave_trip", { trip_id: id });
+            socket.disconnect();
+        };
+    }, [id]);
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -403,18 +459,6 @@ function EditPage({ tripinfo, language, refreshTrip }) {
             document.removeEventListener("mousedown", handleClickOutside);
         };
     }, [dropdownRef]);
-
-    const socket = io.connect("https://planar-effect-420508.de.r.appspot.com", {
-        query: {
-            ...(sessionStorage.getItem("jwtToken") && {
-                Authorization: `Bearer ${sessionStorage.getItem("jwtToken")}`,
-            }),
-        },
-        reconnectionAttempts: 5, // 最大重連次數
-        reconnectionDelay: 5000, // 每次重連間隔時間（毫秒）
-        reconnectionDelayMax: 10000, // 最大重連間隔時間（毫秒）
-        timeout: 20000, // 連接超時時間（毫秒）
-    });
 
     useEffect(() => {
         function formatDateAndWeekday(start, end, language) {
@@ -480,19 +524,6 @@ function EditPage({ tripinfo, language, refreshTrip }) {
         setSpots(trip[selectedDate] || []);
     }, [selectedDate, trip]);
 
-    useEffect(() => {
-        socket.emit("join_trip", { trip_id: tripinfo["id"] });
-
-        socket.on("render_trip", (data) => {
-            setTrip(data.trip);
-        });
-
-        return () => {
-            socket.emit("leave_trip", { trip_id: tripinfo["id"] });
-            socket.disconnect();
-        };
-    }, [tripinfo, socket]);
-
     const reorderSpots = (newOrder) => {
         const newSpots = newOrder.map((id) =>
             spots.find((s) => s.relation_id === id)
@@ -532,9 +563,8 @@ function EditPage({ tripinfo, language, refreshTrip }) {
         //             console.log("Network error:", error.message);
         //         }
         //     });
-
         socket.emit("update_trip", {
-            trip_id: tripinfo["id"],
+            trip_id: id,
             langauge: language,
             trip: newTrip,
         });
@@ -585,24 +615,41 @@ function EditPage({ tripinfo, language, refreshTrip }) {
         //     });
 
         socket.emit("update_trip", {
-            trip_id: tripinfo["id"],
+            trip_id: id,
             langauge: language,
             trip: newTrip,
         });
 
         setSpots(newSpots);
     };
-    const getWeather = () => {
-        let weather = "晴";
+
+    useEffect(() => {
+        fetchWithJwt("/api/v1/weather/" + id, "GET")
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (result) {
+                console.log({ 天氣: result });
+                setWeathers(result["result"]);
+            });
+
+        return () => {};
+    }, [id]);
+    const getWeather = (weather) => {
         switch (weather) {
-            case "晴":
+            case "Clear":
                 return <IoSunny className={style.weather} />;
-            case "雨":
+            case "Rain":
                 return <IoRainy className={style.weather} />;
+            case "Clouds":
+                return <IoCloud className={style.weather} />;
+            case "Snow":
+                return <IoSnow className={style.weather} />;
             default:
-                return <IoAlertCircle className={style.weather} />;
+                return <></>;
         }
     };
+
     const openAddSpot = () => {
         setOpenWallet(false);
         setOpenExplore((prev) => !prev);
@@ -644,7 +691,11 @@ function EditPage({ tripinfo, language, refreshTrip }) {
                                 onClick={() => {
                                     setSelectedDate(i);
                                 }}
-                            >{`第${i + 1}天`}</div>
+                            >
+                                {language === "zh"
+                                    ? `第${i + 1}天`
+                                    : `Day${i + 1}`}
+                            </div>
                         ))}
                     </div>
                     <RiMoneyDollarBoxLine
@@ -655,13 +706,18 @@ function EditPage({ tripinfo, language, refreshTrip }) {
                 <div className={style.datedetail}>
                     <div className={style.dateinfos}>
                         <div>
-                            {dates[selectedDate]
+                            {dates && dates[selectedDate]
                                 ? dates[selectedDate].date + " "
                                 : ""}
-                            {dates[selectedDate]
+                            {dates && dates[selectedDate]
                                 ? dates[selectedDate].weekday + " "
                                 : ""}
-                            {getWeather()}
+                            {weathers &&
+                                getWeather(
+                                    weathers[selectedDate]
+                                        ? weathers[selectedDate]["main"]
+                                        : null
+                                )}
                         </div>
                         <IoAddCircleOutline
                             className={style.addspot}

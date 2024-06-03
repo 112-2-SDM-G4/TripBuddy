@@ -1,11 +1,29 @@
 import React, { useState } from "react";
 import style from "./SpotinEdit.module.css";
 import { IoMdClose } from "react-icons/io";
-import EditViewSpot from "./EditViewSpot";
+import { useLanguage } from "../../hooks/useLanguage";
 
-export default function SpotinEdit({ spot, delSpot, updateSpotData, locked=false }) {
-    const [openEdit, setOpenEdit] = useState(false);
-
+export default function SpotinEdit({
+    spot,
+    delSpot,
+    setOpenedSpot,
+    locked = false,
+}) {
+    const { language } = useLanguage();
+    const words = {
+        zh: {
+            budget: "預算",
+            stay: "停留",
+            hr: "時",
+            min: "分",
+        },
+        en: {
+            budget: "Budget",
+            stay: "Stay",
+            hr: "hr",
+            min: "min",
+        },
+    };
     const tryvalid = (obj) => {
         if (obj) return obj;
         return "";
@@ -15,7 +33,10 @@ export default function SpotinEdit({ spot, delSpot, updateSpotData, locked=false
     };
 
     return (
-        <div className={style.block} onClick={() => setOpenEdit(true)}>
+        <div
+            className={`${style.block} ${locked && style.blocklocked}`}
+            onClick={() => setOpenedSpot(spot)}
+        >
             {spot && (
                 <>
                     <img
@@ -27,32 +48,33 @@ export default function SpotinEdit({ spot, delSpot, updateSpotData, locked=false
                         <div className={style.title}>
                             {tryvalid(spot["name"])}
                         </div>
-                        <div className={style.stay}>{`停留${formatNumber(
-                            tryvalid(spot["stay_time"][0])
-                        )}時${formatNumber(
-                            tryvalid(spot["stay_time"][1])
-                        )}分`}</div>
+                        <div className={style.stay}>{`${
+                            words[language]["stay"]
+                        }${formatNumber(tryvalid(spot["stay_time"][0]))}${
+                            words[language]["hr"]
+                        }${formatNumber(tryvalid(spot["stay_time"][1]))}${
+                            words[language]["min"]
+                        }`}</div>
+                        <div className={style.comment}>
+                            {words[language]["budget"] + ": "}
+                            {tryvalid(spot["money"])}
+                        </div>
                         <div className={style.comment}>
                             {tryvalid(spot["comment"])}
                         </div>
                     </div>
-                    <button
-                        className={style.closebt}
-                        onClick={() => {
-                            delSpot();
-                        }}
-                    >
-                        <IoMdClose className={style.closebt} />
-                    </button>
+                    {!locked && (
+                        <button
+                            className={style.closebt}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                delSpot();
+                            }}
+                        >
+                            <IoMdClose className={style.closebt} />
+                        </button>
+                    )}
                 </>
-            )}
-            {openEdit && (
-                <EditViewSpot
-                    spot={spot}
-                    onClose={() => setOpenEdit(false)}
-                    updateSpotData={updateSpotData}
-                    locked={locked}
-                />
             )}
         </div>
     );
