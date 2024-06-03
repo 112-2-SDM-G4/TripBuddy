@@ -1,6 +1,7 @@
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_restful import Resource
 from flask import request, make_response, jsonify
+import random
 import json
 import ast
 
@@ -9,10 +10,12 @@ from app.models.schedule import Schedule
 from app.models.post import Post
 from app.models.place import Place
 from app.models.tags import Tags
+from app.models.country import Country
 from app.models.relation_user_sch import RelationUserSch
 from app.models.relation_spot_sch import RelationSpotSch
 from app.models.relation_sch_tag import RelationSchTag
 from app.services.gemini import Gemini
+from app.services.weather import OpenWeatherAPI
 
 class TripManager(Resource):
     def get_trip_length(self, trip):
@@ -43,6 +46,9 @@ class TripManager(Resource):
                 return make_response({'message': 'Trip not found.'}, 400)
             
             schedule = Schedule.get_by_id(trip_id)
+
+            if not (schedule.public or user_owns_schedule(user_id, trip_id)):
+                return make_response({'message': 'User does not have access to this trip.'}, 403)
 
             places_in_trip = RelationSpotSch.get_by_schedule(trip_id)
             
@@ -235,10 +241,16 @@ class AITripGeneration(Resource):
             return make_response({'message': 'User not found.'}, 400)
         data = request.get_json()
         text = data['text']
-        country = Tags.get_name_en(data['location_id'])
-        location_lat, location_lng = data['location']
-        exchange = data['exchange'] if 'exchange' in data else None
-        standard = data['standard'] 
+        if data['location_id']:
+            country_id = data['location_id']
+            country = Country.get_name_zh(country_id)
+            location_lat, location_lng = data['location']
+        else:
+            country_id = random.randint(24, 64)
+            country = Country.get_name_zh(country_id)
+            location_lat, location_lng = Country.get_lat_lng(country_id)
+        exchange = Country.get_currency(country_id)
+        standard = "TWD"
         try:
             start_date = array_to_date(data['start_date'])
             end_date = array_to_date(data['end_date'])
@@ -247,15 +259,18 @@ class AITripGeneration(Resource):
             return make_response({'message': 'Invalid date.'}, 400)
         
         trip_name = self._generate_schedule_name(text, country, start_date, end_date)
-        raw_schedule = self._generate_raw_schedule(text, country, start_date, end_date)
+        content = self._generate_raw_schedule(text, country, start_date, end_date)
+        if content['valid'] == 0:
+            return make_response(content, 200)
+        raw_schedule = content['trip']
         schedule_info = {
-            'location_id': data['location_id'],
+            'location_id': country_id,
             'location_lng': location_lng,
             'location_lat': location_lat,
             'exchange': exchange,
             'standard': standard,
             'schedule_name': trip_name,
-            'places': self.search_places_id(raw_schedule, location_lat, location_lng),
+            'places': self._search_places_id(raw_schedule, location_lat, location_lng),
             'start_date': start_date,
             'end_date': end_date,
         }
@@ -269,13 +284,17 @@ class AITripGeneration(Resource):
     
         return make_response(respose, 201)
     
-    def search_places_id(self, raw_schedule: list[dict], location_lat, location_lng, lang='en') -> list[dict]:
+    def _search_places_id(self, raw_schedule: List[dict], location_lat, location_lng, lang='zh') -> List[dict]:
         """Search places in the raw schedule"""
         google_maps = GoogleMapApi(GOOGLE_MAPS_API_KEY)
         
         for place in raw_schedule:
             search_res, search_places = google_maps.get_search_info(place['place_name'], lang, location_lat, location_lng)
-            place['place_id'] = search_places[0]['place_id']
+            if search_res.ok:
+                place['place_id'] = search_places[0]['place_id']
+                _, _ = fetch_and_save_place(place['place_id'], lang)
+            else:
+                raw_schedule.remove(place)
         return raw_schedule
     
     def _generate_schedule_name(self, user_input: str, country: str, start_date: date, end_date: date) -> str:
@@ -295,14 +314,16 @@ class AITripGeneration(Resource):
             'response_mime_type': 'application/json',
             'response_schema': response_schema,
         }
-        gemini = Gemini(configs=model_config)
-        response = gemini.generate_content(gpt_input)
-        trip_name = ast.literal_eval(response.candidates[0].content.parts[0].text)['trip_name']
+        try:
+            gemini = Gemini(configs=model_config)
+            response = gemini.generate_content(gpt_input)
+            trip_name = ast.literal_eval(str(response.candidates[0].content.parts[0].text))['trip_name']
+        except:
+            trip_name = 'AI generate trip'
         print(trip_name)
         return trip_name
 
-
-    def _generate_raw_schedule(self, user_input: str, country: str, start_date: date, end_date: date):
+    def _generate_raw_schedule(self, user_input: str, country: str, start_date: date, end_date: date) -> Dict:
         """Use Google Gemini to generate raw schedule"""
         travel_days = (end_date - start_date).days + 1
         response_schema = {
@@ -327,23 +348,43 @@ class AITripGeneration(Resource):
                     'date': 2,
                     'order': 2,
                 }
-            ]
+            ],
+            'valid': 1
         }
+        bad_response = {'msg': 'your response', 'valid': 0}
+        # Verify if this text is an unreasonable custom itinerary preference. If it is unreasonable, 
         gpt_input = f"""
-        You are a local expert in {country}, 
-        you must plan a {travel_days}-day itinerary list for the user, 
-        and have some user preferences: {user_input}.
-        Your responce must follow JSON schema.<JSONSchema>{json.dumps(response_schema)}</JSONSchema>
+        You are a local guide in {country} who gives travel itinerary to tourists.
+        Please read the request from a tourist in the 『』 sign, 
+        and follow the instructions step by step listed below:
+        1. You should try your best to arrange travel, but some people just come and mess around.
+            If you think the request comes from these malicious people
+            please explain the reasons why it is inappropriate and respond politely.
+            Your explanation must follow this JSON schema.<JSONSchema>{json.dumps(bad_response)}</JSONSchema>
+            If not, go to step 2
+        
+        2. For verified request, you must customize a {travel_days}-day itinerary plan according to the user preferences.
+            For each day, give at least three tourist spots to visit.
+            For each attraction, please provide a clear attraction name instead of an action,
+            such as: "Starbucks Da'an Store" instead of "Spend a leisurely afternoon in a cafe", "Historic Canal Tour" instead of "Take a cruise on the canal"
+            Your responce must follow JSON schema.<JSONSchema>{json.dumps(response_schema)}</JSONSchema>
+
+        The request from a tourist:
+        『{user_input}』
         """
 
         model_config = { 
             'candidate_count': 1,
             'response_mime_type': 'application/json',
         }
-        gemini = Gemini(configs=model_config)
-        response = gemini.generate_content(gpt_input)
-        raw_schedule = ast.literal_eval(response.candidates[0].content.parts[0].text)['trip']
-        return raw_schedule
+        try:
+            gemini = Gemini(configs=model_config)
+            response = gemini.generate_content(gpt_input)
+            res_dict = ast.literal_eval(str(response.candidates[0].content.parts[0].text))
+        except:
+            bad_response['msg'] = 'AI failed to generate schedule.'
+            res_dict = bad_response
+        return res_dict
     
     def _create_schedule(self, schedule_info: Dict, user_id: int) -> int:
         """Create schedule from post-processed schedule_info"""
@@ -439,3 +480,53 @@ class AITripGeneration(Resource):
             "exchange": schedule.exchange,
         }
         return 200, response
+    
+class WeatherManager(Resource):
+    @jwt_required()
+    def get(self, trip_id):
+        OPEN_WEATHER_API_KEY = "a84fa03da67828c145d8b5c137e1d6b7"
+        '''流程：
+        1. 從 trip_id 抓「每天的」第一個景點的經緯度
+        2. 透過 OpenWeatherAPI 抓取當天最高溫、最低溫、天氣狀況
+        3. 回傳天氣資訊
+        '''
+        user_id = varify_user(get_jwt_identity())
+        if user_id == None:
+            return make_response({'message': 'User not found.'}, 400)
+
+        if not Schedule.get_by_id(trip_id):
+            return make_response({'message': 'Trip not found.'}, 400)
+
+        weather_infos = []
+        schedule = Schedule.get_by_id(trip_id)
+        today = datetime.now().date()
+        start_date = schedule.start_date
+        end_date = schedule.end_date
+
+        if end_date < today:
+            return make_response({'message': 'Trip has ended.'}, 400)
+
+        if start_date + timedelta(5) < today:
+            return make_response({'message': 'Trip is too far away.'}, 400)
+
+        places_in_trip = RelationSpotSch.get_by_schedule(trip_id)
+        places_in_trip.sort(key=lambda x: (x.date, x.order))
+        print(places_in_trip)
+        google_maps = GoogleMapApi(GOOGLE_MAPS_API_KEY)
+        open_weather = OpenWeatherAPI(OPEN_WEATHER_API_KEY)
+
+        limit = 5
+        for relation_spot_sch in places_in_trip:
+            if relation_spot_sch.order == 1 and len(weather_infos) < limit:
+                place_location = google_maps.get_place_lat_lng(relation_spot_sch.place_id, "zh_TW")
+                if not place_location:
+                    place_location['lat'] = schedule.location_lat
+                    place_location['lng'] = schedule.location_lng
+                weather_info = open_weather.get_weather(place_location['lat'], place_location['lng'])
+                weather_infos.append(weather_info)
+
+        response = {
+            "result": weather_infos,
+        }
+
+        return make_response(response, 200)

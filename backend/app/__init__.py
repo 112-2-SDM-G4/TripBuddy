@@ -1,10 +1,13 @@
 import os
+import json
 from dotenv import load_dotenv
-from .socket import socketio
+# from .socket import socketio
+from flask_socketio import SocketIO
+
 from flask import Flask
 from flask_jwt_extended import JWTManager
 
-
+socketio = SocketIO(cors_allowed_origins="*",always_connect=True, async_mode="threading")
 def create_app():
     app = Flask(__name__)
     
@@ -26,3 +29,13 @@ def create_app():
     socketio.init_app(app, cors_allowed_origins="*")
 
     return app
+
+def set_env_vars():
+    secret = os.environ.get("CLOUD_SQL_CREDENTIALS_SECRET")
+    if secret:
+        creds = json.loads(secret)
+        for key, value in creds.items():
+            os.environ[key] = value
+            print(f"Setting {key} environment variable")
+    else:
+        print("No secret found")

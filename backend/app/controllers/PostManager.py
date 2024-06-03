@@ -1,11 +1,13 @@
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_restful import Resource
 from flask import request, make_response
+import random
 
 from app.controllers.utils import *
 from app.models.post import Post
 from app.models.relation_sch_tag import RelationSchTag
 from app.models.relation_user_sch import RelationUserSch
+from app.models.relation_user_tag import RelationUserTag
 from app.models.schedule import Schedule
 from app.models.tags import Tags
 
@@ -59,7 +61,6 @@ class PostManager(Resource):
         else:
             # get all hearted trips and public trips
             hearted_trips = []
-            public_trips = []
 
             for relation in RelationUserSch.get_by_user(user_id):
                 if relation.heart:
@@ -71,13 +72,43 @@ class PostManager(Resource):
                         'tags_id': get_trip_tags_id(schedule)
                     })
 
+            # the trips with user preference tags first
+            user_tags = [tag.tag_id for tag in RelationUserTag.get_by_user_id(user_id)]
+            public_trips = []
+            trips_with_user_tags = []
+            trips_without_user_tags = []
             for schedule in Schedule.get_all_public():
-                public_trips.append({
+                trip_tags = get_trip_tags_id(schedule)
+                if any(tag in user_tags for tag in trip_tags):
+                    trips_with_user_tags.append({
                     'id': schedule.schedule_id,
                     'name': schedule.schedule_name,
                     'image': get_trip_photo(schedule),
                     'tags_id': get_trip_tags_id(schedule)
                 })
+                else:
+                    trips_without_user_tags.append({
+                    'id': schedule.schedule_id,
+                    'name': schedule.schedule_name,
+                    'image': get_trip_photo(schedule),
+                    'tags_id': get_trip_tags_id(schedule)
+                })
+            
+            # shuffle the two lists
+            random.shuffle(trips_with_user_tags)
+            random.shuffle(trips_without_user_tags)
+
+            # mix two lists with some diversity
+            total_len = len(trips_with_user_tags) + len(trips_without_user_tags)
+            for _ in range(total_len):
+                if len(trips_with_user_tags) == 0 or len(trips_without_user_tags) == 0:
+                    break
+                if random.random() < 0.7:
+                    schedule = trips_with_user_tags.pop(0)
+                else:
+                    schedule = trips_without_user_tags.pop(0)
+                public_trips.append(schedule)
+            public_trips += trips_with_user_tags + trips_without_user_tags
 
             return make_response({
                 'hearted_trips': hearted_trips,
@@ -149,10 +180,11 @@ class PostManager(Resource):
                 RelationSchTag.delete(tag_relation.rst_id)
         print(f'Old tag relations deleted')
 
-        ## delete all old tag relation
-        RelationSchTag.delete_by_trip(trip_id)
-
+        all_tag_relations = RelationSchTag.get_by_schedule_id(trip_id)
+        all_tag_relations = [tag.tag_id for tag in all_tag_relations]
         for tag in data['tags_id']:
+            if tag in all_tag_relations:
+                continue
             RelationSchTag.create({
                 'schedule_id': trip_id,
                 'tag_id': tag

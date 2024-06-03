@@ -1,4 +1,13 @@
 runtime: python39
+env: flex
+automatic_scaling:
+  min_num_instances: 1
+  max_num_instances: 2
+network:
+  session_affinity: true
+
+# ref: https://flask-socketio.readthedocs.io/en/latest/deployment.html#gunicorn-web-server
+entrypoint: gunicorn --worker-class eventlet -w 1 main:app
 
 env_variables:
   MAIL_DEFAULT_SENDER : ('admin', 'tripbuddy4sdm@gmail.com')

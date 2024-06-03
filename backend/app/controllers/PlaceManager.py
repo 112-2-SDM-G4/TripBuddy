@@ -5,9 +5,9 @@ from flask import request, make_response
 from typing import Dict
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.controllers.utils import *
-
+from app import socketio
 from app.services.googlemap import GoogleMapApi
-
+from app.controllers.SocketTripManager import emit_trip_update
 from app.models.schedule import Schedule
 from app.models.place import Place
 from app.models.relation_spot_sch import RelationSpotSch
@@ -99,6 +99,8 @@ class PlaceInTrip(Resource):
         place_info['period_hours'] = place_info['stay_time'][0]
         place_info['period_minutes'] = place_info['stay_time'][1]
         relation = RelationSpotSch.create(place_info)
+        
+        emit_trip_update(trip_id)
         return make_response({'message': 'Place added to trip successfully.',
                               'relation_id': relation.rss_id},
                                 200)

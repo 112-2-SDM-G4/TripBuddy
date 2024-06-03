@@ -1,14 +1,10 @@
 import os
 import random
 from datetime import datetime, timedelta
-from flask_restful import Resource, reqparse
-from flask import request, make_response, jsonify
+from flask_restful import Resource
+from flask import request, make_response, jsonify, redirect
 from flask_mail import Message
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
-# from google.oauth2 import id_token
-# from google.auth.transport import requests
-# import google.auth.oauthlib.flow
-# from googleapiclient.discovery import build
 
 from app.models.user import User, UserVerify
 from app.models.relation_user_tag import RelationUserTag
@@ -151,24 +147,24 @@ class SetUserInfo(Resource):
 class LoginCheckUser(Resource):
     def get(self):
         user_email = request.args.get('user_email')
-        # data = request.get_json()
-        # user_email = data.get('email')、
         user = User.get_by_email(user_email)
 
+        res_json = {
+            'valid': False,
+            'salt': '',
+            'message': ''
+        }
+        if user.google_token is not None:
+            res_json['message'] = 'This email is already being used with Google Account, please use google login.'
+            return make_response(res_json, 200)
+        
         if user is not None:
-            res_json = {
-                'valid': True,
-                'salt': user.salt
-            }
+            res_json['valid'] = True
+            res_json['salt'] = user.salt
             return make_response(res_json, 200)
         else:
-            res_json = {
-                'valid': False, 
-                'salt': '', 
-                'message': 'User do not exist, Please try to regist'
-            }
+            res_json['message'] = 'User do not exist, Please try to regist'
             return make_response(res_json, 401)
-
 
 class LoginCheckPassword(Resource):
     def post(self):
@@ -177,26 +173,29 @@ class LoginCheckPassword(Resource):
         password_input = data.get('hashed_password')
         user = User.get_by_email(user_email)
 
+        res_json = {
+            'valid': False,
+            'jwt_token': '',
+            'user_name': '',
+            'language': '',
+            'message': 'Wrong Password',
+            'preference': None
+        }
+
+        if user.google_token is not None:
+            res_json['message'] = 'This email is already being used with Google Account, please use google login.'
+            return make_response(res_json, 200)
+        
         if user and password_input == user.hashed_password :
             jwt_token = create_access_token(identity=user_email)
-            res_json = {
-                'valid': True,
-                'jwt_token': jwt_token,
-                'user_name': user.user_name,
-                'language': user.language,
-                'message': 'Login Successful',
-                'preference': user.questionnaire
-            }
+            res_json['valid'] = True
+            res_json['jwt_token'] = jwt_token
+            res_json['user_name'] = user.user_name
+            res_json['language'] = user.language
+            res_json['message'] = 'Login Successful'
+            res_json['preference'] = user.questionnaire
             return make_response(res_json, 200)
         else:
-            res_json = {
-                'valid': False,
-                'jwt_token': '',
-                'user_name': '',
-                'language': '',
-                'message': 'Wrong Password',
-                'preference': None
-            }
             return make_response(res_json, 401)
         
 class ForgetPassword(Resource):
@@ -301,80 +300,50 @@ class GetUserInfo(Resource):
             return make_response(err_msg, 401)
 
 class HandleGoogleLogin(Resource):
-    ''' TODO: Implement Google OAuth2 login flow
-    1. Receive authorization code from google oauth server
-    2. Exchange code for tokens and potentially user information
-    3. Verify/Create user, generate JWT
-    4. Return user data and JWT
-    '''
-    def post(self):
-        parser = reqparse.RequestParser()
-        parser.add_argument('code', type=str, required=True)  # Assuming authorization code is in request body
-        args = parser.parse_args()
-
-        # Create GoogleLogin instance (if needed)
+    def get(self):
         google_login = GoogleLogin()
+        auth_url = google_login.login()
+        data = {
+            "auth_url": auth_url
+        }
 
-        # Exchange code for tokens and potentially user information
+        return make_response(data, 200)
+class HandleGoogleLoginCallback(Resource):
+    def get(self):
+        google_login = GoogleLogin()
+        res_json = {
+            'valid': False,
+            'preference': False,
+            'jwt_token': '',
+            'message': 'This email had been taken. Please use original system to login.'
+        }
         try:
-            credentials = google_login.callback(args['code'])
+            user_info = google_login.callback()
         except Exception as e:
-            return {'error': str(e)}, 400  # Handle errors
-
-        # Verify/Create user, generate JWT (implementation specific)
-        user_data, jwt_token = handle_user_with_google_data(credentials)
-
-        return {'user': user_data, 'jwt_token': jwt_token}, 200
-    
-    def handle_user_with_google_data(credentials):
-        # ... (user verification/creation, JWT generation)
-        pass
-    
-# class ValidateEmail(Resource):
-#     def post(self):
-#         user_email = str(request.get_json()['user_email']).strip(' ')
-#         user = User.get_by_email(user_email)
-
-#         res_json = {
-#             "valid": False, 
-#             "jwt_token": "",
-#             "message": ""
-#         }
-
-#         if not user:
-#             res_json['message'] = "User not found."
-#             return make_response(res_json, 200)
+            res_json['message'] = str(e)
+            return make_response(res_json, 500)
         
-#         if not user.google_token:
-#             res_json['message'] = "User had been registered from original system."
-#             return make_response(res_json, 200)
+        user_email = user_info['email']
+        user = User.get_by_email(user_email)
         
-#         jwt_token = create_access_token(identity=user_email)
-#         res_json['valid'] = True
-#         res_json['jwt_token'] = jwt_token
-#         res_json['message'] = "Email from google token is valid."
+        if not user: 
+            user = User.create({
+                'user_name': user_info['name'],
+                'email': user_info['email'],
+                'hashed_password': 'google',
+                'salt': 'google',
+                'language': 'zh',
+                'questionnaire': False,
+                'user_icon': 0,
+                'google_token': 'google'
+            })
+
+        frontend_url = "https://tripbuddy-frontend-repx5qxhzq-de.a.run.app/login"
         
-#         return make_response(res_json, 200)
-
-# class CreateUser(Resource):
-#     def post(self):
-#         data = request.get_json()
-#         user_email = str(request.get_json()['user_email']).strip(' ')
-
-#         if User.get_by_email(user_email):
-#             return make_response({'valid': False, 'message': "This email had been taken."}, 200)
+        if (user.google_token is None):
+            return redirect(f"{frontend_url}?error=google_login_error")
         
-#         user_data = {
-#             'user_name': data['user_name'],
-#             'email': user_email,
-#             'hashed_password': 'google',
-#             'salt': 'google',
-#             'language': 'zh',
-#             'questionnaire': False,
-#             'user_icon': 0,
-#             'google_token': data['google_id']
-#         }
-
-#         User.create(user_data)
-#         return make_response({'valid': True, 'message': "Register Successfully!!!"}, 200)
-    
+        jwt_token = create_access_token(identity=user_info['email'])
+        
+        redirect_url = frontend_url + "?jwt_token=" + jwt_token + "&preference=" + str(user.questionnaire)
+        return redirect(redirect_url)
